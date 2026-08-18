@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RANsliceOpt AI — Single-Cell Configuration</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>RANsliceOpt AI</h1>
+    <p class="subtitle">Single-Cell 6G RAN Configuration &amp; Soft-Slice Setup</p>
+  </div>
+  <div class="topbar-actions">
+    <button id="btn-reset" class="btn btn-ghost">Reset</button>
+    <button id="btn-save" class="btn btn-ghost">Save</button>
+    <button id="btn-export" class="btn btn-primary">Export JSON</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ===================== CONFIGURATION PANEL ===================== -->
+  <section class="card" id="config-panel">
+    <h2>Configuration Panel</h2>
+    <p class="card-hint">Cell-level radio and resource abstraction. Drives the total PRB pool available to be shared across slices.</p>
+
+    <div class="field-grid">
+      <label class="field">
+        <span>Cell name</span>
+        <input type="text" id="cellName" value="Cell-01">
+      </label>
+
+      <label class="field">
+        <span>Frequency range</span>
+        <select id="band">
+          <option value="FR1">FR1 — Sub-7 GHz</option>
+          <option value="FR2">FR2 — mmWave (24–52 GHz)</option>
+          <option value="FR3" selected>FR3 — Upper mid-band (7–24 GHz)</option>
+          <option value="SUBTHZ">Sub-THz (92–300 GHz, 6G)</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Channel bandwidth</span>
+        <select id="bandwidth"></select>
+      </label>
+
+      <label class="field">
+        <span>Subcarrier spacing (numerology)</span>
+        <select id="scs"></select>
+      </label>
+
+      <label class="field">
+        <span>Duplex mode</span>
+        <select id="duplex">
+          <option value="TDD" selected>TDD</option>
+          <option value="FDD">FDD</option>
+        </select>
+      </label>
+
+      <label class="field" id="tddRatioField">
+        <span>TDD DL:UL slot ratio — <output id="tddRatioOut">4:1</output></span>
+        <input type="range" id="tddRatio" min="1" max="9" value="4" step="1">
+      </label>
+
+      <label class="field">
+        <span>Component carriers (CA) — <output id="carriersOut">2</output></span>
+        <input type="range" id="carriers" min="1" max="8" value="2" step="1">
+      </label>
+
+      <label class="field">
+        <span>MIMO spatial layers (max) — <output id="mimoOut">16</output></span>
+        <input type="range" id="mimo" min="1" max="64" value="16" step="1">
+      </label>
+
+      <label class="field">
+        <span>Cell morphology</span>
+        <select id="morphology">
+          <option value="indoor">Indoor Hotspot</option>
+          <option value="dense-urban" selected>Dense Urban</option>
+          <option value="urban-macro">Urban Macro</option>
+          <option value="rural">Rural</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Cell radius (m) — <output id="radiusOut">200</output></span>
+        <input type="range" id="radius" min="20" max="5000" value="200" step="10">
+      </label>
+
+      <label class="field">
+        <span>Active UEs (load context) — <output id="uesOut">150</output></span>
+        <input type="range" id="ues" min="1" max="2000" value="150" step="1">
+      </label>
+
+      <label class="field">
+        <span>Mean channel quality (CQI 1–15) — <output id="cqiOut">10</output></span>
+        <input type="range" id="cqi" min="1" max="15" value="10" step="1">
+      </label>
+    </div>
+
+    <div class="derived-strip">
+      <div class="derived-item"><span class="derived-label">PRBs / carrier</span><span class="derived-value" id="prbPerCarrier">—</span></div>
+      <div class="derived-item"><span class="derived-label">Total PRB pool</span><span class="derived-value" id="prbTotal">—</span></div>
+      <div class="derived-item"><span class="derived-label">Est. peak spectral eff.</span><span class="derived-value" id="specEff">—</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== SLICE PANEL ===================== -->
+  <section class="card" id="slice-panel">
+    <h2>Slice Panel</h2>
+    <p class="card-hint">Per-slice offered load, SLA thresholds, and min/target/max resource shares. Minimum guarantees across slices must not exceed 100% of the PRB pool.</p>
+
+    <div class="slice-list" id="sliceList"></div>
+  </section>
+
+  <!-- ===================== SUMMARY / VALIDATION ===================== -->
+  <aside class="card" id="summary-panel">
+    <h2>Derived Summary</h2>
+
+    <div class="bar-chart" id="shareChart"></div>
+    <div class="bar-legend" id="shareLegend"></div>
+
+    <h3>Capacity Guard — Hard Floor</h3>
+    <p class="card-hint" style="margin-bottom:10px;">Minimum PRBs required to serve the configured active URLLC connections within deadline, and active RedCap devices at their minimum grant. A failing check means the configured minimum guarantee is not actually sufficient to protect the slice.</p>
+    <div class="guard-list" id="capacityGuard"></div>
+
+    <h3>PRB Allocation at Target</h3>
+    <table class="alloc-table" id="allocTable">
+      <thead><tr><th>Slice</th><th>Min</th><th>Target</th><th>Max</th><th>PRBs @ target</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h3>Validation</h3>
+    <ul class="validation-list" id="validationList"></ul>
+  </aside>
+
+</main>
+
+<footer class="footer">
+  RANsliceOpt AI — Browser prototype. Configuration and slice state are computed locally; nothing leaves this page.
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
