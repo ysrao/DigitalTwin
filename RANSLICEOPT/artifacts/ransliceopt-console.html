@@ -1,0 +1,918 @@
+<title>RANsliceOpt Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg: #eef2f8;
+    --panel: #ffffff;
+    --panel-2: #f7f9fc;
+    --border: #dde3ee;
+    --text: #141c2b;
+    --text-dim: #5b6b82;
+    --text-faint: #8695ab;
+
+    --accent: #2f5fd9;
+    --accent-soft: #e7edfc;
+    --accent-ink: #1c3f9e;
+
+    --ok: #147a53;
+    --ok-bg: #e3f5ec;
+    --warn: #9a6106;
+    --warn-bg: #fbf1de;
+    --err: #b8342c;
+    --err-bg: #fbe8e5;
+
+    --c-urllc: #d9502b;
+    --c-urllc-bg: #fbeae3;
+    --c-embb: #2f5fd9;
+    --c-embb-bg: #e7edfc;
+    --c-miot: #1f8f5f;
+    --c-miot-bg: #e4f4ec;
+
+    --shadow: 0 1px 2px rgba(20, 28, 43, 0.04), 0 8px 24px -12px rgba(20, 28, 43, 0.10);
+    --radius: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1220;
+      --panel: #131b2b;
+      --panel-2: #101827;
+      --border: #263047;
+      --text: #e8edf7;
+      --text-dim: #97a4bd;
+      --text-faint: #66738c;
+
+      --accent: #6f93f5;
+      --accent-soft: #1c2947;
+      --accent-ink: #a9c0ff;
+
+      --ok: #4cd699;
+      --ok-bg: #10281f;
+      --warn: #e8b653;
+      --warn-bg: #2c2312;
+      --err: #ff7d70;
+      --err-bg: #2c1613;
+
+      --c-urllc: #ff8a63;
+      --c-urllc-bg: #2b1911;
+      --c-embb: #6f93f5;
+      --c-embb-bg: #171f36;
+      --c-miot: #52d6a2;
+      --c-miot-bg: #0f2419;
+
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1220;
+    --panel: #131b2b;
+    --panel-2: #101827;
+    --border: #263047;
+    --text: #e8edf7;
+    --text-dim: #97a4bd;
+    --text-faint: #66738c;
+
+    --accent: #6f93f5;
+    --accent-soft: #1c2947;
+    --accent-ink: #a9c0ff;
+
+    --ok: #4cd699;
+    --ok-bg: #10281f;
+    --warn: #e8b653;
+    --warn-bg: #2c2312;
+    --err: #ff7d70;
+    --err-bg: #2c1613;
+
+    --c-urllc: #ff8a63;
+    --c-urllc-bg: #2b1911;
+    --c-embb: #6f93f5;
+    --c-embb-bg: #171f36;
+    --c-miot: #52d6a2;
+    --c-miot-bg: #0f2419;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 28px -14px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .num, output, .tabular {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 28px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(155deg, var(--accent), var(--accent-ink));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .topbar h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+  .subtitle { margin: 1px 0 0; color: var(--text-dim); font-size: 12.5px; }
+  .topbar-actions { display: flex; gap: 8px; }
+
+  .btn {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, transform .05s;
+  }
+  .btn:hover { background: var(--panel-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1.25fr 1.3fr 1fr;
+    gap: 18px;
+    padding: 22px 28px 48px;
+    align-items: start;
+    max-width: 1560px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1080px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+  }
+  .card h2 { margin: 0 0 4px; font-size: 14.5px; letter-spacing: -0.005em; }
+  .card h3 {
+    margin: 18px 0 8px; font-size: 11px; color: var(--text-faint);
+    text-transform: uppercase; letter-spacing: .07em; font-weight: 600;
+  }
+  .card-hint { margin: 0 0 16px; color: var(--text-dim); font-size: 12.5px; max-width: 46ch; }
+
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .field { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: var(--text-dim); }
+  .field > span { font-weight: 500; color: var(--text); }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field select {
+    padding: 7px 9px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: inherit;
+    background: var(--panel-2);
+    color: var(--text);
+  }
+  .field input[type="number"] { font-family: "IBM Plex Mono", monospace; }
+  .field input:focus-visible, .field select:focus-visible, .btn:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .field input[type="range"] {
+    width: 100%; accent-color: var(--accent);
+    height: 4px;
+  }
+  .field output { color: var(--accent); font-weight: 600; }
+
+  .derived-strip {
+    display: flex; gap: 10px; margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .derived-item {
+    flex: 1; background: var(--accent-soft); border-radius: 9px;
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 3px;
+  }
+  .derived-label { font-size: 10.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+  .derived-value { font-size: 17px; font-weight: 600; color: var(--accent-ink); }
+
+  .slice-list { display: flex; flex-direction: column; gap: 16px; }
+  .slice-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--panel-2); }
+  .slice-card.urllc { border-left: 3px solid var(--c-urllc); }
+  .slice-card.embb  { border-left: 3px solid var(--c-embb); }
+  .slice-card.miot  { border-left: 3px solid var(--c-miot); }
+
+  .slice-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .slice-name { font-weight: 700; font-size: 13px; letter-spacing: .01em; }
+  .slice-card.urllc .slice-name { color: var(--c-urllc); }
+  .slice-card.embb  .slice-name { color: var(--c-embb); }
+  .slice-card.miot  .slice-name { color: var(--c-miot); }
+
+  .slice-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-bottom: 10px; }
+  .slice-fields .field { font-size: 12px; }
+  .slice-fields input[type="number"] {
+    padding: 6px 8px; border: 1px solid var(--border); border-radius: 7px;
+    font-size: 12.5px; width: 100%; background: var(--panel); font-family: "IBM Plex Mono", monospace;
+  }
+
+  .range-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .range-row .rr-label { font-size: 12px; display: flex; justify-content: space-between; }
+  .range-row .rr-label b { color: var(--text); font-weight: 600; }
+
+  .slice-toggles { display: flex; gap: 16px; align-items: center; margin-top: 8px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; }
+  .slice-toggles label { display: flex; align-items: center; gap: 6px; }
+  .slice-toggles select { font-family: inherit; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); color: var(--text); padding: 3px 5px; font-size: 12px; }
+  .slice-toggles input[type="checkbox"] { accent-color: var(--accent); }
+
+  .slice-warn { margin-top: 8px; font-size: 11.5px; color: var(--err); font-weight: 600; }
+
+  .bar-chart { display: flex; height: 26px; border-radius: 7px; overflow: hidden; border: 1px solid var(--border); }
+  .bar-seg { transition: width .15s; }
+  .bar-legend { display: flex; gap: 14px; margin-top: 8px; font-size: 11.5px; flex-wrap: wrap; color: var(--text-dim); }
+  .bar-legend span { display: flex; align-items: center; gap: 5px; }
+  .bar-legend .num { color: var(--text); }
+  .swatch { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  .guard-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+  .guard-item { border-radius: 9px; padding: 10px 12px; font-size: 12px; border: 1px solid transparent; }
+  .guard-ok  { background: var(--ok-bg); }
+  .guard-err { background: var(--err-bg); }
+  .guard-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 600; flex-wrap: wrap; }
+  .guard-ok  .guard-head { color: var(--ok); }
+  .guard-err .guard-head { color: var(--err); }
+  .guard-pct { font-weight: 500; color: var(--text-dim); font-size: 11px; }
+  .guard-detail { margin-top: 4px; color: var(--text-dim); font-size: 11px; }
+  .btn-fix {
+    margin-top: 8px; border: 1px solid var(--err); background: var(--panel); color: var(--err);
+    padding: 5px 10px; border-radius: 7px; font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .btn-fix:hover { background: var(--err); color: #fff; }
+
+  .alloc-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .alloc-table th, .alloc-table td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); }
+  .alloc-table td:not(:first-child) { font-family: "IBM Plex Mono", monospace; }
+  .alloc-table th { color: var(--text-faint); font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; }
+
+  .validation-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .validation-list li { font-size: 12px; padding: 7px 10px; border-radius: 7px; display: flex; align-items: flex-start; gap: 7px; }
+  .v-ok   { background: var(--ok-bg);   color: var(--ok); }
+  .v-warn { background: var(--warn-bg); color: var(--warn); }
+  .v-err  { background: var(--err-bg);  color: var(--err); }
+
+  .footer { text-align: center; color: var(--text-faint); font-size: 11.5px; padding: 4px 16px 28px; }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(10, 14, 22, 0.55);
+    display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 100;
+  }
+  .modal-backdrop[hidden] { display: none; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 18px 20px; width: min(640px, 100%);
+  }
+  .modal-head {
+    display: flex; justify-content: space-between; align-items: center;
+    font-weight: 600; font-size: 13.5px; margin-bottom: 4px;
+  }
+  #exportText {
+    width: 100%; height: 280px; resize: vertical; margin-top: 6px;
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px; box-sizing: border-box;
+  }
+</style>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">RS</div>
+    <div>
+      <h1>RANsliceOpt</h1>
+      <p class="subtitle">Single-Cell 6G RAN Configuration &amp; Soft-Slice Capacity Guard</p>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <button id="btn-reset" class="btn">Reset</button>
+    <button id="btn-save" class="btn">Save</button>
+    <button id="btn-export" class="btn btn-primary">Copy Config JSON</button>
+  </div>
+</header>
+
+<div class="modal-backdrop" id="exportModal" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <span>Config JSON</span>
+      <button class="btn" id="btn-close-modal">Close</button>
+    </div>
+    <p class="card-hint" style="margin:0 0 10px;">Select all and copy (⌘/Ctrl+C) — this environment doesn't support direct file downloads.</p>
+    <textarea id="exportText" readonly></textarea>
+  </div>
+</div>
+
+<main class="layout">
+
+  <section class="card" id="config-panel">
+    <h2>Configuration Panel</h2>
+    <p class="card-hint">Cell-level radio and resource abstraction. Drives the total PRB pool shared across slices.</p>
+
+    <div class="field-grid">
+      <label class="field">
+        <span>Cell name</span>
+        <input type="text" id="cellName" value="Cell-01">
+      </label>
+
+      <label class="field">
+        <span>Frequency range</span>
+        <select id="band">
+          <option value="FR1">FR1 — Sub-7 GHz</option>
+          <option value="FR2">FR2 — mmWave (24–52 GHz)</option>
+          <option value="FR3" selected>FR3 — Upper mid-band (7–24 GHz)</option>
+          <option value="SUBTHZ">Sub-THz (92–300 GHz, 6G)</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Channel bandwidth</span>
+        <select id="bandwidth"></select>
+      </label>
+
+      <label class="field">
+        <span>Subcarrier spacing (numerology)</span>
+        <select id="scs"></select>
+      </label>
+
+      <label class="field">
+        <span>Duplex mode</span>
+        <select id="duplex">
+          <option value="TDD" selected>TDD</option>
+          <option value="FDD">FDD</option>
+        </select>
+      </label>
+
+      <label class="field" id="tddRatioField">
+        <span>TDD DL:UL slot ratio — <output class="num" id="tddRatioOut">4:1</output></span>
+        <input type="range" id="tddRatio" min="1" max="9" value="4" step="1">
+      </label>
+
+      <label class="field">
+        <span>Component carriers (CA) — <output class="num" id="carriersOut">2</output></span>
+        <input type="range" id="carriers" min="1" max="8" value="2" step="1">
+      </label>
+
+      <label class="field">
+        <span>MIMO spatial layers (max) — <output class="num" id="mimoOut">16</output></span>
+        <input type="range" id="mimo" min="1" max="64" value="16" step="1">
+      </label>
+
+      <label class="field">
+        <span>Cell morphology</span>
+        <select id="morphology">
+          <option value="indoor">Indoor Hotspot</option>
+          <option value="dense-urban" selected>Dense Urban</option>
+          <option value="urban-macro">Urban Macro</option>
+          <option value="rural">Rural</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Cell radius (m) — <output class="num" id="radiusOut">200</output></span>
+        <input type="range" id="radius" min="20" max="5000" value="200" step="10">
+      </label>
+
+      <label class="field">
+        <span>Active UEs (load context) — <output class="num" id="uesOut">150</output></span>
+        <input type="range" id="ues" min="1" max="2000" value="150" step="1">
+      </label>
+
+      <label class="field">
+        <span>Mean channel quality (CQI 1–15) — <output class="num" id="cqiOut">10</output></span>
+        <input type="range" id="cqi" min="1" max="15" value="10" step="1">
+      </label>
+    </div>
+
+    <div class="derived-strip">
+      <div class="derived-item"><span class="derived-label">PRBs / carrier</span><span class="derived-value num" id="prbPerCarrier">—</span></div>
+      <div class="derived-item"><span class="derived-label">Total PRB pool</span><span class="derived-value num" id="prbTotal">—</span></div>
+      <div class="derived-item"><span class="derived-label">Est. peak spectral eff.</span><span class="derived-value num" id="specEff">—</span></div>
+    </div>
+  </section>
+
+  <section class="card" id="slice-panel">
+    <h2>Slice Panel</h2>
+    <p class="card-hint">Per-slice offered load, SLA thresholds, and min/target/max resource shares. Minimum guarantees must not exceed 100% of the PRB pool.</p>
+    <div class="slice-list" id="sliceList"></div>
+  </section>
+
+  <aside class="card" id="summary-panel">
+    <h2>Derived Summary</h2>
+
+    <div class="bar-chart" id="shareChart"></div>
+    <div class="bar-legend" id="shareLegend"></div>
+
+    <h3>Capacity Guard — Hard Floor</h3>
+    <p class="card-hint" style="margin-bottom:10px;">Minimum PRBs required to serve active URLLC connections within deadline, and active RedCap devices at their minimum grant. A failing check means the configured minimum is not actually sufficient to protect the slice.</p>
+    <div class="guard-list" id="capacityGuard"></div>
+
+    <h3>PRB Allocation at Target</h3>
+    <table class="alloc-table" id="allocTable">
+      <thead><tr><th>Slice</th><th>Min</th><th>Target</th><th>Max</th><th>PRBs @ target</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h3>Validation</h3>
+    <ul class="validation-list" id="validationList"></ul>
+  </aside>
+
+</main>
+
+<footer class="footer">
+  RANsliceOpt — browser prototype. Configuration and slice state compute locally in this page; nothing is transmitted anywhere.
+</footer>
+
+<script>
+"use strict";
+
+const BAND_PARAMS = {
+  FR1:    { bandwidths: [10, 20, 30, 40, 50, 60, 80, 100],        scs: [15, 30, 60] },
+  FR2:    { bandwidths: [50, 100, 200, 400],                      scs: [60, 120] },
+  FR3:    { bandwidths: [100, 200, 400, 800],                     scs: [120, 240] },
+  SUBTHZ: { bandwidths: [400, 800, 1600, 2000, 3200],             scs: [480, 960] },
+};
+
+const CQI_EFFICIENCY = [0.15, 0.23, 0.38, 0.60, 0.88, 1.18, 1.48, 1.91, 2.41, 2.73, 3.32, 3.90, 4.52, 5.12, 5.55];
+
+const SLICE_META = {
+  urllc: {
+    label: "URLLC", cls: "urllc", color: "var(--c-urllc)", slaLabel: "Deadline (ms)", slaDefault: 1,
+    extra: [
+      { key: "maxActive", label: "Max active URLLC connections / cell", min: 0, step: 1 },
+      { key: "packetSize", label: "Packet size (bytes)", min: 1, step: 1 },
+    ],
+  },
+  embb: {
+    label: "eMBB", cls: "embb", color: "var(--c-embb)", slaLabel: "Min throughput (Mbps)", slaDefault: 50,
+    extra: [],
+  },
+  miot: {
+    label: "mIoT/eMTC", cls: "miot", color: "var(--c-miot)", slaLabel: "Access success (%)", slaDefault: 99,
+    extra: [
+      { key: "maxActive", label: "Max active RedCap devices / cell", min: 0, step: 1 },
+      { key: "minPrbPerDevice", label: "Min PRBs / RedCap device", min: 1, step: 1 },
+    ],
+  },
+};
+
+function resolveSliceColor(varExpr) {
+  const m = varExpr.match(/var\((--[\w-]+)\)/);
+  if (!m) return varExpr;
+  return getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() || varExpr;
+}
+
+function defaultState() {
+  return {
+    cell: {
+      name: "Cell-01", band: "FR3", bandwidth: 400, scs: 120, duplex: "TDD",
+      tddRatio: 4, carriers: 2, mimo: 16, morphology: "dense-urban",
+      radius: 200, ues: 150, cqi: 10,
+    },
+    slices: {
+      urllc: { load: 15, sla: 1,  min: 15, target: 20, max: 35, borrow: true,  reclaim: "high",
+                maxActive: 20, packetSize: 32 },
+      embb:  { load: 60, sla: 50, min: 40, target: 55, max: 80, borrow: true,  reclaim: "medium" },
+      miot:  { load: 25, sla: 99, min: 5,  target: 10, max: 20, borrow: true,  reclaim: "low",
+                maxActive: 50, minPrbPerDevice: 2 },
+    },
+  };
+}
+
+let state = loadState() || defaultState();
+
+const el = (id) => document.getElementById(id);
+
+function init() {
+  populateBandDependentSelects();
+  bindCellFields();
+  renderSliceCards();
+  applyStateToInputs();
+  wireGlobalButtons();
+  recompute();
+}
+
+function populateBandDependentSelects() {
+  const band = state.cell.band;
+  const params = BAND_PARAMS[band];
+
+  const bwSel = el("bandwidth");
+  bwSel.innerHTML = params.bandwidths.map(b => `<option value="${b}">${b} MHz</option>`).join("");
+  if (!params.bandwidths.includes(state.cell.bandwidth)) state.cell.bandwidth = params.bandwidths[0];
+  bwSel.value = state.cell.bandwidth;
+
+  const scsSel = el("scs");
+  scsSel.innerHTML = params.scs.map(s => `<option value="${s}">${s} kHz</option>`).join("");
+  if (!params.scs.includes(state.cell.scs)) state.cell.scs = params.scs[0];
+  scsSel.value = state.cell.scs;
+}
+
+function bindCellFields() {
+  el("band").addEventListener("change", (e) => {
+    state.cell.band = e.target.value;
+    populateBandDependentSelects();
+    recompute();
+  });
+  el("bandwidth").addEventListener("change", (e) => { state.cell.bandwidth = Number(e.target.value); recompute(); });
+  el("scs").addEventListener("change", (e) => { state.cell.scs = Number(e.target.value); recompute(); });
+  el("cellName").addEventListener("input", (e) => { state.cell.name = e.target.value; });
+  el("duplex").addEventListener("change", (e) => {
+    state.cell.duplex = e.target.value;
+    el("tddRatioField").style.display = state.cell.duplex === "TDD" ? "" : "none";
+    recompute();
+  });
+  el("morphology").addEventListener("change", (e) => { state.cell.morphology = e.target.value; recompute(); });
+
+  bindRange("tddRatio", "tddRatioOut", (v) => { state.cell.tddRatio = v; return `${v}:1`; });
+  bindRange("carriers", "carriersOut", (v) => { state.cell.carriers = v; return v; });
+  bindRange("mimo", "mimoOut", (v) => { state.cell.mimo = v; return `${v}x`; });
+  bindRange("radius", "radiusOut", (v) => { state.cell.radius = v; return v; });
+  bindRange("ues", "uesOut", (v) => { state.cell.ues = v; return v; });
+  bindRange("cqi", "cqiOut", (v) => { state.cell.cqi = v; return v; });
+}
+
+function bindRange(inputId, outId, apply) {
+  const input = el(inputId);
+  input.addEventListener("input", (e) => {
+    const v = Number(e.target.value);
+    el(outId).textContent = apply(v);
+    recompute();
+  });
+}
+
+function renderSliceCards() {
+  const container = el("sliceList");
+  container.innerHTML = "";
+
+  Object.keys(SLICE_META).forEach((key) => {
+    const meta = SLICE_META[key];
+    const s = state.slices[key];
+
+    const card = document.createElement("div");
+    card.className = `slice-card ${meta.cls}`;
+    card.innerHTML = `
+      <div class="slice-head">
+        <span class="slice-name">${meta.label}</span>
+      </div>
+      <div class="slice-fields">
+        <label class="field">
+          <span>Offered load (%)</span>
+          <input type="number" min="0" max="100" data-k="load" value="${s.load}">
+        </label>
+        <label class="field">
+          <span>${meta.slaLabel}</span>
+          <input type="number" step="0.1" data-k="sla" value="${s.sla}">
+        </label>
+        ${meta.extra.map(f => `
+        <label class="field">
+          <span>${f.label}</span>
+          <input type="number" min="${f.min}" step="${f.step}" data-k="${f.key}" value="${s[f.key]}">
+        </label>`).join("")}
+      </div>
+
+      <div class="range-row">
+        <div class="rr-label"><span>Minimum guarantee</span><b class="num"><span data-out="min">${s.min}</span>%</b></div>
+        <input type="range" min="0" max="100" data-k="min" value="${s.min}">
+      </div>
+      <div class="range-row">
+        <div class="rr-label"><span>Target share</span><b class="num"><span data-out="target">${s.target}</span>%</b></div>
+        <input type="range" min="0" max="100" data-k="target" value="${s.target}">
+      </div>
+      <div class="range-row">
+        <div class="rr-label"><span>Maximum cap</span><b class="num"><span data-out="max">${s.max}</span>%</b></div>
+        <input type="range" min="0" max="100" data-k="max" value="${s.max}">
+      </div>
+
+      <div class="slice-toggles">
+        <label><input type="checkbox" data-k="borrow" ${s.borrow ? "checked" : ""}> Borrowable when idle</label>
+        <label>Reclaim priority
+          <select data-k="reclaim">
+            <option value="high" ${s.reclaim === "high" ? "selected" : ""}>High</option>
+            <option value="medium" ${s.reclaim === "medium" ? "selected" : ""}>Medium</option>
+            <option value="low" ${s.reclaim === "low" ? "selected" : ""}>Low</option>
+          </select>
+        </label>
+      </div>
+      <div class="slice-warn" data-out="warn"></div>
+    `;
+
+    container.appendChild(card);
+
+    card.querySelectorAll("[data-k]").forEach((input) => {
+      const k = input.dataset.k;
+      const evt = input.type === "checkbox" ? "change" : (input.tagName === "SELECT" ? "change" : "input");
+      input.addEventListener(evt, () => {
+        let v = input.type === "checkbox" ? input.checked : input.value;
+        if (input.type === "range" || input.type === "number") v = Number(v);
+        s[k] = v;
+
+        if (k === "min" || k === "target" || k === "max") {
+          if (s.min > s.max) { if (k === "min") s.max = s.min; else s.min = s.max; }
+          if (s.target < s.min) s.target = s.min;
+          if (s.target > s.max) s.target = s.max;
+          card.querySelector('[data-k="min"]').value = s.min;
+          card.querySelector('[data-k="target"]').value = s.target;
+          card.querySelector('[data-k="max"]').value = s.max;
+          card.querySelector('[data-out="min"]').textContent = s.min;
+          card.querySelector('[data-out="target"]').textContent = s.target;
+          card.querySelector('[data-out="max"]').textContent = s.max;
+        }
+        recompute();
+      });
+    });
+  });
+}
+
+function computePrbPool() {
+  const { bandwidth, scs, carriers } = state.cell;
+  const usableKHz = bandwidth * 1000 * 0.90;
+  const prbWidthKHz = scs * 12;
+  const perCarrier = Math.floor(usableKHz / prbWidthKHz);
+  return { perCarrier, total: perCarrier * carriers };
+}
+
+function computeSpectralEfficiencyRaw() {
+  const base = CQI_EFFICIENCY[state.cell.cqi - 1];
+  const mimoGain = Math.sqrt(state.cell.mimo);
+  return base * mimoGain;
+}
+function computeSpectralEfficiency() { return computeSpectralEfficiencyRaw().toFixed(2); }
+
+function computeHardFloors(pool) {
+  const { scs } = state.cell;
+  const ttiMs = 15 / scs;
+  const specEff = computeSpectralEfficiencyRaw();
+  const prbBandwidthHz = scs * 1000 * 12;
+  const bitsPerPrbPerTti = specEff * prbBandwidthHz * (ttiMs / 1000);
+
+  const u = state.slices.urllc;
+  const prbsPerConn = Math.max(1, Math.ceil((u.packetSize * 8) / bitsPerPrbPerTti));
+  const ttisInDeadline = Math.max(1, Math.floor(u.sla / ttiMs));
+  const urllcRequiredPrbs = Math.ceil((u.maxActive * prbsPerConn) / ttisInDeadline);
+
+  const m = state.slices.miot;
+  const miotRequiredPrbs = m.maxActive * m.minPrbPerDevice;
+
+  const pct = (prbs) => (pool.total > 0 ? (prbs / pool.total) * 100 : 0);
+  const configuredPrbs = (pctVal) => Math.round((pctVal / 100) * pool.total);
+
+  return {
+    ttiMs, prbsPerConn, ttisInDeadline,
+    urllc: { requiredPrbs: urllcRequiredPrbs, floorPct: pct(urllcRequiredPrbs), configuredPrbs: configuredPrbs(u.min) },
+    miot:  { requiredPrbs: miotRequiredPrbs,  floorPct: pct(miotRequiredPrbs),  configuredPrbs: configuredPrbs(m.min) },
+  };
+}
+
+function applyStateToInputs() {
+  el("cellName").value = state.cell.name;
+  el("band").value = state.cell.band;
+  el("duplex").value = state.cell.duplex;
+  el("tddRatioField").style.display = state.cell.duplex === "TDD" ? "" : "none";
+  el("tddRatio").value = state.cell.tddRatio;
+  el("tddRatioOut").textContent = `${state.cell.tddRatio}:1`;
+  el("carriers").value = state.cell.carriers;
+  el("carriersOut").textContent = state.cell.carriers;
+  el("mimo").value = state.cell.mimo;
+  el("mimoOut").textContent = `${state.cell.mimo}x`;
+  el("morphology").value = state.cell.morphology;
+  el("radius").value = state.cell.radius;
+  el("radiusOut").textContent = state.cell.radius;
+  el("ues").value = state.cell.ues;
+  el("uesOut").textContent = state.cell.ues;
+  el("cqi").value = state.cell.cqi;
+  el("cqiOut").textContent = state.cell.cqi;
+}
+
+function recompute() {
+  const pool = computePrbPool();
+  el("prbPerCarrier").textContent = pool.perCarrier.toLocaleString();
+  el("prbTotal").textContent = pool.total.toLocaleString();
+  el("specEff").textContent = `${computeSpectralEfficiency()} b/s/Hz`;
+
+  renderShareChart(pool);
+  renderCapacityGuard(pool);
+  renderAllocTable(pool);
+  renderValidation(pool);
+  renderPerSliceWarnings();
+}
+
+function renderShareChart(pool) {
+  const chart = el("shareChart");
+  const legend = el("shareLegend");
+  chart.innerHTML = "";
+  legend.innerHTML = "";
+
+  let sumTarget = 0;
+  Object.keys(SLICE_META).forEach((key) => {
+    const meta = SLICE_META[key];
+    const s = state.slices[key];
+    sumTarget += s.target;
+    const seg = document.createElement("div");
+    seg.className = "bar-seg";
+    seg.style.width = `${s.target}%`;
+    seg.style.background = resolveSliceColor(meta.color);
+    seg.title = `${meta.label}: ${s.target}%`;
+    chart.appendChild(seg);
+  });
+
+  const remainder = Math.max(0, 100 - sumTarget);
+  if (remainder > 0) {
+    const seg = document.createElement("div");
+    seg.className = "bar-seg";
+    seg.style.width = `${remainder}%`;
+    seg.style.background = "var(--border)";
+    seg.title = `Unallocated: ${remainder}%`;
+    chart.appendChild(seg);
+  }
+
+  Object.keys(SLICE_META).forEach((key) => {
+    const meta = SLICE_META[key];
+    legend.innerHTML += `<span><span class="swatch" style="background:${meta.color}"></span>${meta.label} (<span class="num">${state.slices[key].target}%</span>)</span>`;
+  });
+  if (remainder > 0) legend.innerHTML += `<span><span class="swatch" style="background:var(--border)"></span>Unallocated (<span class="num">${remainder}%</span>)</span>`;
+}
+
+function renderAllocTable(pool) {
+  const tbody = document.querySelector("#allocTable tbody");
+  tbody.innerHTML = "";
+  Object.keys(SLICE_META).forEach((key) => {
+    const meta = SLICE_META[key];
+    const s = state.slices[key];
+    const prbsAtTarget = Math.round((s.target / 100) * pool.total);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${meta.label}</td><td>${s.min}%</td><td>${s.target}%</td><td>${s.max}%</td><td>${prbsAtTarget.toLocaleString()}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderCapacityGuard(pool) {
+  const floors = computeHardFloors(pool);
+
+  const rows = [
+    {
+      key: "urllc", label: "URLLC", f: floors.urllc, configuredPct: state.slices.urllc.min,
+      detail: `${state.slices.urllc.maxActive} active conn. × ${floors.prbsPerConn} PRB/conn, `
+            + `${floors.ttisInDeadline} TTI(s) available within ${state.slices.urllc.sla} ms deadline `
+            + `(TTI = ${floors.ttiMs.toFixed(3)} ms at ${state.cell.scs} kHz SCS).`,
+    },
+    {
+      key: "miot", label: "RedCap / mIoT", f: floors.miot, configuredPct: state.slices.miot.min,
+      detail: `${state.slices.miot.maxActive} active RedCap device(s) × ${state.slices.miot.minPrbPerDevice} min PRB/device.`,
+    },
+  ];
+
+  el("capacityGuard").innerHTML = rows.map((r) => {
+    const pass = r.f.requiredPrbs <= r.f.configuredPrbs;
+    const floorPctCeil = Math.min(100, Math.ceil(r.f.floorPct));
+    return `
+      <div class="guard-item ${pass ? "guard-ok" : "guard-err"}">
+        <div class="guard-head">
+          <span>${pass ? "✓" : "✕"} ${r.label} hard floor</span>
+          <span class="guard-pct num">${r.f.requiredPrbs.toLocaleString()} PRB required (${r.f.floorPct.toFixed(1)}%) vs ${r.f.configuredPrbs.toLocaleString()} PRB configured (${r.configuredPct}%)</span>
+        </div>
+        <div class="guard-detail">${r.detail}</div>
+        ${pass ? "" : `<button class="btn-fix" data-apply-slice="${r.key}" data-floor-pct="${floorPctCeil}">Apply required minimum (${floorPctCeil}%)</button>`}
+      </div>`;
+  }).join("");
+}
+
+function renderValidation(pool) {
+  const list = el("validationList");
+  list.innerHTML = "";
+  const sumMin = Object.values(state.slices).reduce((a, s) => a + s.min, 0);
+  const sumTarget = Object.values(state.slices).reduce((a, s) => a + s.target, 0);
+
+  const items = [];
+
+  items.push(sumMin <= 100
+    ? { level: "ok", text: `Sum of minimum guarantees is ${sumMin}% (≤ 100%).` }
+    : { level: "err", text: `Sum of minimum guarantees is ${sumMin}% — exceeds 100% of PRB pool. Capacity conservation violated.` });
+
+  items.push(sumTarget <= 100
+    ? { level: "ok", text: `Sum of target shares is ${sumTarget}% (≤ 100%).` }
+    : { level: "warn", text: `Sum of target shares is ${sumTarget}% — not all slices can operate at target simultaneously without borrowing.` });
+
+  Object.keys(SLICE_META).forEach((key) => {
+    const meta = SLICE_META[key];
+    const s = state.slices[key];
+    if (!(s.min <= s.target && s.target <= s.max)) {
+      items.push({ level: "err", text: `${meta.label}: target must satisfy min ≤ target ≤ max.` });
+    }
+  });
+
+  items.push(pool.total > 0
+    ? { level: "ok", text: `Total PRB pool computed: ${pool.total.toLocaleString()} PRBs across ${state.cell.carriers} carrier(s).` }
+    : { level: "err", text: "Computed PRB pool is zero for this bandwidth/numerology combination." });
+
+  list.innerHTML = items.map(i => `<li class="v-${i.level}">${iconFor(i.level)} ${i.text}</li>`).join("");
+}
+
+function renderPerSliceWarnings() {
+  document.querySelectorAll(".slice-card").forEach((card, idx) => {
+    const key = Object.keys(SLICE_META)[idx];
+    const s = state.slices[key];
+    const warnEl = card.querySelector('[data-out="warn"]');
+    if (!(s.min <= s.target && s.target <= s.max)) {
+      warnEl.textContent = "Constraint violated: min ≤ target ≤ max required.";
+    } else {
+      warnEl.textContent = "";
+    }
+  });
+}
+
+function iconFor(level) {
+  return level === "ok" ? "✓" : level === "warn" ? "⚠" : "✕";
+}
+
+const STORAGE_KEY = "ransliceopt_config_v1";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function wireGlobalButtons() {
+  el("capacityGuard").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-apply-slice]");
+    if (!btn) return;
+    const key = btn.dataset.applySlice;
+    const pct = Math.min(100, Number(btn.dataset.floorPct));
+    const s = state.slices[key];
+    s.min = pct;
+    if (s.target < s.min) s.target = s.min;
+    if (s.max < s.min) s.max = s.min;
+    renderSliceCards();
+    recompute();
+  });
+
+  el("btn-save").addEventListener("click", () => {
+    saveState();
+    flashButton("btn-save", "Saved");
+  });
+
+  el("btn-reset").addEventListener("click", () => {
+    if (!confirm("Reset configuration to defaults? This clears the saved local configuration.")) return;
+    localStorage.removeItem(STORAGE_KEY);
+    state = defaultState();
+    populateBandDependentSelects();
+    applyStateToInputs();
+    renderSliceCards();
+    recompute();
+  });
+
+  el("btn-export").addEventListener("click", () => {
+    const payload = {
+      configVersion: "1.0",
+      generatedAt: new Date().toISOString(),
+      cell: state.cell,
+      derived: { prbPool: computePrbPool(), spectralEfficiency: computeSpectralEfficiency() },
+      slices: state.slices,
+    };
+    const json = JSON.stringify(payload, null, 2);
+    const textarea = el("exportText");
+    textarea.value = json;
+    el("exportModal").hidden = false;
+    textarea.focus();
+    textarea.select();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).catch(() => {});
+    }
+  });
+
+  el("btn-close-modal").addEventListener("click", () => { el("exportModal").hidden = true; });
+  el("exportModal").addEventListener("click", (e) => { if (e.target.id === "exportModal") el("exportModal").hidden = true; });
+}
+
+function flashButton(id, text) {
+  const btn = el(id);
+  const orig = btn.textContent;
+  btn.textContent = text;
+  setTimeout(() => { btn.textContent = orig; }, 1200);
+}
+
+init();
+</script>
