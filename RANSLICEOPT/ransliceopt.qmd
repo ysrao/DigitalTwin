@@ -1,7 +1,10 @@
 ---
 title: "RANsliceOpt AI: SLA-Constrained Soft RAN Slicing via PPO over a Multi-Step MDP"
 subtitle: "A Browser-Prototyped Architecture with a Deployment Path to Latency-Aware gNB Edge Inference"
-author: "RANsliceOpt AI Working Draft"
+author:
+  - name: "Mubanga Nosufu"
+  - name: "Sam Lalwani"
+  - name: "Asokan Ram"
 date: today
 format:
   typst:
