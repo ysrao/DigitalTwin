@@ -81,7 +81,7 @@ SCENARIOS: Dict[str, Dict] = {
         "description": "The stack with both offload tiers removed, to size what "
                        "they were actually contributing.",
         "config": {"cell_counts": {"macro_low": 3, "macro_mid": 7, "umb_6g": 12,
-                                   "mmwave": 16}},
+                                   "mmwave": 16, "wifi7_indoor": 0, "ntn_leo": 0}},
     },
 }
 
