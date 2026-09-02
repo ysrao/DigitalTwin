@@ -164,6 +164,10 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
 
 <section id="summary" class="cards hidden"></section>
 
+<section id="keyPanel" class="panel hidden"><h2>Colour key</h2>
+  <div id="colourKey" style="display:flex;flex-wrap:wrap;gap:26px;font-size:.82rem"></div>
+</section>
+
 <section id="deployPanel" class="panel hidden"><h2>Deployment &amp; per-tier radio config</h2>
   <div class="tablewrap"><table><thead><tr>
     <th>Tier</th><th>RAT</th><th>Band</th><th>Morphology</th><th>Path-loss</th>
@@ -318,8 +322,19 @@ function barChart(node, groups, seriesKeys, valueOf, { max = null, fmt = v => nu
 
 function render(data) {
   $('errorPanel').classList.add('hidden');
-  ['statusPanel', 'summary', 'deployPanel', 'kpiPanel', 'chartPanel', 'tierPanel', 'limitPanel']
+  ['statusPanel', 'summary', 'keyPanel', 'deployPanel', 'kpiPanel', 'chartPanel', 'tierPanel', 'limitPanel']
     .forEach(id => $(id).classList.remove('hidden'));
+
+  const KEYSWATCH = (cls, label) => `<span style="display:inline-flex;align-items:center"><i class="legend-swatch ${cls}"></i>${label}</span>`;
+  const tiersForKey = (data.plan.tiers || []).map(t => t.tier);
+  $('colourKey').innerHTML =
+    `<div><strong style="display:block;margin-bottom:6px;color:#8fa6ad">Policies (bar charts, KPI table)</strong>`
+      + ['static','demand_follow','rule_based','ppo','dqn'].map(k => KEYSWATCH('c-'+k, LABEL[k])).join(' &nbsp; ') + `</div>`
+    + `<div><strong style="display:block;margin-bottom:6px;color:#8fa6ad">Tiers (session-mix bars)</strong>`
+      + tiersForKey.map((t,i) => KEYSWATCH('t'+(i%6), t)).join(' &nbsp; ') + `</div>`
+    + `<div><strong style="display:block;margin-bottom:6px;color:#8fa6ad">Status</strong>`
+      + `<span style="display:inline-flex;align-items:center"><i class="legend-swatch" style="background:#7a2b32"></i>red panel = needs attention (infeasible / error)</span> &nbsp; `
+      + `<span style="display:inline-flex;align-items:center"><i class="legend-swatch" style="background:#12313099;border:1px solid #2f6f5f"></i>green row = winning policy</span></div>`;
 
   const d = data.decision, results = data.results, f = data.feasibility;
   $('feasPanel').classList.remove('hidden');
