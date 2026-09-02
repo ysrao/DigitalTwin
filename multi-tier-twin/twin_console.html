@@ -74,9 +74,10 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
 <section class="panel" id="controls">
   <h2>Scenario</h2>
   <p class="note" style="background:#153239;border:1px solid #29616d;border-radius:8px;padding:10px 12px;margin:0 0 14px">
-    <strong>Standalone build.</strong> Results are precomputed by the Python twin for the six scenarios below.
-    Pick a scenario and press the buttons; the other input fields are shown for reference and are inactive here.
-    The live version (editable inputs, any config) runs from <span class="v">multi-tier-twin/platform/</span>.
+    <strong>Standalone build.</strong> Every panel below fills in automatically for the chosen scenario —
+    capacity &amp; coverage, decision status, KPI comparison, charts and the optimizer. Just switch scenarios
+    (and the Optimize target). The buttons re-run the same precomputed result. Numeric fields are display-only here;
+    the live version with editable inputs runs from <span class="v">multi-tier-twin/platform/</span>.
   </p>
   <div class="grid">
     <label>Scenario<select id="scenario"></select></label>
@@ -506,19 +507,23 @@ $('tierReset').onclick = () => { buildTierRows(); };
       const found = SCENARIOS.find(s => s.id === $('scenario').value);
       $('scenarioNote').textContent = found ? found.description : '';
     };
-    $('scenario').onchange = () => {
-      note();
-      ['statusPanel', 'summary', 'deployPanel', 'kpiPanel', 'chartPanel', 'tierPanel',
-       'limitPanel', 'optPanel'].forEach(id => $(id) && $(id).classList.add('hidden'));
-      $('preview').click();
-    };
+    async function loadAll() {
+      const p = payload();
+      renderPreview(await post('/api/twin/preview', p));
+      render(await post('/api/twin/compare', p));
+      renderOptimization(await post('/api/twin/optimize',
+        Object.assign({}, p, { objective: $('objective').value })));
+    }
+    $('scenario').onchange = () => { note(); loadAll(); };
+    $('objective').onchange = async () => renderOptimization(await post('/api/twin/optimize',
+      Object.assign({}, payload(), { objective: $('objective').value })));
     note();
     // Inputs are display-only in the standalone build.
     document.querySelectorAll('#controls input, #controls select')
       .forEach(el => { if (el.id !== 'scenario' && el.id !== 'objective') el.disabled = true; });
     $('tierReset').style.display = 'none';
     $('health').textContent = 'Standalone · precomputed';
-    renderPreview(await post('/api/twin/preview', payload()));
+    await loadAll();   // every panel populated for the selected scenario, no clicks needed
   } catch (error) {
     $('health').textContent = 'Data missing';
     showError('Precomputed data did not load: ' + error.message);
