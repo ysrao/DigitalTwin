@@ -32,7 +32,7 @@ details.tiercfg .hint{font-weight:400;color:#8fa6ad;font-size:.8rem;margin-left:
 .card{background:#102830;border:1px solid #214851;border-radius:12px;padding:16px}
 .card span{display:block;color:#8fa6ad;font-size:.8rem}.card strong{display:block;font-size:1.35rem;margin-top:8px}
 .card em{display:block;color:#7c8f96;font-size:.74rem;font-style:normal;margin-top:5px;line-height:1.4}
-.statusrow{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.statusrow{display:grid;grid-template-columns:2fr 1fr;gap:18px}#statusPanel,#feasPanel{border-left:4px solid #41dfb0}#statusPanel.err,#feasPanel.err{border-left-color:#e0616b}#statusPanel h2,#feasPanel h2{font-size:1.5rem;margin:.2rem 0}
 .recommend{align-self:center;text-align:center}.recommend span{display:block;color:#8fa6ad}.recommend strong{font-size:1.4rem;color:#41dfb0}
 .tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.86rem}
 th,td{text-align:right;padding:10px;border-bottom:1px solid #20404a;white-space:nowrap}
@@ -119,6 +119,20 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
   <p class="note">Single-agent centralized control, <strong>per tier</strong>: one policy emits one slice-mix branch per tier plus a global steering branch. Advisory output only; no direct RIC control.</p>
 </section>
 
+<section id="errorPanel" class="panel err hidden"><h2>Error</h2><p id="errorText"></p></section>
+
+<section id="feasPanel" class="panel hidden"><div class="statusrow">
+  <div><span class="eyebrow">FEASIBILITY</span><h2 id="feasStatus">—</h2><p id="feasNote"></p></div>
+  <div class="recommend"><span>Remedy</span><strong id="feasRemedy">—</strong></div>
+</div></section>
+
+<section id="statusPanel" class="panel hidden"><div class="statusrow">
+  <div><span class="eyebrow">DECISION STATUS</span><h2 id="status">—</h2><p id="reason"></p></div>
+  <div class="recommend"><span>Recommended</span><strong id="recommended">—</strong></div>
+</div></section>
+
+<section id="summary" class="cards hidden"></section>
+
 <section id="capPanel" class="panel hidden"><h2>Capacity &amp; coverage <span class="tag" id="capTag"></span></h2>
   <div id="capCards" class="cards"></div>
 
@@ -151,20 +165,6 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
   </details>
   <p class="note"><strong>Why URLLC and mIoT are shown per cell, not in Gbit:</strong> URLLC is a latency/reliability slice — you typically carry only a few URLLC connections per cell, each with a small bit-rate and a hard latency budget, so the binding number is connections/cell and the access latency of the serving tier, not aggregate Gbit. mIoT is bound by device count and random-access (PRACH) per cell, not throughput. The per-cell figures shown are the <em>offered</em> load spread over the capable cells; the admission and RACH limits themselves are not modelled yet, so they are not enforced.</p>
 </section>
-
-<section id="errorPanel" class="panel err hidden"><h2>Error</h2><p id="errorText"></p></section>
-
-<section id="feasPanel" class="panel hidden"><div class="statusrow">
-  <div><span class="eyebrow">FEASIBILITY</span><h2 id="feasStatus">—</h2><p id="feasNote"></p></div>
-  <div class="recommend"><span>Remedy</span><strong id="feasRemedy">—</strong></div>
-</div></section>
-
-<section id="statusPanel" class="panel hidden"><div class="statusrow">
-  <div><span class="eyebrow">DECISION STATUS</span><h2 id="status">—</h2><p id="reason"></p></div>
-  <div class="recommend"><span>Recommended</span><strong id="recommended">—</strong></div>
-</div></section>
-
-<section id="summary" class="cards hidden"></section>
 
 <section id="keyPanel" class="panel hidden"><h2>Colour key</h2>
   <div id="colourKey" style="display:flex;flex-wrap:wrap;gap:26px;font-size:.82rem"></div>
