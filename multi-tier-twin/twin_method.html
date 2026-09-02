@@ -1,0 +1,508 @@
+<title>Multi-Tier Digital Twin Method</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f7f8; --surface:#ffffff; --surface-2:#eaeef1; --ink:#171b21; --muted:#59626f;
+  --rule:#d9dee4; --accent:#0c8f84; --accent-ink:#0a6a62; --warn:#b4530f;
+  --shadow:0 1px 2px rgba(20,30,40,.04),0 8px 28px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c1015; --surface:#121820; --surface-2:#171f28; --ink:#e5eaf0; --muted:#929dac;
+    --rule:#262f3a; --accent:#2dd4bf; --accent-ink:#5eead4; --warn:#f59e5b;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c1015; --surface:#121820; --surface-2:#171f28; --ink:#e5eaf0; --muted:#929dac;
+  --rule:#262f3a; --accent:#2dd4bf; --accent-ink:#5eead4; --warn:#f59e5b;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  font-size:17px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* ---- header ---- */
+header{border-bottom:1px solid var(--rule);margin-bottom:44px}
+header .wrap{padding-top:56px;padding-bottom:34px}
+.kicker{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px
+}
+h1{
+  font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:700;
+  font-size:clamp(1.9rem,4.4vw,2.9rem);line-height:1.1;letter-spacing:-.02em;
+  margin:0 0 .5rem;text-wrap:balance;max-width:20ch
+}
+.lede{font-size:1.075rem;color:var(--muted);max-width:60ch;margin:.6rem 0 0}
+.meta{
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--muted);
+  margin-top:20px;display:flex;flex-wrap:wrap;gap:6px 20px
+}
+
+/* ---- layout ---- */
+.grid{display:grid;grid-template-columns:1fr;gap:0}
+@media (min-width:960px){
+  .grid{grid-template-columns:190px minmax(0,640px);gap:64px;justify-content:center}
+}
+nav{display:none}
+@media (min-width:960px){
+  nav{display:block;position:sticky;top:32px;align-self:start;padding-top:6px}
+  nav ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  nav li{margin:0 0 3px}
+  nav a{
+    font-family:"IBM Plex Sans",sans-serif;font-size:.82rem;color:var(--muted);
+    text-decoration:none;display:block;padding:5px 0 5px 30px;position:relative;
+    border-left:2px solid transparent;line-height:1.35
+  }
+  nav a::before{
+    counter-increment:s;content:counter(s,decimal-leading-zero);
+    font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--accent-ink);
+    position:absolute;left:8px;top:6px
+  }
+  nav a:hover{color:var(--ink)}
+  nav a.on{color:var(--ink);border-left-color:var(--accent)}
+}
+
+/* ---- content ---- */
+main{min-width:0}
+section{margin:0 0 52px;scroll-margin-top:28px}
+h2{
+  font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:1.34rem;
+  letter-spacing:-.01em;margin:0 0 4px;text-wrap:balance;
+  display:flex;align-items:baseline;gap:12px
+}
+h2 .n{
+  font-family:"IBM Plex Mono",monospace;font-size:.85rem;font-weight:500;
+  color:var(--accent-ink);flex:none
+}
+h3{
+  font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:.95rem;
+  margin:26px 0 2px;color:var(--ink)
+}
+p{margin:.85rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin-top:2px}
+strong{font-weight:600}
+a{color:var(--accent-ink);text-underline-offset:2px}
+
+.v{
+  font-family:"IBM Plex Mono",monospace;font-size:.86em;
+  background:var(--surface-2);padding:.05em .32em;border-radius:3px;white-space:nowrap
+}
+
+/* ---- equation ---- */
+.eq{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.9rem;line-height:1.95;
+  background:var(--surface-2);border-left:2px solid var(--accent);border-radius:0 6px 6px 0;
+  padding:15px 58px 15px 18px;margin:20px 0;overflow-x:auto;position:relative;
+  color:var(--ink)
+}
+.eq .ref{
+  position:absolute;right:16px;top:14px;color:var(--muted);font-size:.8rem;
+  font-family:"IBM Plex Mono",monospace
+}
+.eq em{font-style:normal;color:var(--muted)}         /* comments inside eq */
+.eq b{font-weight:500;color:var(--accent-ink)}       /* result / lhs emphasis */
+.frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:-1.05em;margin:0 .25em}
+.frac>span{padding:0 .5em}
+.frac>span+span{border-top:1px solid currentColor}
+.rad{border-top:1px solid currentColor;padding:1px 3px 0}
+sup,sub{font-size:.72em;line-height:0}
+
+/* ---- callout ---- */
+.note{
+  border:1px solid var(--rule);border-radius:8px;background:var(--surface);
+  padding:16px 18px;margin:20px 0;font-size:.92rem;box-shadow:var(--shadow)
+}
+.note .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-ink);display:block;margin-bottom:5px
+}
+.note.warn{border-color:color-mix(in srgb,var(--warn) 45%,var(--rule))}
+.note.warn .lbl{color:var(--warn)}
+
+/* ---- diagram ---- */
+figure{margin:24px 0;padding:0}
+figure svg{width:100%;height:auto;display:block;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+figcaption{font-size:.82rem;color:var(--muted);margin-top:8px;font-family:"IBM Plex Sans",sans-serif}
+
+/* ---- param table ---- */
+.tbl{width:100%;border-collapse:collapse;font-family:"IBM Plex Sans",sans-serif;font-size:.86rem;margin:18px 0}
+.tbl th,.tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+.tbl th{font-weight:600;color:var(--muted);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase}
+.tbl td:first-child{font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--accent-ink);white-space:nowrap}
+.tbl td.num{font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--rule);margin-top:60px}
+footer .wrap{padding:26px 28px 60px;font-size:.82rem;color:var(--muted);font-family:"IBM Plex Sans",sans-serif}
+
+@media print{
+  :root{--bg:#fff;--surface:#fff;--surface-2:#f0f2f4;--ink:#161a20;--muted:#55606e;
+    --rule:#d5dae1;--accent:#0c8f84;--accent-ink:#0a6a62;--warn:#b4530f}
+  nav{display:none}
+  .grid{grid-template-columns:1fr;gap:0}
+  section{break-inside:avoid}
+  .eq{break-inside:avoid}
+}
+::selection{background:color-mix(in srgb,var(--accent) 26%,transparent)}
+a:focus-visible,nav a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<header><div class="wrap">
+  <p class="kicker">Multi-Tier Digital Twin · v1 · Method note</p>
+  <h1>How the digital twin computes one control step</h1>
+  <p class="lede">The pipeline that turns a scenario and a policy action into KPIs and a
+  reward — propagation, association, scheduling, reward, and the PPO / Double&nbsp;DQN
+  learning loop — with the formula behind each stage as implemented.</p>
+  <div class="meta">
+    <span>single-agent · per-tier action branching</span>
+    <span>3GPP TR 38.901 / 38.811 / 38.821</span>
+    <span>ITU-R P.618 / P.838 / P.839</span>
+  </div>
+</div></header>
+
+<div class="wrap grid">
+<nav aria-label="Sections"><ol>
+  <li><a href="#timescales">Two timescales</a></li>
+  <li><a href="#demand">Offered demand</a></li>
+  <li><a href="#channel">Propagation &amp; channel</a></li>
+  <li><a href="#assoc">Association &amp; handover</a></li>
+  <li><a href="#sched">Scheduling &amp; KPIs</a></li>
+  <li><a href="#reward">Reward</a></li>
+  <li><a href="#learn">Learning</a></li>
+  <li><a href="#opt">Optimisation &amp; feasibility</a></li>
+  <li><a href="#capacity-basis">Peak vs loaded capacity</a></li>
+</ol></nav>
+
+<main>
+
+<section id="timescales">
+  <h2><span class="n">01</span>Two timescales</h2>
+  <p>Everything runs on a fast <strong>tick</strong> and a slow <strong>control interval</strong>.
+  Each tick (<span class="v">Δt = 0.1 s</span> by default) advances UE positions along their
+  velocity vectors, recomputes RSRP, and steps the A3/A5 measurement state machine.
+  Once per control interval (<span class="v">100 ticks = 10 s</span>) the policy chooses an
+  action, PRBs are allocated, and the interval's KPIs are aggregated. One
+  <span class="v">step()</span> = one control interval; <span class="v">T</span> intervals make an episode.</p>
+
+  <figure><svg viewBox="0 0 640 172" role="img" aria-label="Timeline: many 100-millisecond ticks grouped into one 10-second control interval">
+    <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">
+      <text x="20" y="26">fast loop — mobility, RSRP, A3/A5 timers</text>
+      <g fill="var(--accent)">
+        <!-- tick marks -->
+        <g>
+          <rect x="20" y="38" width="5" height="20" rx="1"/><rect x="44" y="38" width="5" height="20" rx="1"/>
+          <rect x="68" y="38" width="5" height="20" rx="1"/><rect x="92" y="38" width="5" height="20" rx="1"/>
+          <rect x="116" y="38" width="5" height="20" rx="1"/><rect x="140" y="38" width="5" height="20" rx="1"/>
+          <rect x="164" y="38" width="5" height="20" rx="1"/><rect x="188" y="38" width="5" height="20" rx="1"/>
+          <rect x="212" y="38" width="5" height="20" rx="1"/><rect x="236" y="38" width="5" height="20" rx="1"/>
+          <rect x="260" y="38" width="5" height="20" rx="1"/><rect x="284" y="38" width="5" height="20" rx="1"/>
+          <rect x="308" y="38" width="5" height="20" rx="1"/><rect x="332" y="38" width="5" height="20" rx="1"/>
+          <rect x="356" y="38" width="5" height="20" rx="1"/><rect x="380" y="38" width="5" height="20" rx="1"/>
+          <rect x="404" y="38" width="5" height="20" rx="1"/><rect x="428" y="38" width="5" height="20" rx="1"/>
+          <rect x="452" y="38" width="5" height="20" rx="1"/><rect x="476" y="38" width="5" height="20" rx="1"/>
+          <rect x="500" y="38" width="5" height="20" rx="1"/><rect x="524" y="38" width="5" height="20" rx="1"/>
+          <rect x="548" y="38" width="5" height="20" rx="1"/><rect x="572" y="38" width="5" height="20" rx="1"/>
+          <rect x="596" y="38" width="5" height="20" rx="1"/><rect x="620" y="38" width="4" height="20" rx="1"/>
+        </g>
+      </g>
+      <text x="20" y="76">Δt = 100 ms</text>
+      <!-- bracket -->
+      <path d="M20 96 L20 104 L622 104 L622 96" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+      <path d="M321 104 L321 112" stroke="var(--ink)" stroke-width="1.2"/>
+      <text x="321" y="132" text-anchor="middle" fill="var(--ink)">one control interval — 100 ticks = 10 s</text>
+      <text x="321" y="150" text-anchor="middle">policy action → PRB allocation → KPI aggregation</text>
+    </g>
+  </svg><figcaption>The measurement machinery only exists at tick rate; the policy only acts at interval rate.</figcaption></figure>
+</section>
+
+<section id="demand">
+  <h2><span class="n">02</span>Offered demand</h2>
+  <p>Each session carries a base rate from its type (eMBB 5, URLLC 1, mIoT 0.02 Mbps).
+  A per-slice load factor <span class="v">λ<sub>s</sub>(t)</span> scales those rates over the
+  episode. Its shape is one of: <span class="v">flat</span> (λ ≡ 1);
+  <span class="v">diurnal</span>, a two-peak day; or a named profile taken from the
+  platform's established trace <span class="v">synthetic_profiles/all_profiles.csv</span>
+  (<span class="v">P1</span>…<span class="v">P5</span> — busy hour, eMBB hotspot, URLLC burst,
+  massive IoT, mixed-failure stress), normalised to its own peak. A carrier trace drops
+  into that file without touching anything else.</p>
+
+  <div class="eq"><span class="ref">(1)</span>
+    diurnal:&nbsp; shape(t) = 0.55 + 0.32·sin(φ − 1.9) + 0.18·sin(2φ − 0.4)<br>
+    profile:&nbsp; shape<sub>s</sub>(t) = trace<sub>s</sub>[t mod T] / max<sub>t</sub> trace<sub>s</sub><br>
+    <em>&nbsp;&nbsp;φ = 2π·(t mod T) / T</em>
+  </div>
+  <div class="eq"><span class="ref">(2)</span>
+    ρ<sub>t</sub> = 0.85·ρ<sub>t−1</sub> + 𝒩(0, σ<sup>2</sup>)<span style="color:var(--muted)">,&nbsp;&nbsp;σ = traffic_noise</span><br>
+    <b>λ<sub>s</sub>(t)</b> = shape<sub>s</sub>(t) · (1 + ρ<sub>t</sub>) &nbsp;&nbsp;→&nbsp;&nbsp;
+    D<sub>i</sub> = rate(type<sub>i</sub>) · λ<sub>s(i)</sub>(t)
+  </div>
+  <p class="sub">mIoT is held less diurnal (a 0.45 + 0.55·shape floor).</p>
+</section>
+
+<section id="channel">
+  <h2><span class="n">03</span>Propagation &amp; channel</h2>
+  <p>Per tier, path loss comes from the tier's <strong>morphology</strong>
+  (<span class="v">UMa / UMi / RMa / InH</span> → TR 38.901; NTN → TR 38.811). The
+  terrestrial LOS branch, below the breakpoint distance:</p>
+
+  <div class="eq"><span class="ref">(3)</span>
+    PL<sub>LOS</sub> = 28.0 + 22·log<sub>10</sub>(d<sub>3D</sub>) + 20·log<sub>10</sub>(f<sub>c</sub>)<span style="color:var(--muted)">&nbsp;&nbsp;[UMa]</span>
+  </div>
+  <p>LOS and NLOS are blended by the TR 38.901 LOS probability in the linear domain, so
+  a single distance-indexed table per tier is exact:</p>
+  <div class="eq"><span class="ref">(4)</span>
+    <b>PL</b> = −10·log<sub>10</sub>( p<sub>LOS</sub>·10<sup>−PL<sub>LOS</sub>/10</sup> + (1−p<sub>LOS</sub>)·10<sup>−PL<sub>NLOS</sub>/10</sup> )
+  </div>
+  <p>Indoor UEs served by an outdoor cell add the TR 38.901 O2I term
+  (<span class="v">low</span> or <span class="v">high</span> loss). Each link also carries
+  spatially-correlated log-normal <strong>shadow fading</strong> — one value per
+  (session, tier), σ from the TR 38.901 tables (≈ 6–8 dB), evolving as a Gudmundson
+  AR(1) process with the distance the UE moves:</p>
+  <div class="eq"><span class="ref">(5)</span>
+    ξ<sub>t</sub> = e<sup>−Δd/d<sub>corr</sub></sup>·ξ<sub>t−1</sub> + <span class="rad">1 − e<sup>−2Δd/d<sub>corr</sub></sup></span>·σ·𝒩(0,1)
+    <span style="color:var(--muted)">&nbsp;&nbsp;d<sub>corr</sub> ≈ 50 m</span><br>
+    RSRP = EIRP<sub>RE</sub> − PL − L<sub>O2I</sub> − L<sub>blockage</sub> − ξ<sub>t</sub>
+  </div>
+  <p>SINR is against thermal noise <em>and co-channel interference</em> — the sum of
+  received power from same-band cells other than the server, each weighted by its load
+  <span class="v">ρ<sub>j</sub></span> (activity) and the tier's beam-coupling
+  <span class="v">κ</span> (1.0 omni, 0.35 upper-mid-band, 0.08 mmWave). 12 REs per PRB:</p>
+  <div class="eq"><span class="ref">(5′)</span>
+    N<sub>0</sub> = −174 + 10·log<sub>10</sub>(B<sub>PRB</sub>·10<sup>6</sup>) + NF<br>
+    I = 12 · Σ<sub>j ≠ serv, same band</sub> P<sub>rx,j</sub><sup>RE</sup> · ρ<sub>j</sub> · κ<sub>j</sub><br>
+    <b>SINR</b> = <span class="frac"><span>P<sub>rx,serv</sub><sup>PRB</sup></span><span>10<sup>N<sub>0</sub>/10</sup> + I</span></span>
+    <span style="color:var(--muted)">&nbsp;&nbsp;(κ = 0 ⇒ noise-limited, the old model)</span>
+  </div>
+
+  <h3>Non-terrestrial (LEO)</h3>
+  <p>Slant range at elevation <span class="v">ε</span> over a spherical Earth
+  (<span class="v">R</span> = 6371 km, <span class="v">h</span> = altitude), then free-space loss:</p>
+  <div class="eq"><span class="ref">(6)</span>
+    d = <span class="rad">(R·sin ε)<sup>2</sup> + 2R·h + h<sup>2</sup></span> − R·sin ε<br>
+    FSPL = 92.45 + 20·log<sub>10</sub>(f<sub>GHz</sub>) + 20·log<sub>10</sub>(d<sub>km</sub>)
+  </div>
+  <p>Rain attenuation follows ITU-R P.618 with the P.838 coefficients and P.839 rain height;
+  it is negligible at S-band and dominant at Ka-band:</p>
+  <div class="eq"><span class="ref">(7)</span>
+    γ<sub>R</sub> = k·R<sub>rain</sub><sup>α</sup><span style="color:var(--muted)">&nbsp;&nbsp;[dB/km]</span>
+    &nbsp;&nbsp;&nbsp;<b>A<sub>rain</sub></b> = γ<sub>R</sub> · L<sub>S</sub> · r<sub>0.01</sub>
+  </div>
+  <p>The LEO pass sweeps elevation <span class="v">ε<sub>min</sub> → 90° → ε<sub>min</sub></span>;
+  Doppler and its residual after pre-compensation drive inter-carrier interference:</p>
+  <div class="eq"><span class="ref">(8)</span>
+    f<sub>d</sub> = f<sub>c</sub>·ṙ / c &nbsp;&nbsp;&nbsp; ε<sub>off</sub> = Δf<sub>res</sub> / SCS &nbsp;&nbsp;&nbsp;
+    <b>ICI/S</b> ≈ <span class="frac"><span>(π·ε<sub>off</sub>)<sup>2</sup></span><span>3</span></span>
+  </div>
+  <p>Per-stream spectral efficiency is Shannon, capped, and de-rated for mobility; MIMO
+  multiplies delivered cell capacity:</p>
+  <div class="eq"><span class="ref">(9)</span>
+    se = min( log<sub>2</sub>(1 + SINR), se<sub>max</sub> ) · η<sub>mob</sub> · (1 − ICI/S)<br>
+    <b>C<sub>cell,s</sub></b> = n<sub>PRB,s</sub> · B<sub>PRB</sub> · se · G<sub>MIMO</sub>
+  </div>
+  <div class="eq"><span class="ref">(10)</span>
+    G<sub>MIMO</sub> = max(1, L) · η<sub>MIMO</sub> · (1.15 if MU else 1.0)<br>
+    n<sub>PRB</sub> = ⌊ 0.95 · BW · N<sub>CC</sub> / (12·SCS) ⌋<span style="color:var(--muted)">&nbsp;&nbsp;if not given explicitly</span>
+  </div>
+</section>
+
+<section id="assoc">
+  <h2><span class="n">04</span>Association &amp; handover</h2>
+  <p>Each UE holds a measurement set of its nearest cells (plus the satellite beam,
+  always). A <strong>steering eligibility mask</strong> is applied first: indoor-only cells
+  serve indoor UEs, outdoor-only (the LEO beam) serve outdoor UEs, a tier cannot hold a UE
+  faster than its <span class="v">v<sub>max</sub></span>, and the satellite is reserved for
+  <span class="v">v &gt; v<sub>NTN</sub></span> or a best-terrestrial RSRP below the
+  coverage-hole threshold.</p>
+  <p>A3/A5 events are evaluated on biased levels
+  <span class="v">M = RSRP + CIO + steering&nbsp;bias</span>. Entry conditions (TS 38.331),
+  held for the time-to-trigger:</p>
+  <div class="eq"><span class="ref">(11)</span>
+    <b>A3</b>:&nbsp; M<sub>n</sub> − Hys &gt; M<sub>s</sub> + Off<br>
+    <b>A5</b>:&nbsp; M<sub>s</sub> + Hys &lt; T<sub>1</sub> &nbsp;∧&nbsp; M<sub>n</sub> − Hys &gt; T<sub>2</sub>
+  </div>
+  <p class="sub">Off, Hys, TTT, T<sub>1</sub>, T<sub>2</sub> are per session type: URLLC uses a
+  short 40 ms trigger, mIoT a long 1280 ms trigger with a large offset.</p>
+  <p>A fired handover can still fail. Probability of a late (failed) handover rises with
+  UE speed and falls with the trigger margin:</p>
+  <div class="eq"><span class="ref">(12)</span>
+    P<sub>late</sub> = clip( 0.01 + 0.10·(v/120) − 0.01·Δ<sub>margin</sub>, &nbsp;0, &nbsp;0.6 )
+  </div>
+  <p>Also tracked: admission refusal (target at capacity), speed rejection, ping-pong
+  (return to the previous cell inside a 5 s window), radio-link failure
+  (<span class="v">M<sub>s</sub> &lt; M<sub>min</sub></span>), and the interruption time — which
+  breaks continuity when it exceeds the class's tolerance.</p>
+</section>
+
+<section id="sched">
+  <h2><span class="n">05</span>Scheduling &amp; KPIs</h2>
+  <p>Each tier declares which of the three slices it carries. A full terrestrial tier serves
+  <span class="v">{eMBB, URLLC, mIoT}</span>; <span class="v">mmwave</span> drops mIoT;
+  <span class="v">wifi7_indoor</span> and <span class="v">ntn_leo</span> drop URLLC — a
+  ~25 ms LEO service-link RTT cannot underwrite a 5 ms budget. The policy's per-tier template
+  <span class="v">π<sub>tier</sub></span> is masked to that set and renormalised
+  (<span class="v">π<sub>s</sub> ← π<sub>s</sub>·m<sub>s</sub> / Σ π·m</span>), then PRBs are
+  shared equally among the sessions of each slice on the cell. Served rate per session is
+  <span class="v">min(demand, capacity)</span>, capped by backhaul. Aggregated per slice:</p>
+  <div class="eq"><span class="ref">(13)</span>
+    <b>σ<sub>s</sub></b> = clip( Σ served<sub>s</sub> / max(Σ offered<sub>s</sub>, ε), &nbsp;0, &nbsp;1 )<br>
+    SLA<sub>s</sub> = 𝟙[ offered<sub>s</sub> ≤ ε &nbsp;∨&nbsp; σ<sub>s</sub> ≥ θ<sub>s</sub> ]
+    <span style="color:var(--muted)">&nbsp;&nbsp;θ = (0.95, 0.999, 0.99)</span>
+  </div>
+  <p>Unmet demand is split by cause — the distinction the feasibility check needs:</p>
+  <div class="eq"><span class="ref">(14)</span>
+    gap<sub>cov,s</sub> = Σ demand of sessions with <em>no eligible tier</em><br>
+    gap<sub>cap,s</sub> = Σ (demand − served) over <em>attached</em> sessions
+  </div>
+  <p>Jain fairness over the three slice satisfactions:</p>
+  <div class="eq"><span class="ref">(15)</span>
+    <b>F</b> = <span class="frac"><span>( Σ σ<sub>s</sub> )<sup>2</sup></span><span>N · Σ σ<sub>s</sub><sup>2</sup></span></span>
+  </div>
+</section>
+
+<section id="reward">
+  <h2><span class="n">06</span>Reward</h2>
+  <p>One scalar per control interval. Satisfaction is weighted toward URLLC; utilisation and
+  fairness are small positive terms; SLA violation, energy, handover churn and lost
+  continuity are penalties.</p>
+  <div class="eq"><span class="ref">(16)</span>
+    V = Σ<sub>s</sub> (1 − SLA<sub>s</sub>)·k<sub>s</sub> &nbsp;+&nbsp; 1.5·L<sub>risk</sub>
+    <span style="color:var(--muted)">&nbsp;&nbsp;k = (1, 4, 1.5)</span><br>
+    χ = ( n<sub>ping-pong</sub> + n<sub>RLF</sub> ) / N<sub>sessions</sub>
+  </div>
+  <div class="eq"><span class="ref">(17)</span>
+    <b>r</b> = w·σ + 0.06·U + 0.04·F − 0.12·V − c<sub>E</sub>·E<sub>frac</sub> − c<sub>HO</sub>·χ − c<sub>C</sub>·(1 − C)
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Symbol</th><th>Meaning</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>w</td><td>slice satisfaction weights (eMBB, URLLC, mIoT)</td><td class="num">0.27, 0.48, 0.25</td></tr>
+      <tr><td>U, F</td><td>network utilisation, Jain fairness</td><td>—</td></tr>
+      <tr><td>L<sub>risk</sub></td><td>URLLC latency risk (near-saturated tiers carrying URLLC)</td><td class="num">[0, 1]</td></tr>
+      <tr><td>c<sub>E</sub></td><td>energy price · E<sub>frac</sub> (of max)</td><td class="num">0.03</td></tr>
+      <tr><td>c<sub>HO</sub></td><td>handover-churn price</td><td class="num">0.05</td></tr>
+      <tr><td>c<sub>C</sub></td><td>continuity price · (1 − attached fraction)</td><td class="num">0.10</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="learn">
+  <h2><span class="n">07</span>Learning</h2>
+  <p>Observation: a 46-D vector — demand, phase, utilisation, continuity, handover stats,
+  NTN elevation and rain, plus six features per tier. Action is <strong>per tier</strong>:
+  one of nine slice-mix templates for each tier, plus one global steering posture — a
+  multi-categorical action with <span class="v">n<sub>tiers</sub> + 1</span> softmax heads on a
+  shared <span class="v">46 → 64 → 64</span> trunk. Single agent, one update.</p>
+
+  <h3>PPO</h3>
+  <p>The joint log-probability is the sum over branches; the clipped surrogate acts on the
+  joint ratio, with GAE(λ) advantages.</p>
+  <div class="eq"><span class="ref">(18)</span>
+    ρ<sub>t</sub> = exp( Σ<sub>k</sub> log π<sub>k</sub>(a<sub>k,t</sub>) − log π<sub>old,t</sub> )<br>
+    <b>L<sup>clip</sup></b> = −𝔼[ min( ρ<sub>t</sub>·Â<sub>t</sub>, &nbsp;clip(ρ<sub>t</sub>, 1−ϵ, 1+ϵ)·Â<sub>t</sub> ) ]
+  </div>
+  <div class="eq"><span class="ref">(19)</span>
+    δ<sub>t</sub> = r<sub>t</sub> + γ·V(s<sub>t+1</sub>)·(1−d<sub>t</sub>) − V(s<sub>t</sub>)<br>
+    <b>Â<sub>t</sub></b> = δ<sub>t</sub> + γ·λ·(1−d<sub>t</sub>)·Â<sub>t+1</sub>
+    <span style="color:var(--muted)">&nbsp;&nbsp;γ = 0.95, λ = 0.95, ϵ = 0.2</span>
+  </div>
+
+  <h3>Double DQN (branching)</h3>
+  <p>Per-tier Q heads; the online net picks each branch's action, the target net scores it,
+  and the per-branch bootstraps are averaged into one shared TD target (BDQN). Huber loss.</p>
+  <div class="eq"><span class="ref">(20)</span>
+    <b>y<sub>t</sub></b> = r<sub>t</sub> + γ·(1−d<sub>t</sub>)·<span class="frac"><span>1</span><span>K</span></span> Σ<sub>k</sub> Q<sub>tgt,k</sub>( s<sub>t+1</sub>, &nbsp;argmax<sub>a</sub> Q<sub>on,k</sub>(s<sub>t+1</sub>, a) )
+  </div>
+</section>
+
+<section id="opt">
+  <h2><span class="n">08</span>Optimisation &amp; feasibility</h2>
+  <p>Coordinate descent over a knob set chosen by objective —
+  <span class="v">handover · throughput · latency · coverage</span>. Each objective is scored on
+  its own KPI, always net of a session-continuity guard, so nothing can win by stranding
+  sessions:</p>
+  <div class="eq"><span class="ref">(21)</span>
+    guard = 2·(1 − C) + 1·rate<sub>ping-pong</sub><br>
+    <b>score<sub>lat</sub></b> = −latency / 5 &nbsp;+&nbsp; 0.5·σ<sub>URLLC</sub> &nbsp;−&nbsp; guard
+  </div>
+  <p>Knobs: per-class A3/A5 thresholds, per-tier cell individual offset
+  <span class="v">CIO</span>, steering thresholds, per-class
+  <span class="v">M<sub>min</sub></span>.</p>
+
+  <div class="note warn"><span class="lbl">Feasibility verdict</span>
+  Every run reports whether threshold tuning can even help. With
+  <span class="v">g<sub>cov</sub> = Σ gap<sub>cov</sub> / Σ offered</span> and
+  <span class="v">g<sub>cap</sub> = Σ gap<sub>cap</sub> / Σ offered</span>:
+  <div class="eq" style="margin-top:12px">
+    g<sub>cov</sub> &gt; 0.05 &nbsp;→&nbsp; <b>COVERAGE-LIMITED</b> &nbsp;<em>(needs sites / low-band / NTN)</em><br>
+    g<sub>cap</sub> &gt; 0.10 ∧ headroom &lt; 0.1·Σoffered &nbsp;→&nbsp; <b>CAPACITY-LIMITED</b> &nbsp;<em>(needs spectrum / cells)</em><br>
+    otherwise &nbsp;→&nbsp; <b>FEASIBLE</b> &nbsp;<em>(tune thresholds)</em>
+  </div>
+  <span class="v">thresholds_can_help</span> is true only for FEASIBLE.
+  </div>
+</section>
+
+<section id="capacity-basis">
+  <h2><span class="n">09</span>Peak vs loaded capacity</h2>
+  <p>Two capacity figures are reported. <strong>Peak</strong> assumes full PRB use, every UE
+  at the tier's SE ceiling, no interference — a hardware upper bound.
+  <strong>Loaded</strong> substitutes an interference-limited SE from a hex reuse-1 screening
+  estimate: six first-ring interferers at <span class="v">√3·r</span> from the deployed cell
+  density, each at 50% activity, scaled by <span class="v">κ</span>, averaged over a
+  cell-edge and a mid-cell point.</p>
+  <div class="eq"><span class="ref">(22)</span>
+    r = <span class="rad">A / (N<sub>cells</sub>·π)</span><span style="color:var(--muted)">&nbsp;&nbsp;nominal cell radius</span><br>
+    SINR<sub>loaded</sub> = <span class="frac"><span>P<sub>rx</sub>(0.7r)</span><span>N<sub>0</sub> + 6·P<sub>rx</sub>(√3·r)·κ·0.5</span></span>
+    &nbsp;&nbsp;<b>C<sub>loaded</sub></b> = n<sub>PRB</sub>·B<sub>PRB</sub>·SE<sub>loaded</sub>·G<sub>MIMO</sub>
+  </div>
+  <p>Coverage is the fraction of area within the link-budget radius of a cell, at the
+  deployed density, with a 1.28σ shadow-fade allowance and a 5% inter-cell edge outage —
+  so a well-covered tier reads ≈ 95%, not 100%.</p>
+</section>
+
+<section>
+  <h2><span class="n">10</span>Not yet in the model</h2>
+  <div class="note"><span class="lbl">Open</span>
+  <strong>PRACH / random-access overload</strong> — no preamble-capacity limit or contention,
+  so an mIoT arrival storm never causes access failure and mIoT / URLLC connections-per-cell
+  are shown but not enforced. <strong>Per-KPI targets as inputs</strong> — eMBB throughput,
+  URLLC latency and mIoT coverage-per-km² are internal constants, not scenario knobs.
+  </div>
+  <p class="sub" style="margin-top:12px">Closed since v1: co-channel interference in the SINR
+  (§3), spatially-correlated shadow fading (§3), and trace-driven time-varying offered load
+  (§2).</p>
+</section>
+
+</main>
+</div>
+
+<footer><div class="wrap">
+  Screening-grade research model — advisory only, no direct RIC control.
+  Synthetic sessions; SLA figures are modelled interval compliance, not proof of
+  five- or seven-nines reliability. Equation numbers refer to the implementation in
+  <span style="font-family:'IBM Plex Mono',monospace">platform/</span>.
+</div></footer>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav a'));
+  var map=links.map(function(a){return {a:a,el:document.querySelector(a.getAttribute('href'))};})
+               .filter(function(x){return x.el;});
+  if(!('IntersectionObserver'in window)||!map.length)return;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting)return;
+      map.forEach(function(x){x.a.classList.toggle('on',x.el===e.target);});
+    });
+  },{rootMargin:'-20% 0px -70% 0px'});
+  map.forEach(function(x){io.observe(x.el);});
+})();
+</script>

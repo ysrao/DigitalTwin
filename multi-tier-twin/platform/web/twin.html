@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multi-Tier Digital Twin v1</title><style>
+:root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#e7f0f3;background:#071217;font-synthesis:none}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 85% 5%,#123944 0,transparent 32%),#071217}
+header,main,footer{max-width:1240px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;padding:40px 24px 22px;gap:20px}
+h1{font-size:clamp(1.8rem,4vw,3.2rem);margin:.2rem 0}h2{margin-top:0}h3{margin:0 0 8px}
+p{color:#a9bac0}.eyebrow{color:#41dfb0;font-size:.74rem;font-weight:800;letter-spacing:.15em}
+.pill{background:#153239;border:1px solid #29616d;border-radius:99px;padding:9px 14px;white-space:nowrap}
+.panel{background:#0d2027dd;border:1px solid #1c3d46;border-radius:16px;padding:22px;margin:14px 0;box-shadow:0 12px 36px #0004}
+main{padding:0 24px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:14px}
+label{color:#a9bac0;font-size:.8rem;display:block}
+input,select{width:100%;margin-top:6px;background:#071419;border:1px solid #2b5059;border-radius:8px;color:#e7f0f3;padding:10px}
+button{border:0;border-radius:9px;padding:13px 20px;background:#41dfb0;color:#052018;font-weight:800;cursor:pointer}
+button.secondary{background:#20505c;color:#dff3f7}button:disabled{opacity:.55;cursor:default}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px}
+.inline-field{display:flex;align-items:center;gap:8px;width:auto;color:#a9bac0;font-size:.8rem}
+.inline-field select{width:auto;margin:0}
+.linkish{background:none;border:0;color:#41dfb0;padding:0;font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+details.tiercfg{margin:16px 0 4px;border:1px solid #1c3d46;border-radius:12px;background:#0b1b21;padding:0 16px}
+details.tiercfg[open]{padding-bottom:14px}
+details.tiercfg summary{cursor:pointer;padding:14px 0;font-weight:700;color:#dff3f7;font-size:.92rem;list-style-position:inside}
+details.tiercfg .hint{font-weight:400;color:#8fa6ad;font-size:.8rem;margin-left:8px}
+.cfgtable input,.cfgtable select{margin:0;padding:6px 8px;font-size:.82rem}
+.cfgtable input{width:78px}
+.cfgtable td:first-child{font-weight:600;color:#dff3f7}
+.tag{font-size:.7rem;font-weight:700;letter-spacing:.1em;background:#153239;border:1px solid #29616d;border-radius:99px;padding:3px 10px;color:#8feed1;vertical-align:middle;margin-left:8px}
+.v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:#071419;border:1px solid #24424b;border-radius:4px;padding:0 4px}
+.note{font-size:.8rem}.hidden{display:none}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin:14px 0}
+.card{background:#102830;border:1px solid #214851;border-radius:12px;padding:16px}
+.card span{display:block;color:#8fa6ad;font-size:.8rem}.card strong{display:block;font-size:1.35rem;margin-top:8px}
+.card em{display:block;color:#7c8f96;font-size:.74rem;font-style:normal;margin-top:5px;line-height:1.4}
+.statusrow{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.recommend{align-self:center;text-align:center}.recommend span{display:block;color:#8fa6ad}.recommend strong{font-size:1.4rem;color:#41dfb0}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.86rem}
+th,td{text-align:right;padding:10px;border-bottom:1px solid #20404a;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}tbody tr.best{background:#12313099}
+tfoot td{border-top:2px solid #29616d;border-bottom:0;color:#dff3f7;font-weight:600}
+li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.8rem}
+.chart-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:24px}
+.chart-pane{min-width:0}
+.axis-plot{position:relative;height:250px;border-left:1px solid #60777e;border-bottom:1px solid #60777e;margin-left:44px}
+.grid-line{position:absolute;left:0;right:0;border-top:1px solid #28464f}
+.axis-ticks{position:absolute;left:-44px;top:0;bottom:0;width:40px;color:#9fb2b8;font-size:.7rem}
+.axis-ticks span{position:absolute;right:6px;transform:translateY(50%)}
+.plot-groups{position:absolute;inset:0;display:flex;gap:16px;align-items:flex-end;padding:0 8px}
+.metric-group{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center;min-width:0}
+.metric-bars{display:flex;align-items:flex-end;justify-content:center;gap:8px;height:100%}
+.metric-bar-wrap{position:relative;display:flex;align-items:stretch;width:min(42px,28%);min-height:2px}
+.metric-value{position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);font-size:.66rem;color:#dce9ec;white-space:nowrap;font-variant-numeric:tabular-nums}
+.metric-bar{display:block;width:100%;height:100%;border-radius:4px 4px 0 0}
+.metric-label{margin-top:8px;font-weight:700;font-size:.78rem;color:#dce9ec;overflow:hidden;text-overflow:ellipsis}
+.chart-legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:.8rem}
+.legend-swatch{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.c-static{background:#8b9799}.c-demand_follow{background:#6f8fa3}.c-rule_based{background:#3999d4}.c-ppo{background:#ed7d1a}.c-dqn{background:#41dfb0}
+.stack{display:flex;height:26px;border-radius:6px;overflow:hidden;margin:6px 0 2px}
+.stack i{display:block;height:100%}
+.t0{background:#3999d4}.t1{background:#41dfb0}.t2{background:#ed7d1a}.t3{background:#c05fd8}.t4{background:#e8c33a}.t5{background:#8b9799}
+.chart-explanation{margin:16px 0 0;padding-top:12px;border-top:1px solid #20404a;font-size:.8rem;color:#a9bac0}
+.err{background:#3a1518;border:1px solid #7a2b32;color:#ffd9dc}
+@media(max-width:760px){header{flex-direction:column;align-items:flex-start}.statusrow{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header>
+  <div><span class="eyebrow">AI-ENABLED 6G RAN · DIGITAL TWIN · RESEARCH MODEL</span>
+  <h1>Multi-Tier Digital Twin <span style="color:#41dfb0;font-size:.4em;font-weight:600;vertical-align:middle">v1</span></h1>
+  <p>Cellular + Wi-Fi + LEO satellite · TR 38.901 / 38.811 / 38.821 · A3/A5 mobility · PPO vs Double DQN</p></div>
+  <div id="health" class="pill">Checking engine…</div>
+</header>
+<main>
+
+<section class="panel">
+  <h2>Scenario</h2>
+  <div class="grid">
+    <label>Scenario<select id="scenario"></select></label>
+    <label>Sessions<input id="n_sessions" type="number" value="600" step="100"></label>
+    <label>Indoor fraction<input id="indoor_fraction" type="number" value="0.65" step="0.05" min="0" max="1"></label>
+    <label>Control intervals<input id="episode_steps" type="number" value="12" step="2"></label>
+    <label>Ticks per interval<input id="control_interval_ticks" type="number" value="25" step="5"></label>
+    <label>Tick (s)<input id="tick_seconds" type="number" value="0.1" step="0.05"></label>
+    <label>Rain rate (mm/h)<input id="rain_rate_mm_h" type="number" value="0" step="5"></label>
+    <label>Doppler pre-compensation<input id="doppler_precompensation" type="number" value="0.95" step="0.01" min="0" max="1"></label>
+    <label>Training episodes<input id="train_episodes" type="number" value="8" step="2"></label>
+    <label>Seed<input id="seed" type="number" value="3080"></label>
+  </div>
+  <p class="note" id="scenarioNote"></p>
+
+  <details id="tierCfg" class="tiercfg">
+    <summary>Per-tier radio configuration <span class="hint">morphology · bandwidth · MIMO · cell count — changes are picked up by every run</span></summary>
+    <div class="tablewrap"><table class="cfgtable"><thead><tr>
+      <th>Tier</th><th>Cells</th><th>Morphology</th><th>Bandwidth (MHz)</th><th>Carriers</th><th>MIMO layers</th><th>Mode</th>
+    </tr></thead><tbody id="tierRows"></tbody></table></div>
+    <p class="note" style="margin:10px 0 0">PRBs per cell are re-derived from bandwidth × carriers and the tier's subcarrier spacing. Set <strong>Cells = 0</strong> to remove a tier. <button type="button" id="tierReset" class="linkish">reset to scenario defaults</button></p>
+  </details>
+
+  <div class="actions">
+    <button id="preview" class="secondary">Preview capacity &amp; coverage</button>
+    <button id="run">Run comparison</button>
+    <label class="inline-field">Optimize
+      <select id="objective">
+        <option value="handover">Handover thresholds</option>
+        <option value="throughput">Throughput (eMBB)</option>
+        <option value="latency">Latency (URLLC)</option>
+        <option value="coverage">Coverage (mIoT / edge)</option>
+      </select>
+    </label>
+    <button id="optimize" class="secondary">Run optimizer</button>
+  </div>
+  <p class="note">Single-agent centralized control, <strong>per tier</strong>: one policy emits one slice-mix branch per tier plus a global steering branch. Advisory output only; no direct RIC control.</p>
+</section>
+
+<section id="capPanel" class="panel hidden"><h2>Capacity &amp; coverage <span class="tag" id="capTag"></span></h2>
+  <div id="capCards" class="cards"></div>
+
+  <h3 style="font-family:inherit;font-size:1rem;margin:22px 0 4px;color:#dff3f7">Per tier × per slice</h3>
+  <div class="tablewrap"><table><thead><tr>
+    <th rowspan="2">Tier</th><th rowspan="2">Morphology</th><th rowspan="2">Agg BW</th><th rowspan="2">PRBs</th><th rowspan="2">MIMO</th>
+    <th rowspan="2">Cell radius / range</th><th rowspan="2">Area covered</th>
+    <th colspan="3" style="text-align:center;border-bottom:1px solid #29616d">Serves — capacity per slice</th>
+  </tr><tr>
+    <th>eMBB (throughput)</th><th>URLLC (conn/cell · latency)</th><th>mIoT (dev/cell)</th>
+  </tr></thead><tbody id="capRows"></tbody>
+  <tfoot id="capFoot"></tfoot></table></div>
+  <p class="note" style="margin-top:8px">A tier's cells are shared across the slices it carries by the policy's per-tier PRB template, so the <strong>eMBB throughput</strong> column is the tier's full capacity <em>available</em> to eMBB, not a reservation. URLLC and mIoT are shown in their binding unit — connections / devices per cell — not Gbit. Coverage is a radio-geometry property of the tier, identical for every slice it serves.</p>
+  <details class="tiercfg" style="margin-top:14px">
+    <summary>How these numbers are calculated</summary>
+    <div style="font-size:.88rem;color:#cbd8dc;line-height:1.7;padding:6px 0 2px">
+      <p style="margin:.4rem 0"><strong>Per-cell peak throughput</strong> (an upper bound — full PRB use, every UE at the tier's spectral-efficiency ceiling, no interference, no scheduling loss):</p>
+      <p class="v" style="display:block;padding:8px 10px;margin:.4rem 0">peak_cell = PRBs × PRB_BW_MHz × SE_max × G_MIMO</p>
+      <ul style="margin:.4rem 0 .6rem 1.1rem;padding:0">
+        <li><span class="v">PRBs</span> = ⌊ 0.95 × BW_MHz × carriers ÷ PRB_BW_MHz ⌋, or an explicit value</li>
+        <li><span class="v">PRB_BW_MHz</span> = 12 × SCS_kHz ÷ 1000 &nbsp;(SCS 30 kHz → 0.36 MHz)</li>
+        <li><span class="v">SE_max</span> = the tier's peak spectral efficiency, bit/s/Hz (3.0 low-band … 8.0 mmWave)</li>
+        <li><span class="v">G_MIMO</span> = max(1, layers) × 0.75 × (1.15 if MU else 1.0) &nbsp;(4×MU → 3.45)</li>
+      </ul>
+      <p style="margin:.4rem 0"><span class="v">tier capacity = peak_cell × cells</span> &nbsp;·&nbsp; <span class="v">network capacity = Σ tier capacity</span></p>
+      <p style="margin:.4rem 0"><strong>Area covered</strong> = min(1, cells × π·r² ÷ area). The cell radius <span class="v">r</span> is the largest distance whose TR 38.901 path loss still fits the link budget:</p>
+      <p class="v" style="display:block;padding:8px 10px;margin:.4rem 0">MAPL = Tx + G_tx + G_rx − (−174 + 10·log₁₀(PRB_BW·10⁶) + NF) − SINR_req − margin</p>
+      <p style="margin:.4rem 0;color:#9fb2b8">Found by bisection on the LOS-probability-blended path loss. No interference term, so radii and capacity are optimistic upper bounds. NTN range is the TR 38.811 slant range at the minimum elevation. Achieved throughput from <em>Run comparison</em> is far lower.</p>
+    </div>
+  </details>
+  <p class="note"><strong>Why URLLC and mIoT are shown per cell, not in Gbit:</strong> URLLC is a latency/reliability slice — you typically carry only a few URLLC connections per cell, each with a small bit-rate and a hard latency budget, so the binding number is connections/cell and the access latency of the serving tier, not aggregate Gbit. mIoT is bound by device count and random-access (PRACH) per cell, not throughput. The per-cell figures shown are the <em>offered</em> load spread over the capable cells; the admission and RACH limits themselves are not modelled yet, so they are not enforced.</p>
+</section>
+
+<section id="errorPanel" class="panel err hidden"><h2>Error</h2><p id="errorText"></p></section>
+
+<section id="feasPanel" class="panel hidden"><div class="statusrow">
+  <div><span class="eyebrow">FEASIBILITY</span><h2 id="feasStatus">—</h2><p id="feasNote"></p></div>
+  <div class="recommend"><span>Remedy</span><strong id="feasRemedy">—</strong></div>
+</div></section>
+
+<section id="statusPanel" class="panel hidden"><div class="statusrow">
+  <div><span class="eyebrow">DECISION STATUS</span><h2 id="status">—</h2><p id="reason"></p></div>
+  <div class="recommend"><span>Recommended</span><strong id="recommended">—</strong></div>
+</div></section>
+
+<section id="summary" class="cards hidden"></section>
+
+<section id="deployPanel" class="panel hidden"><h2>Deployment &amp; per-tier radio config</h2>
+  <div class="tablewrap"><table><thead><tr>
+    <th>Tier</th><th>RAT</th><th>Band</th><th>Morphology</th><th>Path-loss</th>
+    <th>Agg BW</th><th>SCS</th><th>PRBs</th><th>MIMO</th><th>Cells</th><th>Height</th><th>Tx</th>
+    <th>Radius / range</th><th>Max speed</th><th>Latency</th><th>Peak cell</th><th>Slices</th>
+  </tr></thead><tbody id="deploy"></tbody></table></div>
+  <p class="note">Morphology selects the TR 38.901 path-loss model (UMa/UMi/RMa/InH); NTN uses TR 38.811. PRBs are derived from aggregate bandwidth and subcarrier spacing. MIMO multiplies delivered cell capacity; per-stream spectral efficiency stays Shannon-bounded. Terrestrial radius from TR 38.901 at the tier's antenna height; NTN range is the TR 38.811 slant range at minimum elevation.</p>
+</section>
+
+<section id="kpiPanel" class="panel hidden"><h2>KPI comparison</h2>
+  <div class="tablewrap"><table><thead><tr>
+    <th>Policy</th><th>Reward</th><th>eMBB</th><th>URLLC</th><th>mIoT</th>
+    <th>HO success</th><th>Ping-pong</th><th>RLF</th><th>Continuity</th>
+    <th>Latency</th><th>Energy</th><th>Gain</th></tr></thead><tbody id="kpi"></tbody></table></div>
+</section>
+
+<section id="chartPanel" class="panel hidden"><h2>Visual comparison</h2>
+  <div class="chart-row">
+    <div class="chart-pane"><h3>(a) Mean composite reward</h3><div id="rewardChart"></div></div>
+    <div class="chart-pane"><h3>(b) Handover success rate (%)</h3><div id="hoChart"></div></div>
+  </div>
+  <div class="chart-row" style="margin-top:26px">
+    <div class="chart-pane"><h3>(c) Session continuity (%)</h3><div id="contChart"></div></div>
+    <div class="chart-pane"><h3>(d) Per-slice satisfaction (%)</h3><div id="satChart"></div></div>
+  </div>
+  <div class="chart-legend" id="legend"></div>
+  <p class="chart-explanation"><strong>How to read this:</strong> every policy is evaluated on the same seed, traffic realization and deployment, so bars are directly comparable. Handover success and continuity matter as much as reward — a policy that raises throughput by stranding sessions is not an improvement, which is why the decision status checks continuity before declaring a winner.</p>
+</section>
+
+<section id="tierPanel" class="panel hidden"><h2>Where sessions landed, and what each tier ran</h2><div id="tierMix"></div>
+  <div class="tablewrap" style="margin-top:16px"><table><thead><tr><th>Tier</th><th>DQN eMBB</th><th>DQN URLLC</th><th>DQN mIoT</th><th>Headroom</th></tr></thead><tbody id="tierIntent"></tbody></table></div>
+  <p class="note">Per-tier slice intent is the average PRB split the winning policy ran on that tier — the point of per-tier control: the low band can run a coverage split while the 6G layer runs eMBB-heavy in the same interval. Access steering: indoor → Wi-Fi; fast or coverage-hole outdoor → LEO.</p>
+</section>
+
+<section id="optPanel" class="panel hidden"><h2 id="optTitle">Optimization</h2>
+  <div id="optFeas" class="panel err hidden" style="margin:0 0 14px"></div>
+  <div id="optSummary" class="cards"></div>
+  <div class="tablewrap"><table><thead><tr><th>Knob</th><th>Baseline</th><th>Optimized</th></tr></thead><tbody id="optKnobs"></tbody></table></div>
+  <p class="note">Coordinate search, one pass, scored on the selected KPI net of a session-continuity guard so nothing wins by stranding sessions. Fitted to one evaluation seed. If feasibility is not FEASIBLE, threshold tuning cannot close the gap.</p>
+</section>
+
+<section id="limitPanel" class="panel hidden"><h2>Limitations</h2><ul id="limitations"></ul></section>
+</main>
+<footer>Research model · synthetic sessions · advisory output only · no direct RIC control · negative and inconclusive outcomes are valid</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const num = (x, d = 3) => Number(x).toFixed(d);
+const pct = (x, d = 1) => (100 * Number(x)).toFixed(d) + '%';
+const ORDER = ['static', 'demand_follow', 'rule_based', 'ppo', 'dqn'];
+const LABEL = { static: 'Static', demand_follow: 'Demand-follow', rule_based: 'Rule-based', ppo: 'PPO', dqn: 'Double DQN' };
+const SLICES = ['eMBB', 'URLLC', 'mIoT'];
+const NUMERIC = ['n_sessions', 'indoor_fraction', 'episode_steps', 'control_interval_ticks', 'tick_seconds', 'rain_rate_mm_h', 'doppler_precompensation', 'train_episodes', 'seed'];
+
+let SCENARIOS = [];
+
+/* --- per-tier config: name, default cells, morphology, BW MHz, carriers, MIMO layers, mode --- */
+const TIER_DEFAULTS = [
+  { tier: 'macro_low',    cells: 3,  scenario: 'UMa', bandwidth_mhz: 10,  carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+  { tier: 'macro_mid',    cells: 7,  scenario: 'UMa', bandwidth_mhz: 100, carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+  { tier: 'umb_6g',       cells: 12, scenario: 'UMi', bandwidth_mhz: 200, carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+  { tier: 'mmwave',       cells: 16, scenario: 'UMi', bandwidth_mhz: 400, carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+  { tier: 'wifi7_indoor', cells: 40, scenario: 'InH', bandwidth_mhz: 320, carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+  { tier: 'ntn_leo',      cells: 1,  scenario: 'UMa', bandwidth_mhz: 30,  carriers: 1, mimo_layers: 4, mimo_mode: 'MU' },
+];
+const MORPHOLOGIES = ['UMa', 'UMi', 'RMa', 'InH'];
+
+function buildTierRows() {
+  $('tierRows').innerHTML = TIER_DEFAULTS.map(d => `
+    <tr data-tier="${d.tier}">
+      <td>${d.tier}</td>
+      <td><input type="number" min="0" step="1" data-f="cells" value="${d.cells}"></td>
+      <td><select data-f="scenario">${MORPHOLOGIES.map(m =>
+        `<option${m === d.scenario ? ' selected' : ''}>${m}</option>`).join('')}</select></td>
+      <td><input type="number" min="1" step="5" data-f="bandwidth_mhz" value="${d.bandwidth_mhz}"></td>
+      <td><input type="number" min="1" step="1" data-f="carriers" value="${d.carriers}"></td>
+      <td><input type="number" min="1" step="1" data-f="mimo_layers" value="${d.mimo_layers}"></td>
+      <td><select data-f="mimo_mode"><option${d.mimo_mode === 'SU' ? ' selected' : ''}>SU</option><option${d.mimo_mode === 'MU' ? ' selected' : ''}>MU</option></select></td>
+    </tr>`).join('');
+}
+
+function tierConfig() {
+  const cell_counts = {}, tier_overrides = {};
+  $('tierRows').querySelectorAll('tr').forEach(tr => {
+    const name = tr.dataset.tier;
+    const d = TIER_DEFAULTS.find(t => t.tier === name);
+    const get = f => tr.querySelector(`[data-f="${f}"]`).value;
+    cell_counts[name] = Number(get('cells'));
+    const over = {};
+    if (get('scenario') !== d.scenario) over.scenario = get('scenario');
+    if (Number(get('bandwidth_mhz')) !== d.bandwidth_mhz) over.bandwidth_mhz = Number(get('bandwidth_mhz'));
+    if (Number(get('carriers')) !== d.carriers) over.carriers = Number(get('carriers'));
+    if (Number(get('mimo_layers')) !== d.mimo_layers) over.mimo_layers = Number(get('mimo_layers'));
+    if (get('mimo_mode') !== d.mimo_mode) over.mimo_mode = get('mimo_mode');
+    if (Object.keys(over).length) tier_overrides[name] = over;
+  });
+  return { cell_counts, tier_overrides };
+}
+
+function payload(extra = {}) {
+  const body = { scenario: $('scenario').value };
+  NUMERIC.forEach(k => body[k] = Number($(k).value));
+  Object.assign(body, tierConfig());
+  return Object.assign(body, extra);
+}
+
+async function post(url, body) {
+  const response = await fetch(url, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+function showError(message) {
+  $('errorPanel').classList.remove('hidden');
+  $('errorText').textContent = message;
+}
+
+/* --- grouped bar chart: groups = categories, bars within a group = policies --- */
+function barChart(node, groups, seriesKeys, valueOf, { max = null, fmt = v => num(v, 2), showValues = null } = {}) {
+  const values = groups.flatMap(g => seriesKeys.map(k => valueOf(g, k) || 0));
+  const top = max !== null ? max : Math.max(...values, 1e-6) * 1.08;
+  // Per-bar value labels collide once a group holds more than one bar; there,
+  // fall back to the y-axis + hover title (and the KPI table has the exact numbers).
+  const labels = showValues === null ? groups.length === 1 : showValues;
+  const ticks = [0, 25, 50, 75, 100].map(p =>
+    `<span style="bottom:${p}%">${(top * p / 100).toFixed(top >= 10 ? 0 : 2)}</span>`).join('');
+  const lines = [25, 50, 75, 100].map(p => `<i class="grid-line" style="bottom:${p}%"></i>`).join('');
+  const body = groups.map(g => {
+    const bars = seriesKeys.map(k => {
+      const v = valueOf(g, k) || 0;
+      const h = Math.max(0.6, 100 * v / top);
+      const tag = labels ? `<span class="metric-value">${fmt(v)}</span>` : '';
+      return `<div class="metric-bar-wrap" style="height:${h}%">${tag}<i class="metric-bar c-${k}" title="${LABEL[k]}: ${fmt(v)}"></i></div>`;
+    }).join('');
+    return `<div class="metric-group"><div class="metric-bars">${bars}</div><span class="metric-label">${g}</span></div>`;
+  }).join('');
+  node.innerHTML = `<div class="axis-plot"><div class="axis-ticks">${ticks}</div>${lines}<div class="plot-groups">${body}</div></div>`;
+}
+
+function render(data) {
+  $('errorPanel').classList.add('hidden');
+  ['statusPanel', 'summary', 'deployPanel', 'kpiPanel', 'chartPanel', 'tierPanel', 'limitPanel']
+    .forEach(id => $(id).classList.remove('hidden'));
+
+  const d = data.decision, results = data.results, f = data.feasibility;
+  $('feasPanel').classList.remove('hidden');
+  $('feasPanel').classList.toggle('err', f.status !== 'FEASIBLE');
+  $('feasStatus').textContent = f.status;
+  $('feasNote').textContent = f.note;
+  $('feasRemedy').textContent = f.thresholds_can_help ? 'tune thresholds' : f.remedy.replace(/_/g, ' ');
+  $('status').textContent = d.status;
+  $('reason').textContent = d.reason;
+  $('recommended').textContent = LABEL[d.recommended_policy] || d.recommended_policy;
+
+  const best = results[data.best_policy];
+  const a = data.action_space;
+  $('summary').innerHTML = `
+    <div class="card"><span>Best policy</span><strong>${LABEL[data.best_policy]}</strong></div>
+    <div class="card"><span>Gain vs rule-based</span><strong>${num(d.gain_vs_rule_based_pct, 1)}%</strong></div>
+    <div class="card"><span>Continuity delta</span><strong>${num(d.continuity_delta_pp, 2)} pp</strong></div>
+    <div class="card"><span>HO success delta</span><strong>${num(d.handover_success_delta_pp, 2)} pp</strong></div>
+    <div class="card"><span>Cells deployed</span><strong>${data.plan.total_cells}</strong></div>
+    <div class="card"><span>Per-tier action</span><strong>${a.branches} branches · ${a.equivalent_joint_actions.toLocaleString()} joint</strong></div>`;
+
+  $('deploy').innerHTML = data.plan.tiers.map(t => {
+    const reach = t.ntn ? `${num(t.slant_range_km, 0)} km slant` : `${num(t.cell_radius_m, 0)} m`;
+    const bw = t.carriers > 1 ? `${t.aggregate_bandwidth_mhz} (${t.carriers}CC)` : `${t.aggregate_bandwidth_mhz}`;
+    return `<tr><td>${t.tier}</td><td>${t.rat}</td><td>${t.band_ghz} GHz</td>
+      <td>${t.morphology}</td><td>${t.pathloss_model}</td>
+      <td>${bw} MHz</td><td>${t.numerology_khz} kHz</td><td>${t.prbs_per_cell}</td><td>${t.mimo} ×${t.mimo_capacity_gain}</td>
+      <td>${t.cells}</td><td>${t.antenna_height_m} m</td><td>${t.tx_power_dbm} dBm</td><td>${reach}</td>
+      <td>${t.max_speed_kmh} km/h</td><td>${t.one_way_latency_ms} ms</td><td>${num(t.peak_cell_capacity_mbps, 0)} Mbps</td>
+      <td>${t.slices.join(', ')}</td></tr>`;
+  }).join('');
+
+  const present = ORDER.filter(k => results[k]);
+  $('kpi').innerHTML = present.map(k => {
+    const r = results[k], s = r.mean_satisfaction, h = r.handover;
+    return `<tr class="${k === data.best_policy ? 'best' : ''}"><td>${LABEL[k]}</td>
+      <td>${num(r.mean_reward, 4)}</td><td>${pct(s.eMBB)}</td><td>${pct(s.URLLC)}</td><td>${pct(s.mIoT)}</td>
+      <td>${pct(h.success_rate)}</td><td>${pct(h.ping_pong_rate)}</td><td>${h.radio_link_failures}</td>
+      <td>${pct(r.session_continuity.overall)}</td><td>${num(r.mean_access_latency_ms, 2)} ms</td>
+      <td>${pct(r.energy_fraction)}</td><td>${num(r.gain_vs_rule_based_pct, 1)}%</td></tr>`;
+  }).join('');
+
+  // Charts show three series only — a fixed baseline, the tuned baseline, and
+  // the winner — so the grouped bars stay legible. The KPI table above has all five.
+  const chartSeries = ['static', 'rule_based'];
+  if (!chartSeries.includes(data.best_policy)) chartSeries.push(data.best_policy);
+  else chartSeries.push(data.best_policy === 'dqn' ? 'ppo' : 'dqn');
+
+  barChart($('rewardChart'), ['Mean reward'], chartSeries, (_, k) => results[k].mean_reward, { fmt: v => num(v, 3) });
+  barChart($('hoChart'), ['Success rate'], chartSeries, (_, k) => 100 * results[k].handover.success_rate, { max: 100, fmt: v => num(v, 1) });
+  barChart($('contChart'), ['Overall', ...SLICES], chartSeries,
+    (g, k) => 100 * (g === 'Overall' ? results[k].session_continuity.overall : (results[k].session_continuity[g] ?? 0)),
+    { max: 100, fmt: v => num(v, 1) });
+  barChart($('satChart'), SLICES, chartSeries, (g, k) => 100 * results[k].mean_satisfaction[g], { max: 100, fmt: v => num(v, 1) });
+  $('legend').innerHTML = chartSeries.map(k => `<span><i class="legend-swatch c-${k}"></i>${LABEL[k]}</span>`).join('');
+
+  const tiers = data.plan.tiers.map(t => t.tier);
+  $('tierMix').innerHTML = present.map(k => {
+    const share = results[k].tier_session_share || {};
+    const bars = tiers.map((t, i) => {
+      const v = share[t] || 0;
+      return v <= 0 ? '' : `<i class="t${i % 6}" style="width:${100 * v}%" title="${t}: ${pct(v)}"></i>`;
+    }).join('');
+    return `<div><label>${LABEL[k]}</label><div class="stack">${bars}</div></div>`;
+  }).join('') + `<p class="note" style="margin-top:14px">${tiers.map((t, i) =>
+    `<span><i class="legend-swatch t${i % 6}"></i>${t}</span>`).join(' &nbsp; ')}</p>`;
+
+  const intent = (results.dqn || best).tier_intent || {};
+  const headroom = (results.dqn || best).tier_headroom_mbps || {};
+  $('tierIntent').innerHTML = tiers.filter(t => intent[t]).map(t =>
+    `<tr><td>${t}</td><td>${pct(intent[t][0])}</td><td>${pct(intent[t][1])}</td>
+     <td>${pct(intent[t][2])}</td><td>${num(headroom[t] || 0, 0)} Mbps</td></tr>`).join('');
+
+  $('limitations').innerHTML = data.limitations.map(x => `<li>${x}</li>`).join('');
+}
+
+function renderOptimization(data) {
+  $('errorPanel').classList.add('hidden');
+  $('optPanel').classList.remove('hidden');
+  $('optTitle').textContent = `Optimization — ${data.objective_label}`;
+
+  const f = data.feasibility;
+  const feas = $('optFeas');
+  feas.classList.toggle('hidden', f.status === 'FEASIBLE');
+  feas.innerHTML = `<strong>${f.status}.</strong> ${f.note} Threshold tuning ${f.thresholds_can_help ? 'is' : 'is <em>not</em>'} the right lever here.`;
+
+  const imp = data.improvement, b = data.baseline, o = data.optimized;
+  $('optSummary').innerHTML = `
+    <div class="card"><span>${data.objective_label} KPI</span><strong>${b.objective_kpi} → ${o.objective_kpi}</strong></div>
+    <div class="card"><span>KPI change</span><strong>${num(imp.objective_kpi_delta, 3)}</strong></div>
+    <div class="card"><span>Score improvement</span><strong>${num(imp.score, 4)}</strong></div>
+    <div class="card"><span>Continuity</span><strong>${num(imp.continuity_pp, 2)} pp</strong></div>
+    <div class="card"><span>Evaluations</span><strong>${data.evaluations}</strong></div>
+    <div class="card"><span>Search time</span><strong>${data.search_seconds}s</strong></div>`;
+
+  $('optKnobs').innerHTML = data.knobs.map(k =>
+    `<tr><td>${k}</td><td>${fmtKnob(b.values[k])}</td><td>${fmtKnob(o.values[k])}</td></tr>`).join('');
+}
+
+function fmtKnob(v) { return v === undefined ? '—' : (Math.abs(v) >= 100 ? num(v, 0) : num(v, 1)); }
+
+const mbps = x => x >= 1000 ? (x / 1000).toFixed(1) + ' Gbps' : Math.round(x) + ' Mbps';
+
+function renderPreview(data) {
+  $('errorPanel').classList.add('hidden');
+  $('capPanel').classList.remove('hidden');
+  const c = data.capacity, cov = data.coverage, tiers = data.plan.tiers;
+  $('capTag').textContent = data.scenario;
+
+  const off = (data.plan.sessions && data.plan.sessions.by_type) || {};
+  const offEmbb = (off.eMBB || {}).offered_mbps || 0;
+  const sessUrllc = (off.URLLC || {}).sessions || 0;
+  const sessMiot = (off.mIoT || {}).sessions || 0;
+  const urllcTiers = tiers.filter(t => t.slices.includes('URLLC'));
+  const miotTiers = tiers.filter(t => t.slices.includes('mIoT'));
+  const urllcCells = urllcTiers.reduce((s, t) => s + t.cells, 0);
+  const miotCells = miotTiers.reduce((s, t) => s + t.cells, 0);
+  const minLat = urllcTiers.length ? Math.min(...urllcTiers.map(t => t.one_way_latency_ms)) : NaN;
+  const embbHeadroom = offEmbb > 0 ? (c.by_slice_mbps.eMBB / offEmbb).toFixed(0) + '×' : '—';
+  const perCell = (n, cells) => cells > 0 ? (n / cells).toFixed(1) : '—';
+
+  $('capCards').innerHTML = `
+    <div class="card"><span>eMBB throughput capacity</span><strong>${mbps(c.by_slice_mbps.eMBB)}</strong>
+      <em>vs ${mbps(offEmbb)} offered — ${embbHeadroom} headroom · theoretical peak</em></div>
+    <div class="card"><span>URLLC — connections per cell</span><strong>${perCell(sessUrllc, urllcCells)}</strong>
+      <em>${sessUrllc} sessions / ${urllcCells} URLLC-capable cells · ${isNaN(minLat) ? '—' : minLat + ' ms'} min access latency</em></div>
+    <div class="card"><span>mIoT — devices per cell</span><strong>${perCell(sessMiot, miotCells)}</strong>
+      <em>${sessMiot} sessions / ${miotCells} mIoT-capable cells · RACH/admission limit not modelled</em></div>
+    <div class="card"><span>Network throughput capacity</span><strong>${mbps(c.network_mbps)}</strong>
+      <em>all tiers, theoretical peak</em></div>
+    <div class="card"><span>Service area</span><strong>${num(cov.area_km2, 2)} km²</strong></div>
+    <div class="card"><span>Terrestrial area covered</span><strong>${pct(cov.terrestrial_best)}${cov.ntn_backstop ? ' + NTN' : ''}</strong></div>`;
+
+  const dash = '<span style="color:#5c6f76">—</span>';
+  $('capRows').innerHTML = tiers.map(t => {
+    const reach = t.ntn ? `${num(t.slant_range_km, 0)} km slant` : `${num(t.cell_radius_m, 0)} m`;
+    const bw = t.carriers > 1 ? `${t.aggregate_bandwidth_mhz} (${t.carriers}CC)` : `${t.aggregate_bandwidth_mhz}`;
+    const embbCell = t.slices.includes('eMBB')
+      ? `${mbps(t.tier_capacity_mbps)}<em style="color:#7c8f96;font-style:normal"> · ${mbps(t.peak_cell_capacity_mbps)}/cell</em>` : dash;
+    const urllcCell = t.slices.includes('URLLC')
+      ? `${perCell(sessUrllc, urllcCells)} · ${t.one_way_latency_ms} ms` : dash;
+    const miotCell = t.slices.includes('mIoT') ? `${perCell(sessMiot, miotCells)}` : dash;
+    return `<tr>
+      <td>${t.tier}</td><td>${t.morphology}</td>
+      <td>${bw} MHz</td><td>${t.prbs_per_cell}</td><td>${t.mimo} ×${t.mimo_capacity_gain}</td>
+      <td>${reach}</td><td>${pct(t.area_covered)}</td>
+      <td>${embbCell}</td><td>${urllcCell}</td><td>${miotCell}</td></tr>`;
+  }).join('');
+
+  $('capFoot').innerHTML = `<tr style="font-weight:600">
+    <td>Total</td><td>${tiers.length} tiers</td><td>—</td><td>—</td><td>—</td><td>—</td>
+    <td>terr ${pct(cov.terrestrial_best)}${cov.ntn_backstop ? ' + NTN' : ''}</td>
+    <td>${mbps(c.by_slice_mbps.eMBB)} eligible</td>
+    <td>${perCell(sessUrllc, urllcCells)}/cell · ${isNaN(minLat) ? '—' : minLat + ' ms'} best</td>
+    <td>${perCell(sessMiot, miotCells)}/cell</td></tr>`;
+}
+
+async function withButton(button, label, task) {
+  const original = button.textContent;
+  button.disabled = true; button.textContent = label;
+  try { await task(); }
+  catch (error) { showError(error.message); }
+  finally { button.disabled = false; button.textContent = original; }
+}
+
+$('preview').onclick = () => withButton($('preview'), 'Computing…',
+  async () => renderPreview(await post('/api/twin/preview', payload())));
+
+$('run').onclick = () => withButton($('run'), 'Training PPO and DQN…',
+  async () => render(await post('/api/twin/compare', payload())));
+
+$('optimize').onclick = () => withButton($('optimize'), 'Searching…',
+  async () => renderOptimization(await post('/api/twin/optimize',
+    payload({ objective: $('objective').value }))));
+
+$('tierReset').onclick = () => { buildTierRows(); };
+
+(async function init() {
+  buildTierRows();
+  try {
+    const data = await (await fetch('/api/twin/scenarios')).json();
+    if (data.error) throw new Error(data.error);
+    SCENARIOS = data.scenarios;
+    $('scenario').innerHTML = SCENARIOS.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+    const note = () => {
+      const found = SCENARIOS.find(s => s.id === $('scenario').value);
+      $('scenarioNote').textContent = found ? found.description : '';
+    };
+    $('scenario').onchange = note; note();
+    $('health').textContent = 'Twin ready';
+    renderPreview(await post('/api/twin/preview', payload()));   // show capacity/coverage on load
+  } catch (error) {
+    $('health').textContent = 'Engine unavailable';
+    showError('Could not reach the twin API: ' + error.message);
+  }
+})();
+</script></body></html>
