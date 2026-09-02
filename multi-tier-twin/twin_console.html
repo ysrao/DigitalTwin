@@ -26,7 +26,7 @@ details.tiercfg .hint{font-weight:400;color:#8fa6ad;font-size:.8rem;margin-left:
 .cfgtable input{width:78px}
 .cfgtable td:first-child{font-weight:600;color:#dff3f7}
 .tag{font-size:.7rem;font-weight:700;letter-spacing:.1em;background:#153239;border:1px solid #29616d;border-radius:99px;padding:3px 10px;color:#8feed1;vertical-align:middle;margin-left:8px}
-.v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:#071419;border:1px solid #24424b;border-radius:4px;padding:0 4px}
+#toast{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-14px);background:#0f3b34;border:1px solid #2f8f7f;color:#c8f5ea;padding:9px 16px;border-radius:10px;font-size:.86rem;font-weight:700;box-shadow:0 8px 30px #0006;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}button.ok{background:#2f8f7f !important;color:#eafff9 !important}@keyframes flash{0%{box-shadow:0 0 0 0 #41dfb0aa}100%{box-shadow:0 0 0 14px #41dfb000}}.flash{animation:flash .7s ease-out}.v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86em;background:#071419;border:1px solid #24424b;border-radius:4px;padding:0 4px}
 .note{font-size:.8rem}.hidden{display:none}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin:14px 0}
 .card{background:#102830;border:1px solid #214851;border-radius:12px;padding:16px}
@@ -70,6 +70,7 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
   <div id="health" class="pill">Checking engine…</div>
 </header>
 <main>
+<div id="toast"></div>
 
 <section class="panel" id="controls">
   <h2>Scenario</h2>
@@ -113,6 +114,7 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
       </select>
     </label>
     <button id="optimize" class="secondary">Run optimizer</button>
+    <button id="runAll">Run comparison + optimizer</button>
   </div>
   <p class="note">Single-agent centralized control, <strong>per tier</strong>: one policy emits one slice-mix branch per tier plus a global steering branch. Advisory output only; no direct RIC control.</p>
 </section>
@@ -492,23 +494,50 @@ function renderPreview(data) {
     <td>${perCell(sessMiot, miotCells)}/cell</td></tr>`;
 }
 
-async function withButton(button, label, task) {
-  const original = button.textContent;
+let _toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer); _toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function flash(ids) {
+  ids.forEach(id => { const el = $(id); if (!el || el.classList.contains('hidden')) return;
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); });
+}
+async function withButton(button, label, task, { done = 'Done', flashIds = [] } = {}) {
+  const original = button.dataset.label || button.textContent;
+  button.dataset.label = original;
   button.disabled = true; button.textContent = label;
-  try { await task(); }
-  catch (error) { showError(error.message); }
-  finally { button.disabled = false; button.textContent = original; }
+  try {
+    await task();
+    button.textContent = '\u2713 ' + done; button.classList.add('ok');
+    toast(done); flash(flashIds);
+    setTimeout(() => { button.textContent = original; button.classList.remove('ok'); }, 1100);
+  } catch (error) {
+    showError(error.message); button.textContent = original;
+  } finally { button.disabled = false; }
 }
 
-$('preview').onclick = () => withButton($('preview'), 'Computing…',
-  async () => renderPreview(await post('/api/twin/preview', payload())));
+$('preview').onclick = () => withButton($('preview'), 'Computing\u2026',
+  async () => renderPreview(await post('/api/twin/preview', payload())),
+  { done: 'Capacity updated', flashIds: ['capPanel'] });
 
-$('run').onclick = () => withButton($('run'), 'Training PPO and DQN…',
-  async () => render(await post('/api/twin/compare', payload())));
+$('run').onclick = () => withButton($('run'), 'Running\u2026',
+  async () => render(await post('/api/twin/compare', payload())),
+  { done: 'Comparison updated', flashIds: ['feasPanel', 'statusPanel', 'kpiPanel', 'chartPanel'] });
 
-$('optimize').onclick = () => withButton($('optimize'), 'Searching…',
+$('optimize').onclick = () => withButton($('optimize'), 'Searching\u2026',
   async () => renderOptimization(await post('/api/twin/optimize',
-    payload({ objective: $('objective').value }))));
+    payload({ objective: $('objective').value }))),
+  { done: 'Optimizer updated', flashIds: ['optPanel'] });
+
+$('runAll').onclick = () => withButton($('runAll'), 'Running all\u2026', async () => {
+  const p = payload();
+  renderPreview(await post('/api/twin/preview', p));
+  render(await post('/api/twin/compare', p));
+  renderOptimization(await post('/api/twin/optimize',
+    Object.assign({}, p, { objective: $('objective').value })));
+}, { done: 'All panels updated',
+     flashIds: ['capPanel', 'feasPanel', 'statusPanel', 'kpiPanel', 'chartPanel', 'optPanel'] });
 
 $('tierReset').onclick = () => { buildTierRows(); };
 
