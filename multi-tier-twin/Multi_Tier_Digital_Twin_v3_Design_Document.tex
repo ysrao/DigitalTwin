@@ -1,0 +1,237 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.72in]{geometry}
+\usepackage{lmodern}
+\usepackage{amsmath,booktabs,array,enumitem,xcolor,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[enumerate,itemize]{nosep,leftmargin=*}
+\setlist[description]{nosep}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+\newcommand{\ui}[1]{\textsf{\textbf{#1}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\title{Multi-Tier Digital Twin v3\\Design Document}
+\author{Rao Yenamandra --- \texttt{raosy@digitaltwinsim.com}\\
+Mubanga Nsofu --- \texttt{mubanga.nsofu@vodacom.co.za}\\
+Asokan Ram --- \texttt{asokan.ram@wrc-nc.org}}
+\date{Version 3 --- September 2026}
+
+\begin{document}
+\maketitle
+
+\section{Purpose and evidence boundary}
+The console is a screening-grade research model of a heterogeneous radio network containing low-band and mid-band macro cells, an upper-mid-band 6G layer, mmWave, indoor Wi-Fi~7, and a LEO satellite overlay. It compares static, demand-following, rule-based, PPO, and Double-DQN control and can search selected mobility and steering thresholds.
+
+The public GitHub Pages console contains a \textbf{self-contained JavaScript v2 screening engine}. Input changes recalculate capacity, run an aggregate synthetic policy comparison, train lightweight linear PPO and Double-DQN approximations, and search selected knobs locally. This browser model is intentionally simpler than the Python twin and does not claim numerical parity. A separately regenerated five-seed Python dataset is embedded as a reference-validation record. Results use synthetic sessions and are advisory, not carrier-performance or standards-conformance evidence.
+
+\textbf{Important mIoT boundary:} the browser v2 includes an aggregate mIoT PRACH-overload experiment with contention preambles, collisions, retries, ACB, backoff and access failure. It applies only to the cellular mIoT slice. The mmWave tier is a cellular UMi hotspot/small-cell layer for eMBB/URLLC and is excluded from this PRACH experiment. Wi-Fi offload is also excluded. This is a reproducible screening simulation, not protocol-conformance or carrier evidence.
+
+\section{End-to-end workflow}
+\begin{enumerate}
+  \item \textbf{Choose a scenario.} This selects area, session mix, mobility, weather, and available tiers.
+  \item \textbf{Build the deployment.} Cell positions, spectrum, PRBs, propagation parameters, MIMO gain, and steering constraints are resolved.
+  \item \textbf{Generate sessions.} Each synthetic session receives a service type (eMBB, URLLC, or mIoT), position, indoor state, velocity, and offered bit rate.
+  \item \textbf{Inject the mIoT access storm.} Activated devices enter specified Random Access Opportunities (RAOs), pass or fail ACB, select contention preambles, collide or succeed, and back off/retry until success or attempt exhaustion.
+  \item \textbf{Run the fast loop.} Every tick, sessions move; link levels, shadow fading, interference, A3/A5 conditions, and handovers are updated.
+  \item \textbf{Run the slow loop.} At each control interval, the selected policy chooses one slice-allocation template per tier and one network-wide steering posture.
+  \item \textbf{Allocate service and score it.} The twin calculates served traffic, satisfaction, utilization, fairness, energy, handovers, continuity, and reward.
+  \item \textbf{Compare policies.} All policies use the same scenario and evaluation seed. A learned policy is recommended only if its gain is material and continuity does not regress.
+  \item \textbf{Optionally optimize thresholds.} A one-pass coordinate search tests a finite grid of knob values for the selected objective.
+  \item \textbf{Validate across seeds.} v2 repeats PPO and Double-DQN training/evaluation for five seeds and reports means and 95\% Student-$t$ intervals. This measures seed sensitivity, not convergence.
+\end{enumerate}
+
+\section{Controller placement: Near-RT RIC, xApp and gNB}
+The proposed learned controller is an \textbf{xApp}: a task-specific application hosted by the O-RAN Near-Real-Time RAN Intelligent Controller (Near-RT RIC). The Near-RT RIC is normally deployed on an operator edge or regional cloud platform, possibly co-located with the O-CU and serving several gNBs. It is not located in the UE and is not itself a 3GPP protocol entity.
+
+The operational path is
+\[
+\text{gNB/O-DU measurements}\rightarrow\text{E2}\rightarrow
+\text{Near-RT RIC PPO/DQN xApp}\rightarrow\text{bounded recommendation}\rightarrow
+\text{E2}\rightarrow\text{gNB enforcement}.
+\]
+The O-DU/gNB continues to receive each PRACH transmission and execute the immediate random-access procedure. The xApp works from aggregated RAO KPIs at a slower control interval and adjusts overload-control parameters; it does not schedule individual preamble transmissions. Safety guards clamp every action to operator-approved and standards-permitted ranges. Training can be performed offline or under a Non-RT RIC rApp/SMO workflow; only trained inference and bounded adaptation need run in the xApp.
+
+3GPP defines random-access procedures and radio parameters. O-RAN defines the RIC architecture and E2-based control framework. Consequently, the paper should describe the PPO/DQN component as a guarded Near-RT RIC xApp and the gNB as the final enforcement authority.
+
+\section{Buttons: exactly what they do}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.68\textwidth}}
+\toprule
+Control & Operation\\
+\midrule
+\ui{Preview capacity \& coverage} & Constructs the edited deployment and recalculates link-budget coverage and theoretical/loaded capacity without training PPO or DQN.\\
+\ui{Run comparison} & Trains the browser PPO and Double-DQN approximations, evaluates them and three deterministic controllers on the entered seeds, runs the enabled mIoT PRACH storm, displays Wi-Fi offload selection, and applies the decision guard against the best deterministic controller.\\
+\ui{Run optimizer} & Performs a local one-pass coordinate search over the knob grid for the selected objective.\\
+\ui{Run full analysis} & Executes preview, comparison, five-seed sensitivity, and selected-objective optimization in sequence.\\
+\ui{Reset to scenario defaults} & Live version only: restores the tier table. It does not reset trained weights outside the next requested run.\\
+\bottomrule
+\end{tabular}
+
+\section{Scenario controls}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.47\textwidth}>{\raggedright\arraybackslash}p{0.20\textwidth}}
+\toprule
+Knob & Meaning and effect & Unit / range\\
+\midrule
+\ui{Scenario} & Selects the built-in deployment and traffic profile: urban dense, highway mobility, indoor enterprise, rural coverage hole, heavy rain, or cellular only. & Categorical\\
+\ui{Sessions} & Number of simultaneous synthetic UE sessions. More sessions raise offered load and possible congestion. & Count $\geq 1$\\
+\ui{Indoor fraction} & Probability that a session is indoors; affects penetration loss and eligibility/preference for Wi-Fi. & 0--1\\
+\ui{Control intervals} & Number of slow policy decisions in one episode. & Positive integer\\
+\ui{Ticks per interval} & Number of mobility and handover updates between policy decisions. & Positive integer\\
+\ui{Tick (s)} & Duration of one fast-loop update. A control interval lasts tick duration times ticks per interval. & Seconds\\
+\ui{Rain rate} & Drives frequency-dependent rain attenuation, especially on high-frequency and satellite paths. & mm/h $\geq0$\\
+\ui{Doppler pre-compensation} & Fraction of predicted NTN Doppler removed before residual inter-carrier-interference loss is calculated. & 0--1\\
+\ui{Training episodes} & Number of complete episodes used separately for PPO and Double DQN. More episodes increase experience but do not guarantee convergence. & Positive integer\\
+\ui{Seed} & Controls reproducible session generation, fading, training exploration, and the held-out evaluation seed offset. & Integer\\
+\bottomrule
+\end{tabular}
+
+These fields are editable in the v2 browser console. A changed value affects the next local calculation but does not overwrite the embedded Python reference dataset.
+
+\section{mIoT PRACH storm and mitigation controls}
+The storm is an access-arrival burst, not a burst of scheduled user-plane PRBs. At each RAO, an unbarred device chooses one of $M$ contention preambles uniformly. A preamble selected by exactly one device succeeds; a preamble selected by multiple devices collides. The expected singleton count for $N$ admitted contenders is approximated by
+\[
+S\simeq N\exp\!\left(-\frac{N-1}{M}\right).
+\]
+Collided devices retry after a backoff. Barred devices wait for an ACB barring interval. A device becomes an access failure after the configured maximum attempts or if it remains unresolved at the evaluation horizon.
+
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.64\textwidth}}
+\toprule
+PRACH control & Meaning and modeled adjustment\\
+\midrule
+Storm profile / devices / duration & Sets the activation burst and distributes the stated device population across its RAOs. Custom mode exposes the entered values.\\
+Storm start / evaluation horizon & Places the burst on the RAO axis and defines how long the controller has to clear it.\\
+Contention preambles per RAO & $M$, the resources devices choose from. More preambles reduce occupancy collisions but represent additional configured random-access opportunity.\\
+RAOs per second & Converts RAO waiting time into displayed milliseconds; it does not create scheduled slice PRBs.\\
+Maximum attempts & Retry limit before access failure.\\
+Background arrivals & Non-storm mIoT attempts added per RAO.\\
+Fixed ACB probability & Probability that the non-adaptive controller admits a waiting device. Lower values suppress collisions but can increase delay and backlog. Range 0.005--1.\\
+Fixed barring window & Delay range before a barred device is reconsidered.\\
+Fixed retry backoff & Delay range before a collided device retransmits.\\
+Rule thresholds & High collision triggers stronger spreading/backoff; the recovery threshold permits faster admission when contention subsides.\\
+Demand-follow target preamble load & Multiplier used to derive mIoT ACB admission from available preambles divided by waiting backlog. Default 0.75; a larger value admits devices faster but may increase collisions.\\
+\bottomrule
+\end{tabular}
+
+The deterministic and learned controllers observe backlog, recent collision fraction, idle-preamble indication, storm phase and elapsed RAOs. Their actions adjust ACB admission probability and barring/retry spreading within bounded values. PPO and Double DQN are trained and evaluated separately against the same arrivals and seeds. Reported PRACH KPIs are access-success rate, failures, collision rate, retry transmissions, mean and 95th-percentile access delay, peak backlog and clearance RAO. PPO is not assumed to be better: the result table must establish whether it improves these KPIs relative to the best deterministic controller and Double DQN.
+
+Demand-follow has two distinct scopes. \textbf{Demand-follow slice allocation} applies to scheduled PRBs for eMBB, URLLC and mIoT. Its editable minimum shares protect the three slices; the remaining share follows current offered demand. Demand-response strength controls how closely allocation follows the new demand vector, while allocation smoothing retains part of the previous interval's allocation to reduce abrupt changes. The three minimum shares must sum to less than one. \textbf{Demand-follow PRACH control} applies only to mIoT access and uses
+\[
+p_{\mathrm{ACB}}=\operatorname{clip}\!\left(\frac{\alpha M}{B},0.005,1\right),
+\]
+where $\alpha$ is the editable target preamble load, $M$ is contention preambles per RAO, and $B$ is waiting backlog. It changes access admission, not scheduled PRBs.
+
+\section{Wi-Fi offload is a separate workflow}
+Wi-Fi~7 is not the mmWave hotspot tier. The latter is a 3GPP cellular small-cell layer. Wi-Fi offload starts with an eMBB UE already served under macro or micro/small-cell cellular coverage. The browser applies discovery, indoor eligibility, RSSI, authentication and Wi-Fi-load gates; if all pass, the UE is counted as offloaded, otherwise it stays cellular. mIoT PRACH and URLLC are not offloaded in this experiment. The editable Wi-Fi fields are enable/disable, discovery probability, authentication success, minimum RSSI, load ceiling and indoor bias. This is aggregate access selection, not packet-level IEEE~802.11 contention or a claim that a UE can override operator policy.
+
+\section{Per-tier radio controls}
+\begin{description}
+  \item[Cells] Number of deployed cells in the tier. Zero removes the tier. It changes aggregate capacity, geometry, interference, and coverage opportunities.
+  \item[Morphology] Selects the TR~38.901-shaped UMa, UMi, RMa, or InH path-loss function. LEO uses the NTN link-budget path.
+  \item[Bandwidth] Channel bandwidth per component carrier in MHz.
+  \item[Carriers] Number of aggregated component carriers. Aggregate bandwidth is bandwidth times carriers.
+  \item[MIMO layers] Spatial-layer count used in the screening capacity multiplier.
+  \item[Mode] SU or MU. MU applies an additional efficiency factor in the simplified capacity model.
+\end{description}
+
+The corrected NR grids explicitly align SCS and PRB width: macro-low uses 15 kHz/0.18 MHz, macro-mid and NTN use 30 kHz/0.36 MHz, upper-mid-band uses 60 kHz/0.72 MHz, and mmWave uses 120 kHz/1.44 MHz. Wi-Fi uses this generic field as a 2 MHz scheduling-resource width rather than an NR PRB.
+
+\section{Core radio and capacity calculations}
+For a derived grid, the bandwidth represented by one PRB is
+\[
+B_{\mathrm{PRB,MHz}}=\frac{12\,\Delta f_{\mathrm{kHz}}}{1000},\qquad
+N_{\mathrm{PRB}}=\left\lfloor\frac{0.95 B_{\mathrm{MHz}}N_{\mathrm{CC}}}{B_{\mathrm{PRB,MHz}}}\right\rfloor .
+\]
+Explicit standard/reference grids override this approximation. The screening MIMO multiplier is
+\[
+G_{\mathrm{MIMO}}=\max(1,L)\times0.75\times
+\begin{cases}1.15,&\text{MU mode}\cr1,&\text{SU mode.}\end{cases}
+\]
+The displayed theoretical peak per cell is
+\[
+C_{\mathrm{peak}}=N_{\mathrm{PRB}}B_{\mathrm{PRB,MHz}}\eta_{\max}G_{\mathrm{MIMO}}\quad\text{Mbit/s}.
+\]
+This is an upper bound, not measured throughput. Achieved service uses the simulated SINR, interference coupling, attachment, mobility derating, demand, and policy allocation.
+
+The maximum allowable path loss is formed from transmit power, antenna gains, thermal noise, receiver noise figure, required SINR, and margin:
+\[
+\mathrm{MAPL}=P_{\mathrm{tx}}+G_{\mathrm{tx}}+G_{\mathrm{rx}}
+-\bigl[-174+10\log_{10}(B_{\mathrm{PRB,Hz}})+NF\bigr]
+-\mathrm{SINR}_{\mathrm{req}}-M.
+\]
+The terrestrial radius is the distance at which the morphology-specific path loss reaches MAPL. NTN reports orbital slant range. The displayed radius is a screening link-budget result and should not be confused with an engineered inter-site distance.
+
+For slice $s$, satisfaction is clipped to the interval 0--1:
+\[
+q_s=\min\!\left(1,\frac{\text{served traffic}_s}{\max(\text{offered traffic}_s,\epsilon)}\right).
+\]
+Jain fairness is $J=(\sum_s q_s)^2/(3\sum_s q_s^2+\epsilon)$.
+
+\section{Mobility, handover, and steering}
+The fast loop evaluates biased serving and neighbour measurements. A3 requires a neighbour to exceed the serving cell by the configured offset and hysteresis for the time-to-trigger. A5 combines a weak-serving condition with a sufficiently strong target. A completed attempt may succeed, fail, or later count as ping-pong according to the model's parametric execution rules.
+
+Key mobility/steering knobs used by the optimizer are:
+\begin{itemize}
+  \item A3 offset: 1, 2, 3, 4.5, or 6 dB;
+  \item A3 hysteresis: 0.5, 1, 2, or 3 dB;
+  \item A3 time-to-trigger: 40, 100, 160, 320, or 640 ms;
+  \item A5 serving and neighbour absolute RSRP thresholds (editable in dBm);
+  \item cell individual offset: $-6$, 0, 4, 8, 12, or 16 dB;
+  \item NTN speed threshold: 60, 90, 120, 160, or 220 km/h;
+  \item NTN coverage-hole threshold: $-126$, $-120$, $-114$, or $-108$ dBm;
+  \item Wi-Fi indoor bias: 2, 6, 10, or 14 dB;
+  \item minimum RSRP: $-135$, $-130$, $-125$, or $-120$ dBm.
+\end{itemize}
+
+\section{Policies, actions, and reward}
+One centralized agent observes the complete network. It emits one of nine slice-mix templates for every active tier plus one of four global steering postures. With six tiers this branching representation corresponds to $9^6\times4=2{,}125{,}764$ possible joint actions without constructing one enormous flat output table.
+
+The five comparisons are non-adaptive fixed allocation, demand-following allocation, a transparent adaptive rule, PPO, and Double DQN. The non-adaptive controller repeats the same 55/25/20 eMBB/URLLC/mIoT allocation at every control interval even though radio conditions continue to change. PPO is an on-policy clipped policy-gradient method; Double DQN learns branch-wise action values using replay and a target network.
+
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}}
+\toprule
+Controller & Adaptive during operation? & Behaviour\\
+\midrule
+Non-adaptive & No & Repeats fixed slice allocation, ACB and backoff settings throughout the run; it is controlled but does not react to changing load.\\
+Demand-follow & Yes & Adjusts allocation or PRACH admission from current demand/backlog.\\
+Rule-based & Yes & Changes bounded settings when explicit collision or load thresholds are crossed.\\
+PPO & Yes & Uses its trained policy and current observation to select a bounded action.\\
+Double DQN & Yes & Uses learned action values and current observation to select a bounded action.\\
+Offline knob optimizer & No, after deployment & Searches before operation for an improved fixed configuration. Its output stays fixed unless an adaptive controller subsequently changes it.\\
+\bottomrule
+\end{tabular}
+
+At each control interval the scalar reward is
+\[
+r=\mathbf{w}^{T}\mathbf{q}+0.06U+0.04J-0.12V
+-c_EE-c_HH-c_C(1-C),
+\]
+where $\mathbf q$ is slice satisfaction, $U$ utilization, $J$ fairness, $V$ weighted SLA violation, $E$ normalized energy, $H$ handover churn, and $C$ session continuity. Reward is a model preference function, not a physical KPI.
+
+The browser recommendation guard first selects the better learned controller by reward and compares it with the best of the three deterministic controllers. It rejects the learned controller if continuity falls more than 0.5 percentage points below that comparator, if aggregate gain is negative, or if gain is below the 2\% materiality threshold. A PASS therefore means ``preferred within this synthetic run,'' not universally superior. The Python reference retains its separately documented rule-based comparison rule.
+
+\section{Optimizer objectives}
+The optimizer tests one knob at a time over its finite grid, retains an improvement, and moves to the next knob. One pass is not a global optimum.
+\begin{itemize}
+  \item \ui{Handover thresholds}: rewards continuity and handover success; penalizes ping-pong and failures.
+  \item \ui{Throughput (eMBB)}: maximizes total served Gbit/s plus eMBB satisfaction, subject to continuity and ping-pong penalties.
+  \item \ui{Latency (URLLC)}: minimizes mean modeled access latency while retaining URLLC satisfaction and continuity.
+  \item \ui{Coverage (mIoT / edge)}: maximizes covered offered traffic and continuity. It is radio coverage, not PRACH accessibility.
+\end{itemize}
+If the feasibility panel says coverage-limited or capacity-limited, threshold tuning is not the correct remedy; sites, spectrum, low band, or NTN may be required.
+
+\section{How to read the v3 outputs}
+\begin{description}
+  \item[Feasibility] Separates controller-tunable cases from missing coverage/capacity.
+  \item[Decision status] Applies the material-gain and continuity guard against the rule-based controller.
+  \item[KPI comparison] Gives exact reward, per-slice satisfaction, handover, continuity, latency, energy, and gain values.
+  \item[Demand-follow slice recommendation] States which scheduled slice should increase, hold, or be reviewed for a possible decrease. The decision is based on average offered-versus-served demand and satisfaction for eMBB, URLLC and mIoT. A ``no increase required'' result means current scheduled demand is served; it does not prove that mIoT PRACH access is uncongested.
+  \item[Visual comparison] Shows selected policy bars; use the KPI table for exact numbers and all five policies.
+  \item[Five-seed sensitivity] The browser run reports means and 95\% Student-$t$ intervals over the editable seed list, plus direct PPO-versus-DQN reward wins. The embedded Python record uses seeds 3080--3084. Five seeds are useful for detecting instability but are not enough to prove convergence.
+  \item[Optimization] Shows baseline and selected knob values, objective change, number of evaluations, and search time.
+  \item[mIoT PRACH overload] Compares success, failures, collisions, retries, access delay, peak backlog and clearance RAO for all five controllers. Only cellular mIoT-capable macro/upper-mid tiers participate; mmWave and Wi-Fi are explicitly excluded.
+  \item[Wi-Fi offload] Shows cellular eMBB candidates, sessions offloaded, sessions retained, estimated Wi-Fi RSSI/load and the gate decision. This panel describes macro/micro-to-Wi-Fi steering, not PRACH mitigation.
+  \item[Provenance] Records model version, UTC generation time, generator, and a configuration hash. Identical labels do not imply identical data unless the hash also matches.
+\end{description}
+
+\section{Minimum review checklist}
+Before citing a result, record the scenario, seed set, configuration hash, controller, training episodes, evaluation rule, confidence interval, PRACH profile and every overload-control setting. Confirm that the recommended policy does not reduce continuity, distinguish theoretical peak from achieved service, and distinguish cellular mIoT PRACH control from eMBB Wi-Fi offload. For stronger evidence, increase training episodes, plot learning curves, use more independent seeds, reserve unseen test scenarios, test sensitivity to reward weights, calibrate PRACH arrivals against traces, and compare against carrier or laboratory measurements.
+
+\end{document}

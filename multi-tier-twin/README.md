@@ -1,4 +1,20 @@
-# Multi-Tier Digital Twin v2
+# Multi-Tier Digital Twin v3
+
+[**Launch the interactive v3 artefact →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console_v3.html)
+
+[Open the v3 Design Document (PDF)](https://ysrao.github.io/DigitalTwin/multi-tier-twin/Multi_Tier_Digital_Twin_v3_Design_Document.pdf)
+
+[Open the Near-RT RIC/xApp v3 Design Document (PDF)](https://ysrao.github.io/DigitalTwin/multi-tier-twin/Near_RT_RIC_xApp_v3_Design_Document.pdf)
+
+Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`), Mubanga Nsofu
+(`mubanga.nsofu@vodacom.co.za`), and Asokan Ram (`asokan.ram@wrc-nc.org`).
+
+The v3 browser artefact adds mIoT-only PRACH storm simulation, adaptive
+controller comparisons, explicit Demand-follow controls and recommendations,
+and separate macro/micro-to-Wi-Fi eMBB offload screening. The v2 links remain
+below for reproducibility.
+
+## Previous v2 release
 
 [**Launch the interactive v2 artifact →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console.html)
 
@@ -6,9 +22,6 @@
 
 > Use the launch link above to run the artifact. Clicking `twin_console.html`
 > in GitHub opens its source code because the repository view does not execute HTML.
-
-Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`) and Mubanga Nsofu
-(`mubanga.nsofu@vodacom.co.za`).
 
 A stateful digital twin of an AI-enabled 6G RAN: cellular + Wi-Fi + LEO satellite
 tiers, a population of UE sessions with velocity vectors, 3GPP propagation, an
@@ -64,7 +77,7 @@ mobility + A3/A5 handover, per-tier RL control, trace-driven time-varying
 offered load (`synthetic_profiles/all_profiles.csv`), a guarded decision that
 separates *tune the controller* from *change the deployment*.
 
-Not yet modelled: PRACH / random-access overload; explicit per-KPI targets
-(eMBB throughput, URLLC latency, mIoT coverage-per-km²) as scenario inputs.
-The mIoT values are therefore offered load only, not random-access capacity or
-PRACH-storm performance.
+The Python v2 reference dataset does not model PRACH. The separate v3 browser
+engine adds aggregate PRACH contention, collisions, ACB, retries and access
+failures for the cellular mIoT slice. It remains screening-grade and is not a
+packet-level 3GPP conformance simulator.

@@ -1,0 +1,71 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{lmodern,amsmath,booktabs,array,enumitem,xcolor,hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\setlist[itemize,enumerate]{nosep,leftmargin=*}
+\setlength{\parskip}{5pt}\setlength{\parindent}{0pt}
+\title{Near-RT RIC and xApp Design for the\\Multi-Tier Digital Twin v3}
+\author{Rao Yenamandra --- \texttt{raosy@digitaltwinsim.com}\\
+Mubanga Nsofu --- \texttt{mubanga.nsofu@vodacom.co.za}\\
+Asokan Ram --- \texttt{asokan.ram@wrc-nc.org}}
+\date{Version 3 --- September 2026}
+\begin{document}\maketitle
+
+\section{Purpose and scope}
+This document defines how the Digital Twin v3 maps its mIoT PRACH-overload experiment to an O-RAN deployment. The proposed PPO or Double-DQN controller is an \textbf{xApp} hosted by the \textbf{Near-Real-Time RAN Intelligent Controller (Near-RT RIC)}. It observes aggregated random-access measurements and recommends bounded overload-control parameters. The serving gNB/O-DU retains final enforcement authority.
+
+This is a design mapping for a synthetic screening simulator. It does not claim that every named measurement or control is already exposed by a specific vendor E2 service model, nor that the browser model is a protocol-conformance implementation.
+
+\section{Where the components are located}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.40\textwidth}}
+\toprule Component & Typical location & Responsibility in this design\\\midrule
+UE / mIoT device & Customer or field device & Detects access opportunity, applies broadcast barring, selects a preamble, transmits and retries after failure/backoff.\\
+O-RU & Cell site & Radio-frequency transmission/reception; no PPO/DQN decision.\\
+O-DU / gNB & Cell site or far-edge cloud & Executes PRACH, detects preambles, produces RAO counters, applies approved ACB/backoff settings and preserves safety/fallback control.\\
+Near-RT RIC & Operator edge or regional cloud, possibly near the O-CU & Hosts xApps, collects E2 telemetry, arbitrates policies and sends authorized control recommendations on a near-real-time timescale.\\
+PRACH xApp & Software inside Near-RT RIC & Runs PPO, Double DQN, or the selected deterministic comparator; converts observations into bounded PRACH mitigation actions.\\
+Non-RT RIC/rApp and SMO & Operator management/regional cloud & Offline analytics, policy, model training/validation, versioning and deployment approval.\\
+\bottomrule\end{tabular}
+
+\section{Closed-loop workflow}
+\begin{enumerate}
+\item The O-DU/gNB aggregates attempted preambles, occupied/idle preambles, collision estimate, successful accesses, failures, retries and waiting-load indicators for each cellular mIoT service area.
+\item Measurements are delivered toward the Near-RT RIC through an E2-based telemetry path. The simulator represents this as one observation per control interval rather than packet-level E2 messages.
+\item The xApp builds a state containing backlog, collision fraction, idle-preamble indication, storm phase, elapsed RAOs and current control settings.
+\item The selected policy produces an action. PPO and Double DQN select from the same bounded action set; non-adaptive, demand-follow and rule-based controllers provide reproducible comparators.
+\item A guard validates range, rate of change, freshness and policy authority. Unsafe, stale or unavailable output is rejected and the gNB retains its deterministic fallback.
+\item The approved recommendation is sent to the serving gNB/O-DU. It applies the new setting at an allowed configuration boundary, never to an individual in-flight PRACH attempt.
+\item Subsequent RAO measurements close the loop and are logged for evaluation and later retraining.
+\end{enumerate}
+
+\section{xApp observations, actions and safeguards}
+\textbf{Observations} include RAO-normalized backlog, admitted attempts, collision fraction, idle-preamble fraction, successes, exhausted attempts, mean retry count, access delay, storm indicator and prior action. They are aggregated for the mIoT slice; eMBB/URLLC scheduled traffic and Wi-Fi offload are outside this PRACH loop.
+
+\textbf{Actions} are bounded combinations of ACB admission probability, barring window and retry-backoff window. A future implementation may also expose standards/vendor-supported RAO or preamble configuration, but the v3 comparison does not assume instantaneous physical-resource reconfiguration. Demand-follow uses $p_{\mathrm{ACB}}=\operatorname{clip}(\alpha M/B,0.005,1)$, where $M$ is contention preambles, $B$ backlog and $\alpha$ the editable target load.
+
+\textbf{Guards} enforce minimum/maximum values, maximum step change, minimum dwell time, telemetry freshness, rollback, audit logging and operator priority. Loss of the RIC/E2 path must not stop random access: the gNB falls back to its last approved or rule-based configuration.
+
+\section{Training and inference split}
+Training is performed offline or under an rApp/Non-RT RIC workflow using Digital Twin scenarios, multiple random seeds and held-out storms. Candidate models are checked against deterministic controllers before approval. The deployed xApp performs inference and limited bounded adaptation; it does not conduct unconstrained online exploration on a live RAN. Model identity, training data, reward weights, guard configuration and rollback version are recorded.
+
+\section{Controller behaviour in the simulator}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.56\textwidth}}
+\toprule Controller & Adaptive online? & Function\\\midrule
+Non-adaptive & No & Holds fixed slice allocation, ACB and backoff settings.\\
+Demand-follow & Yes & Scheduled PRBs follow observed slice demand; separately, mIoT ACB follows PRACH backlog using a fixed formula.\\
+Rule-based & Yes & Changes bounded controls when collision/load thresholds are crossed.\\
+PPO xApp & Yes & Selects a bounded action from a trained stochastic policy using current state.\\
+Double-DQN xApp & Yes & Selects the highest-valued bounded action using current state.\\
+Offline optimizer & No after deployment & Searches for a better fixed configuration before operation.\\
+\bottomrule\end{tabular}
+
+\section{Reward, decision and reported KPIs}
+The PRACH contribution rewards successful access and penalizes collisions, unresolved backlog and exhausted attempts. The overall research score also retains slice satisfaction and continuity terms. A learned controller is not declared superior merely because reward rises: the comparison reports access-success rate, failures, collision rate, retry transmissions, mean and 95th-percentile delay, peak backlog and clearance RAO against the best deterministic controller and the other learned controller.
+
+\section{Boundaries with other v3 functions}
+PRACH mitigation applies only to the cellular mIoT slice on mIoT-capable tiers. The cellular mmWave hotspot/small-cell tier carries eMBB/URLLC and is excluded. Wi-Fi offload is a separate macro/micro-to-Wi-Fi eMBB access-selection workflow using discovery, RSSI, authentication and load gates. The Near-RT PRACH xApp does not control autonomous UE Wi-Fi selection.
+
+\section{Path from simulator to field trial}
+Before field use, map each observation and action to supported E2 service-model/vendor interfaces; calibrate arrivals and collision inference with lab or carrier traces; define control periodicity and delay budgets; test E2 loss and rollback; run shadow-mode recommendations; then conduct a bounded canary trial. The v3 browser result alone is evidence of reproducible algorithm behaviour, not production readiness.
+
+\end{document}
