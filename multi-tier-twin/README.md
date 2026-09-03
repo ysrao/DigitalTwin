@@ -1,5 +1,12 @@
 # Multi-Tier Digital Twin v2
 
+[**Launch the interactive v2 artifact →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console.html)
+
+[Open the v2 workflow and calculation guide (PDF)](https://ysrao.github.io/DigitalTwin/multi-tier-twin/Multi_Tier_Digital_Twin_v2_Workflow.pdf)
+
+> Use the launch link above to run the artifact. Clicking `twin_console.html`
+> in GitHub opens its source code because the repository view does not execute HTML.
+
 Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`) and Mubanga Nsofu
 (`mubanga.nsofu@vodacom.co.za`).
 
