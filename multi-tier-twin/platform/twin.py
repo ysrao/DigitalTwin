@@ -204,7 +204,11 @@ def default_tiers() -> List[Tier]:
     return [
         Tier(
             name="macro_low", cio_db=0.0, rat="NR", band_ghz=0.7, bandwidth_mhz=10.0,
-            prb_bandwidth_mhz=0.18, prbs_per_cell=52, scenario="UMa",
+            # 10 MHz / 52 PRBs is the NR 15 kHz SCS resource grid.  Keep the
+            # established grid and state its numerology explicitly so the
+            # console does not inherit the Tier default of 30 kHz.
+            numerology_khz=15.0, prb_bandwidth_mhz=0.18,
+            prbs_per_cell=52, scenario="UMa",
             tx_power_dbm=46.0, antenna_height_m=30.0, antenna_gain_dbi=15.0,
             noise_figure_db=7.0, max_se_bps_hz=3.0,
             mobility=MobilityLimits(350.0, 500.0),
@@ -226,7 +230,8 @@ def default_tiers() -> List[Tier]:
             # Upper mid-band: the 6G capacity layer. Beamformed, so it starts
             # derating well before the macro tiers do.
             name="umb_6g", cio_db=14.0, rat="6G-NR", band_ghz=7.5, bandwidth_mhz=200.0,
-            prb_bandwidth_mhz=0.72, prbs_per_cell=264, scenario="UMi",
+            numerology_khz=60.0, prb_bandwidth_mhz=0.72,
+            prbs_per_cell=264, scenario="UMi",
             tx_power_dbm=44.0, antenna_height_m=12.0, antenna_gain_dbi=20.0,
             noise_figure_db=7.0, max_se_bps_hz=7.0,
             mobility=MobilityLimits(120.0, 250.0, beam_refinement_ms=1.0),
@@ -236,7 +241,8 @@ def default_tiers() -> List[Tier]:
         ),
         Tier(
             name="mmwave", cio_db=18.0, rat="NR", band_ghz=28.0, bandwidth_mhz=400.0,
-            prb_bandwidth_mhz=1.44, prbs_per_cell=264, scenario="UMi",
+            numerology_khz=120.0, prb_bandwidth_mhz=1.44,
+            prbs_per_cell=264, scenario="UMi",
             tx_power_dbm=40.0, antenna_height_m=10.0, antenna_gain_dbi=22.0,
             noise_figure_db=9.0, max_se_bps_hz=8.0,
             slices=("eMBB", "URLLC"),

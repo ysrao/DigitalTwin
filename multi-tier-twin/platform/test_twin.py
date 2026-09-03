@@ -288,6 +288,20 @@ class AgentTests(unittest.TestCase):
 
 
 class ComparisonTests(unittest.TestCase):
+    def test_macro_low_resource_grid_is_internally_consistent(self):
+        tier = next(t for t in default_tiers() if t.name == "macro_low")
+        self.assertEqual(tier.numerology_khz, 15.0)
+        self.assertAlmostEqual(tier.resolved_prb_bandwidth_mhz, 0.18)
+        self.assertEqual(tier.resolved_prbs_per_cell, 52)
+
+    def test_nr_tier_scs_matches_prb_bandwidth(self):
+        for tier in default_tiers():
+            if tier.rat == "WiFi7":
+                continue  # Wi-Fi uses the field as an aggregate resource unit.
+            self.assertAlmostEqual(tier.resolved_prb_bandwidth_mhz,
+                                   12 * tier.numerology_khz / 1000.0,
+                                   msg=tier.name)
+
     def test_rule_based_policies_return_valid_actions(self):
         twin = MultiTierTwin(TwinConfig(**FAST))
         obs = twin.reset()

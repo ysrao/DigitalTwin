@@ -1,4 +1,7 @@
-# Multi-Tier Digital Twin
+# Multi-Tier Digital Twin v2
+
+Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`) and Mubanga Nsofu
+(`mubanga.nsofu@vodacom.co.za`).
 
 A stateful digital twin of an AI-enabled 6G RAN: cellular + Wi-Fi + LEO satellite
 tiers, a population of UE sessions with velocity vectors, 3GPP propagation, an
@@ -26,7 +29,23 @@ cd platform
 python3 server.py                       # http://127.0.0.1:8765/twin.html
 python3 -m unittest -v test_twin.py test_engine.py
 python3 compare.py                       # matched comparison as JSON
+python3 gen_console_data.py --write-release  # v2 dataset + standalone console
 ```
+
+## v2 standalone evidence package
+
+`twin_console.html` loads `browser_engine_v2.js`, a self-contained editable
+aggregate JavaScript screening engine. It recalculates capacity, trains
+lightweight linear PPO/Double-DQN approximations, compares five controllers,
+performs a five-seed sensitivity check, and runs coordinate search locally.
+It is intentionally simpler than, and not numerically identical to, the Python
+twin. The generated `validation_dataset_v2.json` is the separate Python
+reference record: model version, UTC generation time, configuration hash, five
+raw seed-level policy results per scenario, Student-t 95% confidence intervals,
+and optimizer outputs.
+
+The five-seed summary is an exploratory sensitivity check. Eight training
+episodes per seed do not demonstrate PPO or DQN convergence.
 
 ## Status
 
@@ -40,3 +59,5 @@ separates *tune the controller* from *change the deployment*.
 
 Not yet modelled: PRACH / random-access overload; explicit per-KPI targets
 (eMBB throughput, URLLC latency, mIoT coverage-per-km²) as scenario inputs.
+The mIoT values are therefore offered load only, not random-access capacity or
+PRACH-storm performance.

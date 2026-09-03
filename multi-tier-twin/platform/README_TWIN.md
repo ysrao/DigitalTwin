@@ -1,4 +1,4 @@
-# Multi-Tier Digital Twin v1
+# Multi-Tier Digital Twin v2
 
 `engine.py` (the original slice MVP) replays a single-cell CSV trace. This adds
 the network model underneath it: real cell coordinates and antenna heights, a
@@ -117,6 +117,7 @@ cd platform
 python3 server.py            # http://127.0.0.1:8765/twin.html
 python3 -m unittest -v test_twin.py test_engine.py
 python3 compare.py           # comparison as JSON
+python3 gen_console_data.py --write-release  # v2 dataset + standalone console
 ```
 
 API: `GET /api/twin/scenarios`, `POST /api/twin/compare`,

@@ -65,7 +65,7 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
 <body>
 <header>
   <div><span class="eyebrow">AI-ENABLED 6G RAN · DIGITAL TWIN · RESEARCH MODEL</span>
-  <h1>Multi-Tier Digital Twin <span style="color:#41dfb0;font-size:.4em;font-weight:600;vertical-align:middle">v1</span></h1>
+  <h1>Multi-Tier Digital Twin <span style="color:#41dfb0;font-size:.4em;font-weight:600;vertical-align:middle">v2</span></h1>
   <p>Cellular + Wi-Fi + LEO satellite · TR 38.901 / 38.811 / 38.821 · A3/A5 mobility · PPO vs Double DQN</p></div>
   <div id="health" class="pill">Checking engine…</div>
 </header>
@@ -157,7 +157,7 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
       <p style="margin:.4rem 0;color:#9fb2b8">Found by bisection on the LOS-probability-blended path loss. No interference term, so radii and capacity are optimistic upper bounds. NTN range is the TR 38.811 slant range at the minimum elevation. Achieved throughput from <em>Run comparison</em> is far lower.</p>
     </div>
   </details>
-  <p class="note"><strong>Why URLLC and mIoT are shown per cell, not in Gbit:</strong> URLLC is a latency/reliability slice — you typically carry only a few URLLC connections per cell, each with a small bit-rate and a hard latency budget, so the binding number is connections/cell and the access latency of the serving tier, not aggregate Gbit. mIoT is bound by device count and random-access (PRACH) per cell, not throughput. The per-cell figures shown are the <em>offered</em> load spread over the capable cells; the admission and RACH limits themselves are not modelled yet, so they are not enforced.</p>
+  <p class="note"><strong>Why URLLC and mIoT are shown per cell, not in Gbit:</strong> URLLC is a latency/reliability slice — you typically carry only a few URLLC connections per cell, each with a small bit-rate and a hard latency budget, so the binding number is connections/cell and the access latency of the serving tier, not aggregate Gbit. The mIoT figure is only offered device load. <strong>PRACH contention, preamble collisions, retries, access barring and admission limits are not modelled in v2</strong>; this console therefore does not estimate mIoT random-access capacity or storm performance.</p>
 </section>
 
 <section id="keyPanel" class="panel hidden"><h2>Colour key</h2>
@@ -193,6 +193,12 @@ li{color:#a9bac0;margin:9px 0}footer{padding:30px 24px;color:#758d94;font-size:.
   <p class="chart-explanation"><strong>How to read this:</strong> every policy is evaluated on the same seed, traffic realization and deployment, so bars are directly comparable. Handover success and continuity matter as much as reward — a policy that raises throughput by stranding sessions is not an improvement, which is why the decision status checks continuity before declaring a winner.</p>
 </section>
 
+<section id="validationPanel" class="panel hidden"><h2>Five-seed sensitivity check</h2>
+  <p id="validationNote" class="note"></p>
+  <div class="tablewrap"><table><thead><tr><th>Policy</th><th>Mean reward (95% CI)</th><th>Continuity (95% CI)</th><th>HO success (95% CI)</th></tr></thead><tbody id="validationRows"></tbody></table></div>
+  <p id="validationWins" class="note"></p>
+</section>
+
 <section id="tierPanel" class="panel hidden"><h2>Where sessions landed, and what each tier ran</h2><div id="tierMix"></div>
   <div class="tablewrap" style="margin-top:16px"><table><thead><tr><th>Tier</th><th>DQN eMBB</th><th>DQN URLLC</th><th>DQN mIoT</th><th>Headroom</th></tr></thead><tbody id="tierIntent"></tbody></table></div>
   <p class="note">Per-tier slice intent is the average PRB split the winning policy ran on that tier — the point of per-tier control: the low band can run a coverage split while the 6G layer runs eMBB-heavy in the same interval. Access steering: indoor → Wi-Fi; fast or coverage-hole outdoor → LEO.</p>
@@ -215,7 +221,7 @@ const $ = id => document.getElementById(id);
 const num = (x, d = 3) => Number(x).toFixed(d);
 const pct = (x, d = 1) => (100 * Number(x)).toFixed(d) + '%';
 const ORDER = ['static', 'demand_follow', 'rule_based', 'ppo', 'dqn'];
-const LABEL = { static: 'Static', demand_follow: 'Demand-follow', rule_based: 'Rule-based', ppo: 'PPO', dqn: 'Double DQN' };
+const LABEL = { static: 'Non-adaptive', demand_follow: 'Demand-follow', rule_based: 'Rule-based', ppo: 'PPO', dqn: 'Double DQN' };
 const SLICES = ['eMBB', 'URLLC', 'mIoT'];
 const NUMERIC = ['n_sessions', 'indoor_fraction', 'episode_steps', 'control_interval_ticks', 'tick_seconds', 'rain_rate_mm_h', 'doppler_precompensation', 'train_episodes', 'seed'];
 
@@ -337,7 +343,7 @@ function render(data) {
   const a = data.action_space;
   $('summary').innerHTML = `
     <div class="card"><span>Best policy</span><strong>${LABEL[data.best_policy]}</strong></div>
-    <div class="card"><span>Gain vs rule-based</span><strong>${num(d.gain_vs_rule_based_pct, 1)}%</strong></div>
+    <div class="card"><span>Learned gain vs best deterministic</span><strong>${num(d.gain_vs_rule_based_pct, 1)}%</strong></div>
     <div class="card"><span>Continuity delta</span><strong>${num(d.continuity_delta_pp, 2)} pp</strong></div>
     <div class="card"><span>HO success delta</span><strong>${num(d.handover_success_delta_pp, 2)} pp</strong></div>
     <div class="card"><span>Cells deployed</span><strong>${data.plan.total_cells}</strong></div>
@@ -396,6 +402,22 @@ function render(data) {
      <td>${pct(intent[t][2])}</td><td>${num(headroom[t] || 0, 0)} Mbps</td></tr>`).join('');
 
   $('limitations').innerHTML = data.limitations.map(x => `<li>${x}</li>`).join('');
+  renderValidation(data.validation);
+}
+
+function ci(x, percent = false) {
+  const scale = percent ? 100 : 1;
+  const digits = percent ? 2 : 4;
+  return `${num(scale * x.mean, digits)} [${num(scale * x.ci95_low, digits)}, ${num(scale * x.ci95_high, digits)}]${percent ? '%' : ''}`;
+}
+
+function renderValidation(v) {
+  const panel = $('validationPanel');
+  if (!v) { panel.classList.add('hidden'); return; }
+  panel.classList.remove('hidden');
+  $('validationNote').textContent = `${v.seeds.length} seeds (${v.seeds.join(', ')}), ${v.training_episodes_per_seed} training episodes per seed. ${v.scope}.`;
+  $('validationRows').innerHTML = ORDER.map(k => `<tr><td>${LABEL[k]}</td><td>${ci(v.summary[k].mean_reward)}</td><td>${ci(v.summary[k].session_continuity, true)}</td><td>${ci(v.summary[k].handover_success, true)}</td></tr>`).join('');
+  $('validationWins').textContent = `Direct PPO–DQN reward wins: PPO ${v.ppo_reward_wins}, Double DQN ${v.dqn_reward_wins}, ties ${v.ties}. Intervals quantify seed sensitivity; they do not prove convergence or field performance.`;
 }
 
 function renderOptimization(data) {
