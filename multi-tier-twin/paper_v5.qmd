@@ -21,6 +21,9 @@ index-terms:
 format:
   ieee-typst:
     pdf-standard: "2.0"
+    include-in-header:
+      text: |
+        #show link: it => underline(text(fill: rgb("#0645AD"), it))
 bibliography: refs.bib
 ---
 
