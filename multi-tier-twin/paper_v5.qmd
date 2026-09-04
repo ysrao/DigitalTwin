@@ -1,0 +1,238 @@
+---
+title: "A Multi-Tier 6G RAN Digital Twin: Propagation, Control, and RIC/xApp Placement (v5)"
+authors:
+  - name: "Rao Yenamandra"
+    email: "raosy@digitaltwinsim.com"
+  - name: "Mubanga Nsofu"
+    email: "mubanga.nsofu@vodacom.co.za"
+  - name: "Asokan Ram"
+    email: "asokan.ram@wrc-nc.org"
+abstract: |
+  We present a screening-grade, single-agent digital twin of a multi-tier 6G radio access network spanning six radio-access tiers -- sub-1 GHz macro, mid-band macro, an upper-mid-band 6G capacity layer, mmWave, indoor Wi-Fi 7, and a LEO non-terrestrial overlay -- serving eMBB, URLLC, and mIoT slices under 3GPP-shaped propagation, association, and handover models. A two-timescale simulator advances a 100 ms mobility/measurement loop and a 10 s control loop, on which a single branching-action policy (clipped-surrogate PPO or Double DQN) sets a per-tier slice-mix template and a global multi-access steering posture. We detail the propagation (3GPP TR 38.901/38.811/38.821, ITU-R P.618/838/839), association/handover (3GPP TS 38.331 A3/A5), reward, and learning formulation; report freshly regenerated comparison results, averaged over 3 seeds per scenario and policy, against a tuned rule-based baseline on two representative scenarios; and give an explicit, honesty-constrained discussion of where such a controller would sit in an O-RAN RIC architecture -- concluding it corresponds to a non-real-time RIC / rApp-style policy loop, not a near-real-time xApp. The twin is a synthetic research model, not carrier evidence; we describe its scope, its unmodelled effects, and the larger seed counts and training budgets needed before any stronger claim.
+index-terms:
+  - 6G
+  - Digital twin
+  - RAN slicing
+  - Handover
+  - Reinforcement learning
+  - O-RAN
+  - RIC
+  - Non-terrestrial networks
+format:
+  ieee-typst:
+    pdf-standard: "2.0"
+bibliography: refs.bib
+---
+
+## Introduction
+
+Sixth-generation radio access is expected to combine several access tiers that differ by an order of magnitude or more in frequency, bandwidth, coverage radius, and mobility tolerance: sub-1 GHz macro coverage, mid-band and upper-mid-band capacity layers, mmWave hotspots, indoor Wi-Fi offload, and a low-Earth-orbit (LEO) non-terrestrial overlay for coverage holes and high-speed corridors. Operators must simultaneously steer traffic across this stack and slice each tier's radio resources across enhanced mobile broadband (eMBB), ultra-reliable low-latency communication (URLLC), and massive machine-type communication (mIoT) services with materially different latency, reliability, and mobility requirements. Evaluating control policies for this problem end to end -- propagation through handover through scheduling through reward -- requires a model that is cheap enough to iterate on but faithful enough in its physical layer to expose the right trade-offs (e.g., mmWave beam loss under mobility, satellite Doppler-induced inter-carrier interference, Wi-Fi offload capacity under building penetration loss).
+
+This paper documents such a model: a multi-tier 6G RAN digital twin implemented as a dependency-light NumPy simulator, together with a per-tier action-branching reinforcement-learning controller and a coordinate-descent threshold optimizer. Contributions:
+
+1. A **screening-grade, multi-tier digital twin** combining 3GPP TR 38.901 [@tr38901] terrestrial path loss (UMa/UMi/RMa/InH), TR 38.811/38.821 [@tr38811; @tr38821] non-terrestrial link budgets with ITU-R P.618/838/839 [@itup618; @itup838; @itup839] rain fade, spatially correlated log-normal shadow fading, explicit co-channel interference, a 3GPP TS 38.331 [@ts38331] A3/A5 handover state machine, and trace-driven time-varying offered load, with a **per-tier branching RL controller** (PPO and Double DQN variants) that sets an independent slice-mix template on every tier plus one global multi-access steering posture.
+2. An **explicit, honesty-constrained architectural placement** of the controller within the O-RAN RIC taxonomy [@oran_arch], distinguishing what is implemented from what is architectural framing, and correctly classifying the controller's 10 s control cadence as a non-real-time RIC / rApp-style policy loop rather than a near-real-time xApp loop.
+3. An **open interactive companion console** [@twin_console] and a **method note** [@twin_method] documenting every formula as implemented, alongside freshly regenerated, 3-seed comparison results reported here without reuse of stale precomputed figures.
+
+## System Model
+
+The twin models six configurable tiers (@tbl-tiers): a low-band macro coverage anchor, a mid-band macro capacity layer, an upper-mid-band ("6G") beamformed capacity layer, an mmWave hotspot layer, an indoor Wi-Fi 7 offload layer, and a LEO non-terrestrial overlay at 600 km altitude. Each tier declares its morphology (TR 38.901 UMa/UMi/RMa/InH, or TR 38.811 for the satellite), spectrum, numerology-derived PRB grid, MIMO configuration, mobility limits, and the subset of the three slices (eMBB, URLLC, mIoT) it carries -- mmWave drops mIoT, and Wi-Fi and the satellite both drop URLLC (a $\approx$ 25 ms LEO service-link RTT cannot underwrite a 5 ms budget). A population of individual UE sessions (not an aggregate Mbps figure) carries position, velocity, session type, and a serving-cell state, because handover success, ping-pong rate, and session continuity are undefined on an aggregate.
+
+Every scenario runs on two timescales. A fast **tick** ($\Delta t=100$ ms by default) advances UE positions, recomputes RSRP, and steps the A3/A5 measurement state machine. Once every **control interval** (100 ticks = 10 s) a policy chooses one action -- a per-tier slice-mix template plus a global steering posture -- PRBs are allocated, and interval KPIs are aggregated; $T$ control intervals (default 60, a 10-minute episode) make one episode. The measurement machinery exists only at tick rate; the policy acts only at interval rate.
+
+
+| Tier | RAT | Band | BW | Morphology | Note |
+|---|---|---|---|---|---|
+| macro_low | NR | 0.7 GHz | 10 MHz | UMa | coverage anchor, 350 km/h |
+| macro_mid | NR | 3.5 GHz | 100 MHz | UMa | primary capacity layer |
+| umb_6g | 6G-NR | 7.5 GHz | 200 MHz | UMi | beamformed, upper mid-band |
+| mmwave | NR | 28 GHz | 400 MHz | UMi | hotspot, fails above 120 km/h |
+| wifi7_indoor | Wi-Fi 7 | 6 GHz | 320 MHz | InH | indoor only, no URLLC |
+| ntn_leo | NR-NTN | 2 GHz | 30 MHz | TR 38.811 | LEO 600 km, outdoor only, no URLLC |
+: Default tier stack {#tbl-tiers}
+
+## Propagation & Channel
+
+Terrestrial path loss follows TR 38.901 [@tr38901]. For the LOS branch below the breakpoint distance (Urban Macro shown; UMi/RMa/InH follow the same table with their own coefficients),
+
+$$
+PL_{LOS}=28.0+22\log_{10}(d_{3D})+20\log_{10}(f_c)
+$$
+
+and LOS/NLOS are blended by the TR 38.901 LOS probability in the linear domain -- with $g_{LOS}=10^{-PL_{LOS}/10}$ and $g_{NLOS}=10^{-PL_{NLOS}/10}$ the corresponding linear-domain gains -- so a single distance-indexed table per tier is exact and fast:
+
+$$
+PL = -10\log_{10}\big(p_{LOS}\,g_{LOS} + (1-p_{LOS})\,g_{NLOS}\big)
+$$
+
+Indoor sessions served by an outdoor cell add the TR 38.901 outdoor-to-indoor (O2I) penetration term (low- or high-loss building model). Each (session, tier) link also carries spatially correlated log-normal shadow fading, $\sigma\approx$ 6-8 dB from the TR 38.901 tables, evolved as a Gudmundson AR(1) process over the distance moved ($d_{corr}\approx$ 50 m):
+
+$$
+\xi_t = e^{-\Delta d/d_{corr}}\xi_{t-1} + \sqrt{1-e^{-2\Delta d/d_{corr}}}\,\sigma\,\mathcal N(0,1)
+$$
+
+$$
+\text{RSRP} = \text{EIRP}_{RE} - PL - L_{O2I} - L_{blockage} - \xi_t
+$$
+
+SINR is computed against thermal noise **and explicit co-channel interference**: the sum of received power from same-band cells other than the serving cell, each weighted by its current load (activity) $\rho_j$ and the tier's beam-coupling factor $\kappa$ (1.0 for omni reuse-1 macro, 0.35 for the beamformed upper-mid-band layer, 0.08 for mmWave, 0 for the satellite):
+
+$$
+N_0 = -174+10\log_{10}(B_{PRB}\cdot10^6)+NF
+$$
+
+$$
+I = 12\sum_{j\neq \text{serv}}P_{rx,j}^{RE}\rho_j\kappa_j
+$$
+
+$$
+\text{SINR} = \frac{P_{rx,serv}^{PRB}}{10^{N_0/10}+I}
+$$
+
+For the LEO tier, slant range at elevation $\varepsilon$ over a spherical Earth ($R=6371$ km) gives free-space loss, gaseous absorption, scintillation, and shadow fading per TR 38.811/38.821 [@tr38811; @tr38821], plus ITU-R P.618 rain attenuation [@itup618] using the P.838 coefficients [@itup838] and P.839 rain height [@itup839] (negligible at S-band, dominant at Ka-band):
+
+$$
+d=\sqrt{(R\sin\varepsilon)^2+2Rh+h^2}-R\sin\varepsilon
+$$
+
+$$
+\text{FSPL}=92.45+20\log_{10}(f_{GHz})+20\log_{10}(d_{km})
+$$
+
+$$
+\gamma_R = k\,R_{rain}^{\alpha}\ \text{[dB/km]},\qquad A_{rain}=\gamma_R L_S r_{0.01}
+$$
+
+The satellite pass sweeps elevation $\varepsilon_{min}\to90°\to\varepsilon_{min}$; the resulting Doppler shift and its residual after pre-compensation drive inter-carrier interference (ICI):
+
+$$
+f_d=f_c\dot r/c,\quad \varepsilon_{off}=\Delta f_{res}/\text{SCS}
+$$
+
+$$
+\text{ICI}/S\approx\frac{(\pi\varepsilon_{off})^2}{3}
+$$
+
+Per-stream spectral efficiency is Shannon-bounded, capped at the tier's maximum, and de-rated for mobility (beam-tracking loss once channel coherence time falls below the beam-refinement period) and residual-Doppler ICI on the satellite tier; MIMO multiplies delivered cell capacity:
+
+$$
+\begin{aligned}
+se = {}& \min(\log_2(1+\text{SINR}),\,se_{max}) \\
+       & \cdot\,\eta_{mob}\cdot(1-\text{ICI}/S)
+\end{aligned}
+$$
+
+$$
+C_{cell,s}=n_{PRB,s}B_{PRB}\,se\,G_{MIMO}
+$$
+
+$$
+G_{MIMO}=\max(1,L)\,\eta_{MIMO}\,g_{MU}
+$$
+
+with $g_{MU}=1.15$ for multi-user MIMO and 1.0 otherwise, and $n_{PRB}=\lfloor 0.95\,BW\,N_{CC}/(12\cdot SCS)\rfloor$ when not given explicitly.
+
+## Association, Handover & Scheduling
+
+Each UE holds a measurement set of its nearest cells (the satellite beam is always a candidate). A **steering eligibility mask** applies first: indoor-only cells (Wi-Fi, indoor small cells) serve indoor UEs only, outdoor-only cells (the satellite beam) serve outdoor UEs only, no tier can hold a UE faster than its $v_{max}$, and the satellite is reserved for UEs exceeding a speed threshold or sitting below a best-terrestrial-RSRP coverage-hole threshold. A3/A5 events (3GPP TS 38.331 [@ts38331] §5.5.4) are then evaluated on **biased** levels, $M=\text{RSRP}+\text{CIO}+\text{steering bias}$, held for a time-to-trigger (TTT):
+
+$$
+\text{A3: } M_n-\text{Hys} > M_s+\text{Off}
+$$
+$$
+\text{A5: } M_s+\text{Hys} < T_1 \ \wedge\ M_n-\text{Hys} > T_2
+$$
+
+Offset, hysteresis, TTT, $T_1$, $T_2$ are per session type: URLLC uses a short 40 ms TTT to avoid absorbing a late handover, mIoT a long 1280 ms TTT with a large offset since ping-pong costs battery but not latency. A fired handover can still fail: the probability of a late handover rises with UE speed and falls with trigger margin ($P_{late}=\text{clip}(0.01+0.10\,v/120-0.01\,\Delta_{margin},0,0.6)$); admission is refused if the target cell is near capacity; and a session drops on radio link failure once $M_s<M_{min}$. Ping-pong (return to the previous cell inside a 5 s window) and interruption time (which breaks continuity once it exceeds the session class's tolerance) are also tracked.
+
+Each tier's slice-mix template $\pi_{tier}$ from the policy is masked to the slices that tier carries and renormalized, then PRBs are shared equally among the sessions of each slice on a cell; served rate is $\min(\text{demand},\text{capacity})$, capped by a per-cell backhaul ceiling. Per-slice KPIs aggregate as
+
+$$
+\sigma_s=\text{clip}\Big(\frac{\sum \text{served}_s}{\max(\sum\text{offered}_s,\epsilon)},0,1\Big)
+$$
+
+$$
+\text{SLA}_s=\mathbb 1[\sigma_s\geq\theta_s]
+$$
+
+with SLA thresholds $\theta=(0.95,0.999,0.99)$ for (eMBB, URLLC, mIoT), unmet demand split into a coverage gap (no eligible tier reached the session) versus a capacity gap (the serving tier ran out of PRBs), and Jain fairness $F=(\sum\sigma_s)^2/(N\sum\sigma_s^2)$.
+
+## Control Formulation
+
+**Reward.** One scalar per control interval combines slice satisfaction (weighted toward URLLC), small positive utilization and fairness terms, and penalties for SLA violation, energy, handover churn, and lost session continuity:
+
+$$
+\begin{aligned}
+r = {}& w\cdot\sigma + 0.06\,U + 0.04\,F - 0.12\,V \\
+      & - c_E E_{frac} - c_{HO}\chi - c_C(1-C)
+\end{aligned}
+$$
+
+with slice weights $w=(0.27,0.48,0.25)$, violation cost $V=\sum_s(1-\text{SLA}_s)k_s$, $k=(1,4,1.5)$, churn $\chi=(n_{ping\text{-}pong}+n_{RLF})/N_{sessions}$, continuity $C$ the attached-session fraction, and prices $c_E=0.03$, $c_{HO}=0.05$, $c_C=0.10$.
+
+**Learning.** The observation is a 46-dimensional vector (offered demand, episode phase, network utilization, session continuity, handover statistics, satellite elevation and rain rate, plus six features per tier) shared by every algorithm. The action is **per tier**: one of nine slice-mix templates for each of the six tiers, plus one of four global steering postures -- a multi-categorical action with $n_{tiers}+1=7$ softmax heads on a shared $46\to64\to64$ trunk (a single centralized agent, not multi-agent). The equivalent flat joint-action table would have $9^{6}\times4=2{,}125{,}764$ entries; branching keeps the parameter count linear in the number of tiers instead. PPO uses the joint (summed-log-probability) ratio in a clipped surrogate with GAE($\lambda$) advantages:
+
+$$
+\rho_t=\exp\Big(\textstyle\sum_k \log\pi_k(a_{k,t})-\log\pi_{old,t}\Big)
+$$
+$$
+L_{clip}=-\mathbb E\big[\min(\rho_t \hat A_t,\ \text{clip}(\rho_t,1-\epsilon,1+\epsilon)\hat A_t)\big]
+$$
+
+with $\gamma=0.95$, $\lambda=0.95$, $\epsilon=0.2$. Double DQN uses a per-tier Q-head branching network (Branching Dueling Q-Network style): the online network picks each branch's greedy action $a_k^*=\arg\max_a Q_{on,k}(s_{t+1},a)$, the target network scores it, and the $K$ per-branch bootstraps are averaged into one shared TD target:
+
+$$
+y_t = r_t + \gamma(1-d_t)\,\frac1K\sum_k Q_{tgt,k}(s_{t+1}, a_k^*)
+$$
+
+## Optimization & Feasibility
+
+Beyond the learned policies, a coordinate-descent optimizer tunes A3/A5 thresholds, per-tier cell individual offset (CIO), steering thresholds, and per-class minimum RSRP against one of four objectives (handover, throughput, latency, coverage), each scored net of a session-continuity guard so no objective can "win" by stranding sessions: $\text{guard}=2(1-C)+1\cdot\text{rate}_{ping\text{-}pong}$. Independently, every comparison and optimization run carries a **feasibility verdict**: with $g_{cov}=\sum\text{gap}_{cov}/\sum\text{offered}$ and $g_{cap}=\sum\text{gap}_{cap}/\sum\text{offered}$, a deployment is COVERAGE-LIMITED if $g_{cov}>5\%$ (needs sites, low-band, or NTN, not threshold tuning), CAPACITY-LIMITED if $g_{cap}>10\%$ and headroom is under 10% of offered demand (needs spectrum or cells), or otherwise FEASIBLE, in which case threshold tuning is the appropriate lever. This separation matters operationally: no amount of A3/A5 re-tuning recovers a coverage hole or a spectrum shortfall.
+
+## Results
+
+We regenerated every number in this section directly from the current codebase (the System Model through Optimization and Feasibility sections above) by running `compare.run_comparison`; none reuse the companion console's [@twin_console] precomputed data, which predates the interference, shadow-fading, and trace-driven load models described above. For each of two representative scenarios -- **Urban dense** (the full six-tier stack, mixed indoor/outdoor, 1200 sessions) and **Highway mobility** (5% indoor fraction, 900 sessions, elevated speed, area stretched to 3.0 km $\times$ 0.6 km) -- we trained PPO and Double DQN for 6 episodes (360 control steps) each and evaluated all five policies (static, demand-follow, rule-based, PPO, DQN) on a held-out seed, repeating the entire train-evaluate pipeline for 3 seeds (3080-3082) and reporting the mean $\pm$ population s.d. across seeds. @tbl-results summarizes mean episode reward, handover success rate, and gain over the tuned rule-based baseline (demand-follow and rule-based coincide numerically in both scenarios at these seeds, since the rule-based posture rule never left the default "balanced" branch); @fig-reward and @fig-satisfaction show reward and per-slice satisfaction graphically.
+
+
+| Scenario | Policy | Reward | Gain % | HO succ. |
+|---|---|---|---|---|
+| Urban dense | Static | 0.776 $\pm$ 0.064 | +3.73 | 0.983 |
+| Urban dense | Rule-based | 0.748 $\pm$ 0.061 | 0.00 | 0.983 |
+| Urban dense | PPO | 0.754 $\pm$ 0.061 | +0.83 | 0.983 |
+| Urban dense | Double DQN | 0.765 $\pm$ 0.074 | +2.15 | 0.983 |
+| Highway mob. | Static | 0.625 $\pm$ 0.034 | +0.91 | 0.975 |
+| Highway mob. | Rule-based | 0.621 $\pm$ 0.047 | 0.00 | 0.975 |
+| Highway mob. | PPO | 0.593 $\pm$ 0.027 | -4.31 | 0.975 |
+| Highway mob. | Double DQN | 0.609 $\pm$ 0.070 | -2.15 | 0.976 |
+: Mean reward and handover success, 3 seeds (mean $\pm$ s.d.) {#tbl-results}
+
+![Mean reward by policy and scenario, 3-seed mean $\pm$ s.d.](fig_reward.png){#fig-reward width=95%}
+
+![Per-slice mean satisfaction by policy, 3-seed mean $\pm$ s.d.](fig_satisfaction.png){#fig-satisfaction width=95%}
+
+At this training budget, the picture is mixed rather than a clean win for the learned policies. In Urban dense, PPO and Double DQN show small positive mean gains over the tuned rule-based baseline (+0.83% and +2.15%), but the *per-seed* decision verdict (Control Formulation) was inconsistent -- NO MATERIAL BENEFIT for one seed and PASS (DQN preferred) for the other two -- which is exactly the failure mode single-seed reporting would hide. In Highway mobility both learned policies show a *negative* mean gain (PPO -4.31%, DQN -2.15%), with per-seed verdicts of UNDERPERFORMING for two of three seeds and PASS (DQN) for the third. In both scenarios, a fixed **static** allocation (the constant carrier-reference template with balanced steering) achieved the highest mean reward of any policy, modestly ahead of the tuned rule-based/demand-follow controller (+3.73% urban dense, +0.91% highway mobility) -- at only 6 training episodes, a well-chosen fixed heuristic remains a hard baseline to beat. Handover success rate (97.5-98.3%) and session continuity (99.9-100%, not tabulated) were essentially uniform across every policy in both scenarios: differences among policies show up in reward and slice satisfaction, not in link-layer handover robustness. eMBB satisfaction was the most policy-sensitive metric, spanning 0.797-0.850 (urban dense) and 0.857-0.898 (highway mobility) across policies, while URLLC and mIoT satisfaction stayed at or above 0.99 for every policy in both scenarios (@fig-satisfaction), consistent with the reward's 4$\times$ weight on URLLC SLA violations (Control Formulation). Every one of the 6 runs returned a **FEASIBLE** feasibility verdict (Optimization and Feasibility): the deployed tier stack has enough coverage and capacity for the offered demand in both scenarios, so threshold tuning rather than added sites or spectrum is the appropriate next lever. We take the seed-to-seed disagreement in the decision verdict, and the fact that a fixed heuristic was never clearly beaten at this training budget, as evidence *for* -- not against -- the honesty constraints discussed below (Limitations): a single lucky seed here would have supported a materially different headline claim.
+
+## RIC/xApp Placement
+
+The controller described in the Association/Handover and Control Formulation sections above is a standalone policy, not an implemented O-RAN component -- but it is worth placing precisely. The O-RAN Alliance architecture [@oran_arch] splits RAN intelligence into two controllers of different cadence. The **non-real-time (non-RT) RIC** lives in the Service Management and Orchestration (SMO) layer, runs on a loop coarser than 1 s, hosts rApps, and issues policy guidance over the **A1** interface. The **near-real-time (near-RT) RIC** runs a 10 ms-1 s loop, hosts xApps, and controls RAN E2 Nodes (gNB-CU/DU) over the **E2** interface, using service models such as E2SM-KPM for KPI monitoring and E2SM-RC for control actions.
+
+**As implemented, not as it could be.** The twin's control interval is 10 s (100 ticks $\times$ 100 ms) -- three to four orders of magnitude coarser than the canonical 10 ms-1 s near-RT loop. As built, this maps onto a **non-RT RIC / rApp-style policy-tuning loop**, adjusting per-tier, per-slice weights on a $\approx$ 10 s cadence, and *not* onto a near-RT xApp making per-TTI, per-UE scheduling decisions. Calling the current controller "an xApp" without this caveat would overclaim what it does. @tbl-oran gives the component correspondence as built; no A1AP or E2AP protocol stack, no real E2 Node, and no SMO or near-RT RIC platform is implemented -- this is an architectural placement discussion, not an implementation claim.
+
+
+| Twin component | O-RAN correspondence | Cadence, as built |
+|---|---|---|
+| Objective selector | A1 policy intent | set per run |
+| PPO / Double DQN per-tier controller | RIC-hosted control function | 10 s -- non-RT |
+| Per-interval KPI aggregation | E2SM-KPM-style reporting | 10 s |
+| Coordinate-descent optimizer | rApp-style offline analytics, in the SMO | offline, per run |
+: Component correspondence, as built {#tbl-oran}
+
+Pushing the controller down to a true near-RT xApp -- future work, not implemented here -- would require control actions resolved per-UE/per-cell rather than per-tier, expressed as E2SM-RC action messages rather than a slice-mix template, reward attribution fast enough for a 10 ms-1 s decision window rather than a 10 s one, and a real E2AP stack talking to real E2 Nodes rather than the twin's own simulated tiers. None of that exists in this codebase today.
+
+## Limitations
+
+This is a **screening-grade, synthetic research model**: it is not carrier evidence and has not been validated against a real deployment. Specific limitations as implemented: TR 38.901 path loss is evaluated from a per-tier distance table with a LOS-probability blend rather than per-link ray tracing; the TR 38.811/38.821 [@tr38811; @tr38821] NTN link budget uses a single beam and a circular orbit over a non-rotating Earth, omitting the Earth-rotation Doppler term (the model's $\approx$ 45 kHz S-band peak Doppler is somewhat below the $\approx$ 48 kHz TR 38.821 reference, consistent with that omission); Wi-Fi is modelled as a scheduled tier rather than CSMA/CA with contention; handover failure probabilities are parametric rather than derived from an RRC signalling simulation; there is no PRACH/random-access overload model, so an mIoT arrival storm does not by itself cause access failure; and reported SLA figures are modelled interval compliance, not proof of five- or seven-nines reliability. Co-channel interference, spatially correlated shadow fading, and trace-driven time-varying offered load are implemented (Propagation & Channel; System Model) but remain screening-grade approximations, not measurement-calibrated planning tools. The results reported above are averaged over **only 3 seeds** per scenario and policy -- a modest sample for a stochastic simulator whose per-seed reward standard deviation (up to $\pm$ 0.07) is comparable in size to the gaps between policies, which is exactly why the per-seed decision verdict disagreed across seeds in both scenarios. PPO and Double DQN were also trained for only 6 episodes (360 control steps) per seed within this study's wall-clock budget; a materially longer training budget could change the comparison and is not ruled out by these results. No direct RIC control is performed, consistent with the RIC/xApp Placement discussion above.
+
+## Conclusion and Future Work
+
+We described a screening-grade, multi-tier 6G RAN digital twin covering six radio-access tiers and three service slices under 3GPP/ITU-R-shaped propagation, handover, and scheduling models, controlled by a per-tier action-branching PPO or Double DQN policy, and reported freshly regenerated, 3-seed comparison results against a tuned rule-based baseline. Those results did not show a clean, seed-robust win for the learned policies over a well-chosen fixed heuristic at this training budget, and the per-seed decision verdict disagreed across seeds -- a finding we report plainly rather than smoothing over. We also gave an explicit, honesty-constrained placement of the controller as a non-RT RIC/rApp-style policy loop rather than a near-RT xApp, consistent with its 10 s control cadence. Priority future work: (1) a **larger seed count with confidence intervals** and a **substantially longer training budget** than the 6 episodes used here, to determine whether the learned policies' gains are real and seed-robust; (2) integration with a real E2AP/A1AP protocol stack against a near-RT RIC platform, to validate the architectural placement claims against an actual implementation; and (3) a live, parametrized version of the simulator exposing per-KPI targets (eMBB throughput, URLLC latency, mIoT coverage density) as scenario inputs rather than internal constants, closing the gap identified above (Limitations).

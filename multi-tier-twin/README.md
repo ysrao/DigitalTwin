@@ -1,6 +1,45 @@
+# Multi-Tier Digital Twin
+
+## v5 release — regenerated Python-engine results + IEEE paper
+
+[**Launch the v5 interactive console →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console_v5.html)
+
+[**Open the v5 method note →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_method_v5.html)
+
+[**Download the 6-page IEEE paper (PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/multi-tier-6g-ran-twin-paper-v5.pdf)
+
+Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`), Mubanga Nsofu
+(`mubanga.nsofu@vodacom.co.za`), and Asokan Ram (`asokan.ram@wrc-nc.org`).
+
+v5 runs directly off the Python engine in `platform/` (the same engine as v2 —
+`radio.py`, `twin.py`, `handover.py`, `agents.py`, `compare.py`), with
+freshly-regenerated, 3-seed comparison results (not the browser-side linear
+approximations `browser_engine_v2.js`/`v3.js` use) and an explicit, honest
+finding: at a 6-training-episode budget, PPO/Double DQN did **not** cleanly
+beat a fixed-static or tuned rule-based baseline, and the per-seed decision
+verdict disagreed — reported plainly rather than smoothed over. v5 also adds
+a formal §11 RIC/xApp architectural placement (non-RT RIC/rApp vs. near-RT
+RIC/xApp correspondence, with the 10 s-vs-10 ms–1 s cadence gap made explicit)
+and a References section (`refs_v5.bib`, `paper_v5.qmd` — Quarto/Typst IEEE
+source included for reproducibility).
+
+**Scope note:** v5 does **not** include the v3 browser engine's mIoT PRACH
+storm simulation, demand-follow controls, or macro/micro-to-Wi-Fi offload
+screening (`browser_engine_v3.js`/`prach_engine_v3.js`) — those remain unique
+to the v3 artefact below. v5 is the Python-engine-backed, paper-focused
+release; v3 is the richer standalone browser engine. They are parallel, not
+sequential — until reconciled, treat them as two different scopes of the same
+project rather than v5 superseding v3.
+
+---
+
 # Multi-Tier Digital Twin v3
 
-[**Launch the interactive v3 artefact →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console_v3.html)
+> **Launch link removed here to avoid confusion with v5 above.** v3's browser
+> artefact (PRACH storm simulation, demand-follow controls, offload screening)
+> is still fully present in this repo at `twin_console_v3.html` — open it
+> directly from the file browser if you need those specific v3 features; it
+> just isn't the front-page launch link anymore, v5 is.
 
 [Open the v3 Design Document (PDF)](https://ysrao.github.io/DigitalTwin/multi-tier-twin/Multi_Tier_Digital_Twin_v3_Design_Document.pdf)
 
