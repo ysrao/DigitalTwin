@@ -35,7 +35,11 @@ project rather than v5 superseding v3.
 
 # Multi-Tier Digital Twin v3
 
-[**Launch the interactive v3 artefact →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/twin_console_v3.html)
+> **Launch link removed here to avoid confusion with v5 above.** v3's browser
+> artefact (PRACH storm simulation, demand-follow controls, offload screening)
+> is still fully present in this repo at `twin_console_v3.html` — open it
+> directly from the file browser if you need those specific v3 features; it
+> just isn't the front-page launch link anymore, v5 is.
 
 [Open the v3 Design Document (PDF)](https://ysrao.github.io/DigitalTwin/multi-tier-twin/Multi_Tier_Digital_Twin_v3_Design_Document.pdf)
 
