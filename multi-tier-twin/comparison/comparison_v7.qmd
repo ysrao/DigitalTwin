@@ -1,5 +1,5 @@
 ---
-title: "Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected RAN Slice Allocation (v7)"
+title: "Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected 5G/6G RAN Slice Allocation (v7)"
 authors:
   - name: "Rao Yenamandra"
     email: "raosy@digitaltwinsim.com"
