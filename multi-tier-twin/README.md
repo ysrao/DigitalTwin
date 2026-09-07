@@ -33,6 +33,8 @@ paper.
 [**Comparison paper (6-page IEEE PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/centralized-ppo-vs-marl-comparison-v8.pdf)
 &nbsp;·&nbsp;
 [**Reference implementation →**](platform/marl_replication.py)
+&nbsp;·&nbsp;
+[**Observation & initialization notes →**](comparison/OBSERVATIONS_AND_INITIALIZATION.md)
 
 v5 runs directly off the Python engine in `platform/` (the same engine as v2 —
 `radio.py`, `twin.py`, `handover.py`, `agents.py`, `compare.py`), with
