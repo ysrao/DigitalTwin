@@ -11,6 +11,22 @@
 Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`), Mubanga Nsofu
 (`mubanga.nsofu@vodacom.co.za`), and Asokan Ram (`asokan.ram@wrc-nc.org`).
 
+### Companion comparison — centralized PPO vs. cooperative MARL
+
+A separately-bounded study comparing a centralized single-agent PPO controller
+against three per-slice cooperative MARL agents for SLA-protected slice
+allocation, in an isolated single-cell PRB-share environment (not the full
+six-tier twin). Across 10 training seeds × 40 held-out traffic seeds (400 paired
+evaluations) MARL raises mean composite reward from 0.9162 to 1.0147 (+10.75%),
+with a wholly positive training-seed-clustered 95% interval [+0.0535, +0.1480]
+and no slice SLA-compliance regression. Resource utilization falls 1.25 pp, so
+it is a reward-weighted re-prioritization, not a uniform gain. It motivates
+integrating per-slice MARL into the full twin as future work.
+
+[**Comparison dashboard (HTML) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/comparison_v6.html)
+&nbsp;·&nbsp;
+[**Comparison paper (6-page IEEE PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/centralized-ppo-vs-marl-comparison-v6.pdf)
+
 v5 runs directly off the Python engine in `platform/` (the same engine as v2 —
 `radio.py`, `twin.py`, `handover.py`, `agents.py`, `compare.py`), with
 freshly-regenerated, 3-seed comparison results (not the browser-side linear

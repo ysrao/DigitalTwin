@@ -1,0 +1,123 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Centralized PPO vs Cooperative MARL — RAN Slice Allocation (v6)</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;background:#f4f7fb;color:#172033}
+main{max-width:1080px;margin:auto;padding:24px}
+h1{margin-bottom:4px;font-size:1.6rem;line-height:1.25}
+.sub{color:#586579;margin:.2rem 0}
+.authors{color:#586579;font-size:.9rem;margin:.4rem 0 0}
+.banner{padding:18px;border-radius:12px;margin:22px 0;background:#e7f7f1;border-left:7px solid #16866b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.card{background:#fff;border-radius:12px;padding:17px;box-shadow:0 2px 10px #23395d18}
+.big{font-size:1.7rem;font-weight:750}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:10px;border-bottom:1px solid #dfe5ee;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{background:#eaf0f8}
+svg{width:100%;height:auto;background:#fff;border-radius:10px;margin:15px 0}
+code{background:#edf1f6;padding:2px 5px;border-radius:4px}
+.note{font-size:.88rem;color:#536174;line-height:1.6}
+footer{margin:34px 0 10px;font-size:.85rem;color:#536174}
+footer a{color:#16866b}
+@media(max-width:600px){main{padding:14px}th,td{padding:7px;font-size:12px}.big{font-size:1.4rem}}
+</style></head><body><main>
+
+<h1>Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected RAN Slice Allocation</h1>
+<p class="sub">Matched synthetic comparison for eMBB, URLLC, and mIoT/eMTC slice allocation — companion to the Multi-Tier 6G RAN Digital Twin v6 paper</p>
+<p class="authors">Rao Yenamandra &middot; Mubanga Nsofu &middot; Asokan Ram</p>
+
+<section class="banner">
+<h2 style="margin:0 0 6px">Cooperative MARL improves reward</h2>
+<p style="margin:0">Across 10 training seeds and 40 held-out traffic seeds per trained pair (400 paired evaluations), cooperative MARL raises mean composite reward from 0.9162 to 1.0147. The training-seed-clustered 95% interval for the difference is wholly positive, and modeled interval-SLA compliance improves for all three slices. Resource utilization falls by 1.25 percentage points, so this is a reward-weighted re-prioritization of a fixed budget, not a uniform gain.</p>
+</section>
+
+<section class="grid">
+<div class="card"><div>Centralized PPO reward</div><div class="big">0.9162</div></div>
+<div class="card"><div>MARL reward</div><div class="big">1.0147</div></div>
+<div class="card"><div>Reward difference</div><div class="big">+0.0985</div><div>+10.75% relative</div></div>
+<div class="card"><div>95% CI of difference</div><div class="big">[+0.0535, +0.1480]</div><div>clustered by training seed</div></div>
+</section>
+
+<h2>Aggregate comparison (400 paired evaluations)</h2>
+<table><thead><tr><th>Metric</th><th>Centralized PPO</th><th>MARL</th><th>MARL &minus; centralized</th></tr></thead><tbody>
+<tr><td>Mean composite reward</td><td>0.9162</td><td>1.0147</td><td>+0.0985</td></tr>
+<tr><td>PRB utilization</td><td>59.13%</td><td>57.87%</td><td>&minus;1.25 pp</td></tr>
+<tr><td>Allocation churn (lower is better)</td><td>0.0999</td><td>0.0693</td><td>&minus;0.0306</td></tr>
+<tr><td>eMBB mean satisfaction</td><td>97.40%</td><td>99.90%</td><td>+2.50 pp</td></tr>
+<tr><td>URLLC mean satisfaction</td><td>99.85%</td><td>99.99%</td><td>+0.15 pp</td></tr>
+<tr><td>mIoT/eMTC mean satisfaction</td><td>91.10%</td><td>98.74%</td><td>+7.65 pp</td></tr>
+<tr><td>eMBB interval SLA compliance</td><td>85.94%</td><td>99.23%</td><td>+13.29 pp</td></tr>
+<tr><td>URLLC interval SLA compliance</td><td>98.70%</td><td>99.93%</td><td>+1.23 pp</td></tr>
+<tr><td>mIoT/eMTC interval SLA compliance</td><td>68.49%</td><td>90.31%</td><td>+21.82 pp</td></tr>
+</tbody></table>
+
+<svg viewBox="0 0 760 300" role="img" aria-label="Mean slice satisfaction, centralized PPO versus MARL">
+<text x="70" y="22" font-size="17" font-weight="700">Mean slice satisfaction</text>
+<line x1="70" y1="250" x2="740" y2="250" stroke="#718096"/>
+<rect x="109.9" y="71.7" width="44.3" height="178.3" rx="3" fill="#3973c9"/><text x="132.1" y="66.7" text-anchor="middle" font-size="11">97.4%</text>
+<rect x="165.3" y="67.1" width="44.3" height="182.9" rx="3" fill="#16a085"/><text x="187.5" y="62.1" text-anchor="middle" font-size="11">99.9%</text>
+<text x="159.8" y="270" text-anchor="middle" font-size="12">eMBB</text>
+<rect x="331.6" y="67.2" width="44.3" height="182.8" rx="3" fill="#3973c9"/><text x="353.7" y="62.2" text-anchor="middle" font-size="11">99.85%</text>
+<rect x="387.0" y="67.0" width="44.3" height="183.0" rx="3" fill="#16a085"/><text x="409.1" y="62.0" text-anchor="middle" font-size="11">99.99%</text>
+<text x="381.4" y="270" text-anchor="middle" font-size="12">URLLC</text>
+<rect x="553.2" y="83.2" width="44.3" height="166.8" rx="3" fill="#3973c9"/><text x="575.4" y="78.2" text-anchor="middle" font-size="11">91.1%</text>
+<rect x="608.6" y="69.3" width="44.3" height="180.7" rx="3" fill="#16a085"/><text x="630.8" y="64.3" text-anchor="middle" font-size="11">98.7%</text>
+<text x="603.1" y="270" text-anchor="middle" font-size="12">mIoT/eMTC</text>
+<rect x="520" y="15" width="12" height="12" fill="#3973c9"/><text x="538" y="26" font-size="12">Centralized PPO</text>
+<rect x="640" y="15" width="12" height="12" fill="#16a085"/><text x="658" y="26" font-size="12">MARL</text>
+</svg>
+
+<svg viewBox="0 0 760 300" role="img" aria-label="Interval SLA compliance, centralized PPO versus MARL">
+<text x="70" y="22" font-size="17" font-weight="700">Interval SLA compliance</text>
+<line x1="70" y1="250" x2="740" y2="250" stroke="#718096"/>
+<rect x="109.9" y="92.6" width="44.3" height="157.4" rx="3" fill="#3973c9"/><text x="132.1" y="87.6" text-anchor="middle" font-size="11">85.9%</text>
+<rect x="165.3" y="68.3" width="44.3" height="181.7" rx="3" fill="#16a085"/><text x="187.5" y="63.3" text-anchor="middle" font-size="11">99.2%</text>
+<text x="159.8" y="270" text-anchor="middle" font-size="12">eMBB</text>
+<rect x="331.6" y="69.2" width="44.3" height="180.8" rx="3" fill="#3973c9"/><text x="353.7" y="64.2" text-anchor="middle" font-size="11">98.7%</text>
+<rect x="387.0" y="67.0" width="44.3" height="183.0" rx="3" fill="#16a085"/><text x="409.1" y="62.0" text-anchor="middle" font-size="11">99.9%</text>
+<text x="381.4" y="270" text-anchor="middle" font-size="12">URLLC</text>
+<rect x="553.2" y="124.6" width="44.3" height="125.4" rx="3" fill="#3973c9"/><text x="575.4" y="119.6" text-anchor="middle" font-size="11">68.5%</text>
+<rect x="608.6" y="84.6" width="44.3" height="165.4" rx="3" fill="#16a085"/><text x="630.8" y="79.6" text-anchor="middle" font-size="11">90.3%</text>
+<text x="603.1" y="270" text-anchor="middle" font-size="12">mIoT/eMTC</text>
+<rect x="520" y="15" width="12" height="12" fill="#3973c9"/><text x="538" y="26" font-size="12">Centralized PPO</text>
+<rect x="640" y="15" width="12" height="12" fill="#16a085"/><text x="658" y="26" font-size="12">MARL</text>
+</svg>
+
+<h2>Training-seed robustness</h2>
+<table><thead><tr><th>Training seed</th><th>Centralized PPO reward</th><th>MARL reward</th><th>Difference</th></tr></thead><tbody>
+<tr><td>1301</td><td>0.9899</td><td>0.9847</td><td>&minus;0.0052</td></tr>
+<tr><td>1302</td><td>0.9394</td><td>0.9874</td><td>+0.0481</td></tr>
+<tr><td>1303</td><td>0.9469</td><td>1.0269</td><td>+0.0800</td></tr>
+<tr><td>1304</td><td>0.7609</td><td>1.0218</td><td>+0.2610</td></tr>
+<tr><td>1305</td><td>0.8331</td><td>1.0258</td><td>+0.1928</td></tr>
+<tr><td>1306</td><td>1.0176</td><td>1.0189</td><td>+0.0013</td></tr>
+<tr><td>1307</td><td>0.9433</td><td>1.0263</td><td>+0.0831</td></tr>
+<tr><td>1308</td><td>0.8885</td><td>1.0093</td><td>+0.1208</td></tr>
+<tr><td>1309</td><td>0.9036</td><td>1.0210</td><td>+0.1174</td></tr>
+<tr><td>1310</td><td>0.9391</td><td>1.0247</td><td>+0.0856</td></tr>
+</tbody></table>
+<p class="note">MARL is higher in 9 of 10 training seeds. Seed 1301 is the single exception. Seeds 1304 and 1305 contribute the largest gains, so the clustered interval is wide and per-seed disclosure matters.</p>
+
+<h2>What was compared</h2>
+<div class="card"><ul style="margin:0;padding-left:1.1rem;line-height:1.7">
+<li><b>Centralized PPO:</b> one 13-input, two-hidden-layer 64&times;64 PPO actor&ndash;critic chooses a joint feasible allocation template.</li>
+<li><b>Cooperative MARL:</b> three 7-input, 64&times;64 PPO actor&ndash;critics &mdash; one per slice &mdash; submit local bids; a deterministic coordinator projects them onto the same PRB budget and slice floors (0.25, 0.20, 0.10). All three receive the same cooperative reward.</li>
+<li><b>Matched controls:</b> 260 training episodes &times; 48 MDP steps (12,480 interactions) for each of 10 training seeds; the same training traces; 40 held-out evaluation traces per trained pair (400 paired cases).</li>
+<li><b>Common objective:</b> 0.35&thinsp;&sigma;<sub>eMBB</sub> + 0.45&thinsp;&sigma;<sub>URLLC</sub> + 0.20&thinsp;&sigma;<sub>mIoT</sub> &minus; SLA deficits + 0.05&thinsp;utilization &minus; 0.025&thinsp;allocation churn. SLA targets &theta; = (0.95, 0.999, 0.99); deficit weights k = (0.70, 1.30, 0.80).</li>
+<li><b>Fairness:</b> not in the reward. Service protection is anchored in explicit slice SLA targets.</li>
+<li><b>Publication gate:</b> a positive training-seed-clustered 95% interval for the reward difference AND no slice SLA-compliance regression greater than 0.5 percentage point. Both were fixed before the sweep and both are met.</li>
+</ul></div>
+
+<h2>Interpretation limits</h2>
+<p class="note">This is a reproducible synthetic engineering comparison in a bounded single-cell PRB-share environment &mdash; not field-network evidence and not a 3GPP / O-RAN conformance result. It omits the companion twin's six-tier propagation, mobility, association, handover, explicit interference, non-terrestrial dynamics, and multi-access steering, so the gain cannot be cited as an end-to-end six-tier MARL result. The centralized and multi-agent parameterizations are structurally different; matching hidden width and interaction count improves comparability but does not equalize representational capacity. Ten training seeds are useful but modest, and two of them contribute a disproportionate share of the mean gain. The defined next experiment is to integrate the MARL controller into the full twin and repeat the paired, seed-clustered evaluation there.</p>
+
+<footer>
+Companion documents:
+<a href="centralized-ppo-vs-marl-comparison-v6.pdf">this comparison as a 6-page IEEE paper (PDF)</a> &middot;
+<a href="multi-tier-6g-ran-twin-paper-v5.pdf">Multi-Tier 6G RAN Digital Twin paper</a> &middot;
+<a href="twin_method_v5.html">Method note</a> &middot;
+<a href="twin_console_v5.html">Interactive console</a>
+<br>Screening-grade synthetic research model &middot; advisory only &middot; not carrier evidence.
+</footer>
+
+</main></body></html>
