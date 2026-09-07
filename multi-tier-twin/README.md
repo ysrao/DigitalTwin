@@ -23,9 +23,9 @@ and no slice SLA-compliance regression. Resource utilization falls 1.25 pp, so
 it is a reward-weighted re-prioritization, not a uniform gain. It motivates
 integrating per-slice MARL into the full twin as future work.
 
-[**Comparison dashboard (HTML) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/comparison_v6.html)
+[**Comparison dashboard (HTML) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/comparison_v7.html)
 &nbsp;·&nbsp;
-[**Comparison paper (6-page IEEE PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/centralized-ppo-vs-marl-comparison-v6.pdf)
+[**Comparison paper (6-page IEEE PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/centralized-ppo-vs-marl-comparison-v7.pdf)
 
 v5 runs directly off the Python engine in `platform/` (the same engine as v2 —
 `radio.py`, `twin.py`, `handover.py`, `agents.py`, `compare.py`), with

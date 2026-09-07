@@ -1,5 +1,5 @@
 ---
-title: "Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected RAN Slice Allocation"
+title: "Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected RAN Slice Allocation (v7)"
 authors:
   - name: "Rao Yenamandra"
     email: "raosy@digitaltwinsim.com"
@@ -38,7 +38,7 @@ This work is a companion to the Multi-Tier 6G RAN Digital Twin v6 paper [@twin_v
 
 **Cooperative MARL.** Centralized-training / decentralized-execution methods such as MADDPG [@lowe2017maddpg] and counterfactual multi-agent policy gradients (COMA) [@foerster2018coma] address the non-stationarity and credit-assignment problems that arise when several agents learn against a shared reward. Independent learners -- independent PPO (IPPO) and independent Q-learning -- drop the centralized critic entirely and are simpler, but each agent then treats the others' evolving policies as part of a non-stationary environment. The controller studied here is closest to IPPO with a *shared* cooperative reward and a deterministic feasibility projection standing in for explicit coordination; it is decentralized action selection with shared task-level feedback, not three independent objectives.
 
-**RL for RAN slicing.** Reinforcement learning has been applied to slice admission, inter-slice PRB partitioning, and joint slice/scheduling control, typically with a single centralized agent. Multi-agent formulations have been proposed for multi-cell or multi-slice settings, but matched, paired comparisons against a centralized baseline -- with the traffic generator, reward, and interaction budget held fixed and with seed-level uncertainty reported -- remain uncommon. This paper is a small step toward that kind of controlled comparison.
+**RL for RAN slicing.** Reinforcement learning has been applied to slice admission, inter-slice PRB partitioning, and joint slice/scheduling control, most often with a single centralized agent; DORA, for example, uses a PPO agent to allocate PRBs across URLLC, eMBB, and mMTC slices under fluctuating load [@dora2025]. Multi-agent formulations have been proposed for O-RAN and multi-cell settings -- constrained MARL that scales with the number of slices [@jsac2023flexible], coordinated multi-agent DRL for inter-cell slicing resource partitioning [@intercell2022coordinated], and attention-based multi-agent PPO for latency-spike resolution in 6G RAN slicing [@attn2026mappo]. What remains uncommon is a *matched, paired* comparison of a per-slice multi-agent controller against a centralized baseline with the traffic generator, reward, and interaction budget held fixed and with training-seed-level uncertainty reported. This paper is a small step toward that kind of controlled comparison.
 
 **PPO.** Both controllers use PPO [@schulman2017ppo] with a clipped surrogate objective and generalized advantage estimation (GAE) [@schulman2016gae]. PPO is chosen because its on-policy update and clipping make the two architectures comparable when the number of environment interactions is held equal.
 
@@ -52,10 +52,12 @@ The environment isolates inter-slice PRB-share coordination for a single cell. E
 
 **Common objective.** Both controllers optimize the same per-step reward
 $$
-r = 0.35\,\sigma_e + 0.45\,\sigma_u + 0.20\,\sigma_m
-- \mathbf{k}^{\top}[\boldsymbol{\theta} - \boldsymbol{\sigma}]_{+}
-+ 0.05\,U
-- 0.025\,\lVert \pi_t - \pi_{t-1} \rVert_1 ,
+\begin{aligned}
+r ={} & 0.35\,\sigma_e + 0.45\,\sigma_u + 0.20\,\sigma_m + 0.05\,U \\[2pt]
+      & {}- \mathbf{k}^{\top}\,[\boldsymbol{\theta} - \boldsymbol{\sigma}]_{+}
+        - 0.025\,\lVert \pi_t - \pi_{t-1} \rVert_{1} ,
+\end{aligned}
+\tag{1}
 $$
 where $\boldsymbol{\sigma} = (\sigma_e, \sigma_u, \sigma_m)$ is the slice-satisfaction vector, $U$ is PRB utilization, $\pi_t$ is the current allocation, $[\,\cdot\,]_{+}$ is the elementwise positive part, $\boldsymbol{\theta} = (0.95, 0.999, 0.99)$ are the per-slice SLA satisfaction targets, and $\mathbf{k} = (0.70, 1.30, 0.80)$ are the per-slice SLA-deficit penalty weights. Fairness is deliberately excluded; explicit SLA deficits, not a fairness term, protect the services. The last term penalizes allocation churn. Reward can exceed one because the utilization term contributes up to $0.05$; it is therefore neither a probability nor a normalized percentage.
 
@@ -138,7 +140,7 @@ The largest SLA gain is on mIoT/eMTC. The centralized controller selects one joi
 
 The gate is passed because the clustered reward interval is positive and no slice regresses on SLA compliance. The gate governs whether the result is presented; it does not establish universal MARL superiority. The advantage remains conditional on the discrete action parameterization of the centralized controller, the traffic generator, the slice-local observation design, the coordinator rule, the reward weights, and the finite 12,480-interaction budget. A centralized controller with a continuous action head, or a larger training budget, might close part of the gap.
 
-# Threats to Validity
+# Validity Limitations
 
 **Model validity.** The traffic profiles, channel-efficiency indicators, and SLA outcomes are synthetic and have not been calibrated against carrier measurements. Nothing here is evidence of field performance or of 3GPP / O-RAN [@oran_arch] conformance.
 
