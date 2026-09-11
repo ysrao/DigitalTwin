@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Centralized PPO vs Cooperative MARL — RAN Slice Allocation (v8)</title>
+<style>
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;margin:0;background:#f4f7fb;color:#172033}
+main{max-width:1080px;margin:auto;padding:24px}
+h1{margin-bottom:4px;font-size:1.6rem;line-height:1.25}
+.sub{color:#586579;margin:.2rem 0}
+.authors{color:#586579;font-size:.9rem;margin:.4rem 0 0}
+.banner{padding:18px;border-radius:12px;margin:22px 0;background:#fdf3e3;border-left:7px solid #b4530f}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.card{background:#fff;border-radius:12px;padding:17px;box-shadow:0 2px 10px #23395d18}
+.big{font-size:1.6rem;font-weight:750}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden}
+th,td{padding:10px;border-bottom:1px solid #dfe5ee;text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{background:#eaf0f8}
+img.fig{width:100%;height:auto;background:#fff;border-radius:10px;margin:15px 0;border:1px solid #e3e8f0}
+code{background:#edf1f6;padding:2px 5px;border-radius:4px}
+.note{font-size:.88rem;color:#536174;line-height:1.6}
+footer{margin:34px 0 10px;font-size:.85rem;color:#536174}
+footer a{color:#16866b}
+@media(max-width:600px){main{padding:14px}th,td{padding:7px;font-size:12px}.big{font-size:1.3rem}}
+</style></head><body><main>
+
+<h1>Centralized PPO versus Cooperative Multi-Agent Reinforcement Learning for SLA-Protected 5G/6G RAN Slice Allocation</h1>
+<p class="sub">A matched, seed-robust evaluation — v8</p>
+<p class="authors">Rao Yenamandra &middot; Mubanga Nsofu &middot; Asokan Ram</p>
+
+<section class="banner">
+<h2 style="margin:0 0 6px">Not statistically significant — and the mechanism isn't what it looks like</h2>
+<p style="margin:0">Cooperative MARL shows a small aggregate reward advantage (0.5021 &rarr; 0.5226, +4.08%), but the training-seed-clustered 95% interval for that difference is <b>[&minus;0.0069, +0.0625]</b> &mdash; it crosses zero, and MARL wins on only <b>4 of 10</b> training seeds. Per-seed analysis shows the gap is explained by a training-reliability effect (MARL reliably finds the same corner allocation; centralized PPO occasionally stalls in a worse local optimum), not by richer adaptive coordination.</p>
+</section>
+
+<section class="grid">
+<div class="card"><div>Centralized PPO reward</div><div class="big">0.5021</div></div>
+<div class="card"><div>MARL reward</div><div class="big">0.5226</div></div>
+<div class="card"><div>Reward difference</div><div class="big">+0.0205</div><div>+4.08% relative</div></div>
+<div class="card"><div>95% CI of difference</div><div class="big">[&minus;0.0069, +0.0625]</div><div>crosses zero &mdash; not significant</div></div>
+</section>
+
+<h2>Aggregate comparison (400 paired evaluations)</h2>
+<table><thead><tr><th>Metric</th><th>Centralized PPO</th><th>MARL</th><th>MARL &minus; centralized</th></tr></thead><tbody>
+<tr><td>Mean composite reward</td><td>0.5021</td><td>0.5226</td><td>+0.0205 (+4.08%)</td></tr>
+<tr><td>eMBB mean satisfaction</td><td>45.61%</td><td>47.48%</td><td>+1.87 pp</td></tr>
+<tr><td>URLLC mean satisfaction</td><td>100.00%</td><td>100.00%</td><td>0.00 pp</td></tr>
+<tr><td>mIoT/eMTC mean satisfaction</td><td>100.00%</td><td>100.00%</td><td>0.00 pp</td></tr>
+<tr><td>PRB utilization</td><td>83.08%</td><td>84.61%</td><td>+1.53 pp</td></tr>
+<tr><td>Allocation churn (lower is better)</td><td>0.0237</td><td>0.0102</td><td>&minus;0.0135</td></tr>
+</tbody></table>
+<p class="note">URLLC and mIoT/eMTC satisfaction are 1.000 for both controllers on this traffic profile — see "Why" below.</p>
+
+<img class="fig" src="fig8_aggregate.png" alt="Aggregate reward, eMBB satisfaction, utilization, and churn, centralized PPO vs cooperative MARL">
+
+<h2>Training-seed robustness</h2>
+<table><thead><tr><th>Training seed</th><th>Centralized PPO</th><th>MARL</th><th>Difference</th></tr></thead><tbody>
+<tr><td>1301</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+<tr><td>1302</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+<tr><td>1303</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+<tr><td>1304</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+<tr><td>1305</td><td>0.3451</td><td>0.5226</td><td>+0.1775</td></tr>
+<tr><td>1306</td><td>0.4911</td><td>0.5226</td><td>+0.0315</td></tr>
+<tr><td>1307</td><td>0.4911</td><td>0.5226</td><td>+0.0315</td></tr>
+<tr><td>1308</td><td>0.4911</td><td>0.5226</td><td>+0.0315</td></tr>
+<tr><td>1309</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+<tr><td>1310</td><td>0.5338</td><td>0.5226</td><td>&minus;0.0112</td></tr>
+</tbody></table>
+<p class="note">MARL's reward is <b>identical to four decimal places across all 10 training seeds</b> — it converges to the same corner solution every time. The centralized controller varies (0.3451&ndash;0.5338) and only loses to MARL on the 4 seeds where it stalls in a worse local optimum.</p>
+
+<img class="fig" src="fig8_seed_reward.png" alt="Mean reward by training seed, centralized PPO vs cooperative MARL">
+
+<h2>Why: a corner solution, not adaptive control</h2>
+<div class="card"><p style="margin:0;line-height:1.7">On the tested profile (<code>P1_balanced_busy_hour</code>), URLLC and mIoT/eMTC offered demand is small relative to capacity even at their protected floor shares, so both sit at 100% satisfaction under almost any policy. The only allocation decision that matters is the eMBB share, and the reward-maximizing policy collapses toward one near-static corner allocation. MARL's three small, decomposed 7-input/5-action subproblems find that corner reliably in 10/10 training seeds. The centralized controller, searching a larger 13-input/9-way joint space, finds an equal-or-better solution in 6/10 seeds but stalls in a markedly worse local optimum in the other 4 &mdash; which is what produces the aggregate gap. This is a <b>training-reliability</b> difference, not evidence of richer per-slice coordination.</p></div>
+
+<h2>What was compared</h2>
+<div class="card"><ul style="margin:0;padding-left:1.1rem;line-height:1.7">
+<li><b>Centralized PPO:</b> one 13-input, 64&times;64 PPO actor&ndash;critic (the project's existing <code>ActorCritic</code>, unmodified) chooses one of 9 discrete joint PRB-share templates.</li>
+<li><b>Cooperative MARL:</b> three independent 7-input, 64&times;64 <code>ActorCritic</code> instances &mdash; one per slice &mdash; each choosing one of 5 discrete bid levels; a deterministic coordinator projects the three bids onto the shared PRB budget and slice floors (0.25, 0.20, 0.10). All three receive the same cooperative reward.</li>
+<li><b>Matched controls:</b> 260 training episodes &times; 48 MDP steps (12,480 interactions) per training seed, seeds 1301&ndash;1310, PPO clip 0.2, &gamma;=0.97, GAE &lambda;=0.95; evaluated on 40 held-out traffic windows per trained pair (seeds 5001&ndash;5040), 400 paired evaluations.</li>
+<li><b>Statistics:</b> training-seed-clustered bootstrap, 10,000 resamples, for the 95% CI of the reward difference.</li>
+</ul></div>
+
+<h2>Reproducibility</h2>
+<p class="note">Every number on this page is produced by <code>marl_replication.py</code>, released in the project repository. It imports <code>ActorCritic</code>, <code>TEMPLATES</code>, <code>state_vector</code>, <code>demand_and_capacity</code>, and <code>load_rows</code> unmodified from the project's existing <code>engine.py</code>. Running it end to end reproduces both tables above exactly. No results are drawn from any external dataset, prior publication, or third-party model.</p>
+
+<footer>
+Companion documents:
+<a href="centralized-ppo-vs-marl-comparison-v8.pdf">this comparison as a 6-page IEEE paper (PDF)</a> &middot;
+<a href="multi-tier-6g-ran-twin-paper-v5.pdf">Multi-Tier 6G RAN Digital Twin paper</a> &middot;
+<a href="twin_method_v5.html">Method note</a> &middot;
+<a href="twin_console_v5.html">Interactive console</a>
+<br>Screening-grade synthetic research model &middot; advisory only &middot; not carrier evidence. Independent evidence from the full six-tier digital twin (separate sweep) converges on the same conclusion: neither centralized RL nor per-slice MARL reliably beats a simple fixed allocation at the tested training budget.
+</footer>
+
+</main></body></html>

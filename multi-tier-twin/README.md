@@ -11,6 +11,31 @@
 Authors: Rao Yenamandra (`raosy@digitaltwinsim.com`), Mubanga Nsofu
 (`mubanga.nsofu@vodacom.co.za`), and Asokan Ram (`asokan.ram@wrc-nc.org`).
 
+### Companion study — centralized PPO vs. cooperative MARL (v8)
+
+A matched, seed-robust, single-cell slice-allocation study testing whether
+per-slice cooperative MARL beats centralized PPO. Both controllers are built
+from the same PPO actor-critic implementation, trained under an identical
+protocol, and evaluated on 400 paired held-out cases (10 training seeds x 40
+traffic windows). Result: a small aggregate reward advantage for MARL (+4.08%)
+that is **not statistically significant** (training-seed-clustered 95% CI
+`[-0.0069, +0.0625]`, crosses zero; MARL wins only 4/10 training seeds).
+Per-seed and mechanism analysis trace the aggregate gap to a
+training-reliability effect — MARL's smaller, decomposed subproblems converge
+on the same corner solution every time, while centralized PPO reaches an
+equal-or-better solution most of the time but stalls in worse local optima on
+a minority of seeds — not to richer adaptive coordination. Every number here
+is reproducible from `platform/marl_replication.py`, released alongside the
+paper.
+
+[**Comparison dashboard (HTML) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/comparison_v8.html)
+&nbsp;·&nbsp;
+[**Comparison paper (6-page IEEE PDF) →**](https://ysrao.github.io/DigitalTwin/multi-tier-twin/centralized-ppo-vs-marl-comparison-v8.pdf)
+&nbsp;·&nbsp;
+[**Reference implementation →**](platform/marl_replication.py)
+&nbsp;·&nbsp;
+[**Observation & initialization notes →**](comparison/OBSERVATIONS_AND_INITIALIZATION.md)
+
 v5 runs directly off the Python engine in `platform/` (the same engine as v2 —
 `radio.py`, `twin.py`, `handover.py`, `agents.py`, `compare.py`), with
 freshly-regenerated, 3-seed comparison results (not the browser-side linear
