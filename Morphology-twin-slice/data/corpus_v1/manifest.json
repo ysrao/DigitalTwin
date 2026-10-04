@@ -1,0 +1,42 @@
+{
+ "version": "corpus_v1",
+ "date": "2026-10-03",
+ "n_slots": 400,
+ "epoch_slots": 20,
+ "runs": [
+  {
+   "file": "run_00_seed1000_e02815eb.npz",
+   "config_id": 0,
+   "seed": 1000,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 20,
+   "cells": 27,
+   "violations_total": 0
+  },
+  {
+   "file": "run_01_seed1010_50589df4.npz",
+   "config_id": 1,
+   "seed": 1010,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 20,
+   "cells": 27,
+   "violations_total": 0
+  }
+ ],
+ "held_out_config_ids": [
+  1
+ ],
+ "train_config_ids": [
+  0
+ ]
+}

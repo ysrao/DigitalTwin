@@ -1,0 +1,47 @@
+# Scenario schema v1 (matches Brief v2 §1 design table)
+# All locations in meters, local ENU frame unless noted.
+scenario:
+  name: "urban-small-01"
+  seed: 42
+
+network:
+  macro_sites: 7
+  sectors_per_site: 3          # 21 macro cells
+  site_spacing_m: 500
+  small_cells:
+    count: 12
+    placement: "uniform"       # or "hotspot" | explicit list
+    # explicit: [{x, y, height_m}]
+  wraparound: true             # or outer interference ring
+  cells:                       # per-cell location inputs (generated or imported)
+    # - cell_id, site_id, x, y, height_m, azimuth_deg, type: macro|pico|femto
+
+radio:
+  carriers:                    # FDD+TDD component carriers per cell
+    - {cc_id: 0, duplex: FDD, freq_mhz: 2100, bw_mhz: 20, numerology: 1}
+    - {cc_id: 1, duplex: TDD, freq_mhz: 3500, bw_mhz: 100, numerology: 1,
+       tdd_pattern: "DDDSU"}
+    # 5G-Advanced (3GPP Rel-18/19): FR3 upper mid-band TDD carrier.
+    # 7.125 GHz identified for IMT at WRC-23; channel per 38.901 (valid to
+    # 100 GHz). 200 MHz @ 60 kHz SCS (mu=2); pattern scaled to 0.25-ms slots.
+    - {cc_id: 2, duplex: TDD, freq_mhz: 7125, bw_mhz: 200, numerology: 2,
+       tdd_pattern: "DDDDDDSSUU"}
+  propagation: "UMa"           # 3GPP 38.901 statistical; ray tracing later
+  tx_power_dbm: {macro: 46, pico: 30, femto: 20}
+
+mobility:                      # mixed mobility classes
+  classes:
+    - {name: stationary,  share: 0.5, speed_mps: 0}
+    - {name: pedestrian,  share: 0.3, speed_mps: 1.5}
+    - {name: vehicular,   share: 0.2, speed_mps: 13.9}
+  handover: {hysteresis_db: 3, time_to_trigger_ms: 160}
+
+services:
+  slices:
+    - {name: eMBB,  latency_ms: 20,  reliability: 0.99,  min_share: 0.4}
+    - {name: URLLC, latency_ms: 5,   reliability: 0.999, min_share: 0.2}
+    - {name: mIoT,  latency_ms: 1000, reliability: 0.95, min_share: 0.1}
+
+control:
+  budget_decision_ms: 10
+  forecast_horizon: 6

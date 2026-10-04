@@ -1,0 +1,808 @@
+[
+ {
+  "tag": "layout00_seed0",
+  "layout": 0,
+  "seed": 0,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 7758.1,
+   "served_kb": {
+    "eMBB": 7463.3,
+    "URLLC": 12.5,
+    "mIoT": 282.4
+   },
+   "violations": {
+    "eMBB": 13,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 13,
+   "prb_used": 191748,
+   "prb_util": 0.0293,
+   "eff_kb_per_prb": 0.0405,
+   "ue_thr_p5_kbps": 1.16,
+   "ue_thr_mean_kbps": 263.97,
+   "handovers": 18
+  },
+  "wall_s": 3.0
+ },
+ {
+  "tag": "layout00_seed0",
+  "layout": 0,
+  "seed": 0,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 7626.3,
+   "served_kb": {
+    "eMBB": 7327.5,
+    "URLLC": 12.4,
+    "mIoT": 286.4
+   },
+   "violations": {
+    "eMBB": 8,
+    "URLLC": 1,
+    "mIoT": 0
+   },
+   "viol_total": 9,
+   "prb_used": 271652,
+   "prb_util": 0.0416,
+   "eff_kb_per_prb": 0.0281,
+   "ue_thr_p5_kbps": 0.89,
+   "ue_thr_mean_kbps": 259.85,
+   "handovers": 18
+  },
+  "wall_s": 3.2
+ },
+ {
+  "tag": "layout00_seed0",
+  "layout": 0,
+  "seed": 0,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 7631.4,
+   "served_kb": {
+    "eMBB": 7331.8,
+    "URLLC": 11.7,
+    "mIoT": 288.0
+   },
+   "violations": {
+    "eMBB": 15,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 15,
+   "prb_used": 198056,
+   "prb_util": 0.0303,
+   "eff_kb_per_prb": 0.0385,
+   "ue_thr_p5_kbps": 1.06,
+   "ue_thr_mean_kbps": 258.67,
+   "handovers": 18
+  },
+  "wall_s": 3.7,
+  "decisions": 1188,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 11.804927909100694,
+  "decision_ms_p95": 34.23642724960701
+ },
+ {
+  "tag": "layout00_seed1",
+  "layout": 0,
+  "seed": 1,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 7249.2,
+   "served_kb": {
+    "eMBB": 6879.7,
+    "URLLC": 7.1,
+    "mIoT": 362.4
+   },
+   "violations": {
+    "eMBB": 63,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 63,
+   "prb_used": 246385,
+   "prb_util": 0.0377,
+   "eff_kb_per_prb": 0.0294,
+   "ue_thr_p5_kbps": 0.83,
+   "ue_thr_mean_kbps": 255.92,
+   "handovers": 24
+  },
+  "wall_s": 3.0
+ },
+ {
+  "tag": "layout00_seed1",
+  "layout": 0,
+  "seed": 1,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 7714.7,
+   "served_kb": {
+    "eMBB": 7348.4,
+    "URLLC": 7.1,
+    "mIoT": 359.2
+   },
+   "violations": {
+    "eMBB": 34,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 34,
+   "prb_used": 346004,
+   "prb_util": 0.0529,
+   "eff_kb_per_prb": 0.0223,
+   "ue_thr_p5_kbps": 0.83,
+   "ue_thr_mean_kbps": 267.07,
+   "handovers": 20
+  },
+  "wall_s": 2.7
+ },
+ {
+  "tag": "layout00_seed1",
+  "layout": 0,
+  "seed": 1,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 7666.5,
+   "served_kb": {
+    "eMBB": 7296.9,
+    "URLLC": 7.1,
+    "mIoT": 362.4
+   },
+   "violations": {
+    "eMBB": 40,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 40,
+   "prb_used": 310900,
+   "prb_util": 0.0476,
+   "eff_kb_per_prb": 0.0247,
+   "ue_thr_p5_kbps": 0.83,
+   "ue_thr_mean_kbps": 261.98,
+   "handovers": 21
+  },
+  "wall_s": 3.5,
+  "decisions": 1188,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 10.992324818165468,
+  "decision_ms_p95": 29.06760880068761
+ },
+ {
+  "tag": "layout01_seed0",
+  "layout": 1,
+  "seed": 0,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 8207.7,
+   "served_kb": {
+    "eMBB": 7488.6,
+    "URLLC": 18.3,
+    "mIoT": 700.8
+   },
+   "violations": {
+    "eMBB": 46,
+    "URLLC": 4,
+    "mIoT": 0
+   },
+   "viol_total": 50,
+   "prb_used": 231673,
+   "prb_util": 0.0354,
+   "eff_kb_per_prb": 0.0354,
+   "ue_thr_p5_kbps": 1.45,
+   "ue_thr_mean_kbps": 280.95,
+   "handovers": 15
+  },
+  "wall_s": 2.9
+ },
+ {
+  "tag": "layout01_seed0",
+  "layout": 1,
+  "seed": 0,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 9110.6,
+   "served_kb": {
+    "eMBB": 8378.1,
+    "URLLC": 18.1,
+    "mIoT": 714.4
+   },
+   "violations": {
+    "eMBB": 8,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 8,
+   "prb_used": 216113,
+   "prb_util": 0.0331,
+   "eff_kb_per_prb": 0.0422,
+   "ue_thr_p5_kbps": 2.15,
+   "ue_thr_mean_kbps": 304.13,
+   "handovers": 14
+  },
+  "wall_s": 3.0
+ },
+ {
+  "tag": "layout01_seed0",
+  "layout": 1,
+  "seed": 0,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 8523.9,
+   "served_kb": {
+    "eMBB": 7782.1,
+    "URLLC": 26.6,
+    "mIoT": 715.2
+   },
+   "violations": {
+    "eMBB": 16,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 16,
+   "prb_used": 237104,
+   "prb_util": 0.0363,
+   "eff_kb_per_prb": 0.036,
+   "ue_thr_p5_kbps": 1.37,
+   "ue_thr_mean_kbps": 288.99,
+   "handovers": 16
+  },
+  "wall_s": 3.9,
+  "decisions": 1188,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 12.981574545433846,
+  "decision_ms_p95": 21.053352100261694
+ },
+ {
+  "tag": "layout01_seed1",
+  "layout": 1,
+  "seed": 1,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 10319.2,
+   "served_kb": {
+    "eMBB": 9766.6,
+    "URLLC": 15.0,
+    "mIoT": 537.6
+   },
+   "violations": {
+    "eMBB": 55,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 55,
+   "prb_used": 252768,
+   "prb_util": 0.0387,
+   "eff_kb_per_prb": 0.0408,
+   "ue_thr_p5_kbps": 1.98,
+   "ue_thr_mean_kbps": 352.84,
+   "handovers": 19
+  },
+  "wall_s": 2.9
+ },
+ {
+  "tag": "layout01_seed1",
+  "layout": 1,
+  "seed": 1,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 10656.7,
+   "served_kb": {
+    "eMBB": 10090.7,
+    "URLLC": 17.2,
+    "mIoT": 548.8
+   },
+   "violations": {
+    "eMBB": 31,
+    "URLLC": 2,
+    "mIoT": 0
+   },
+   "viol_total": 33,
+   "prb_used": 368324,
+   "prb_util": 0.0563,
+   "eff_kb_per_prb": 0.0289,
+   "ue_thr_p5_kbps": 2.76,
+   "ue_thr_mean_kbps": 362.28,
+   "handovers": 23
+  },
+  "wall_s": 3.0
+ },
+ {
+  "tag": "layout01_seed1",
+  "layout": 1,
+  "seed": 1,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 10560.1,
+   "served_kb": {
+    "eMBB": 10014.4,
+    "URLLC": 12.9,
+    "mIoT": 532.8
+   },
+   "violations": {
+    "eMBB": 45,
+    "URLLC": 2,
+    "mIoT": 0
+   },
+   "viol_total": 47,
+   "prb_used": 316067,
+   "prb_util": 0.0484,
+   "eff_kb_per_prb": 0.0334,
+   "ue_thr_p5_kbps": 1.62,
+   "ue_thr_mean_kbps": 357.09,
+   "handovers": 21
+  },
+  "wall_s": 3.5,
+  "decisions": 1188,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 10.516494386303583,
+  "decision_ms_p95": 22.465035799950794
+ },
+ {
+  "tag": "layout12_seed0",
+  "layout": 12,
+  "seed": 0,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 6846.4,
+   "served_kb": {
+    "eMBB": 6630.7,
+    "URLLC": 10.9,
+    "mIoT": 204.8
+   },
+   "violations": {
+    "eMBB": 42,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 42,
+   "prb_used": 238217,
+   "prb_util": 0.0298,
+   "eff_kb_per_prb": 0.0287,
+   "ue_thr_p5_kbps": 0.29,
+   "ue_thr_mean_kbps": 238.69,
+   "handovers": 20
+  },
+  "wall_s": 3.8
+ },
+ {
+  "tag": "layout12_seed0",
+  "layout": 12,
+  "seed": 0,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 7027.7,
+   "served_kb": {
+    "eMBB": 6816.0,
+    "URLLC": 10.9,
+    "mIoT": 200.8
+   },
+   "violations": {
+    "eMBB": 34,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 34,
+   "prb_used": 339120,
+   "prb_util": 0.0424,
+   "eff_kb_per_prb": 0.0207,
+   "ue_thr_p5_kbps": 0.29,
+   "ue_thr_mean_kbps": 242.05,
+   "handovers": 25
+  },
+  "wall_s": 3.1
+ },
+ {
+  "tag": "layout12_seed0",
+  "layout": 12,
+  "seed": 0,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 7205.4,
+   "served_kb": {
+    "eMBB": 6989.7,
+    "URLLC": 10.9,
+    "mIoT": 204.8
+   },
+   "violations": {
+    "eMBB": 26,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 26,
+   "prb_used": 200512,
+   "prb_util": 0.0251,
+   "eff_kb_per_prb": 0.0359,
+   "ue_thr_p5_kbps": 0.29,
+   "ue_thr_mean_kbps": 245.15,
+   "handovers": 16
+  },
+  "wall_s": 4.0,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 10.488705181780295,
+  "decision_ms_p95": 21.824285099955897
+ },
+ {
+  "tag": "layout12_seed1",
+  "layout": 12,
+  "seed": 1,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 6811.7,
+   "served_kb": {
+    "eMBB": 6396.8,
+    "URLLC": 10.1,
+    "mIoT": 404.8
+   },
+   "violations": {
+    "eMBB": 49,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 49,
+   "prb_used": 253118,
+   "prb_util": 0.0317,
+   "eff_kb_per_prb": 0.0269,
+   "ue_thr_p5_kbps": 1.28,
+   "ue_thr_mean_kbps": 234.4,
+   "handovers": 22
+  },
+  "wall_s": 3.2
+ },
+ {
+  "tag": "layout12_seed1",
+  "layout": 12,
+  "seed": 1,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 6716.0,
+   "served_kb": {
+    "eMBB": 6309.3,
+    "URLLC": 10.7,
+    "mIoT": 396.0
+   },
+   "violations": {
+    "eMBB": 29,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 29,
+   "prb_used": 292311,
+   "prb_util": 0.0366,
+   "eff_kb_per_prb": 0.023,
+   "ue_thr_p5_kbps": 1.15,
+   "ue_thr_mean_kbps": 232.24,
+   "handovers": 19
+  },
+  "wall_s": 3.3
+ },
+ {
+  "tag": "layout12_seed1",
+  "layout": 12,
+  "seed": 1,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 7174.3,
+   "served_kb": {
+    "eMBB": 6776.8,
+    "URLLC": 9.5,
+    "mIoT": 388.0
+   },
+   "violations": {
+    "eMBB": 30,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 30,
+   "prb_used": 243506,
+   "prb_util": 0.0305,
+   "eff_kb_per_prb": 0.0295,
+   "ue_thr_p5_kbps": 0.75,
+   "ue_thr_mean_kbps": 245.76,
+   "handovers": 17
+  },
+  "wall_s": 4.2,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 12.414680363649081,
+  "decision_ms_p95": 23.59570534940758
+ },
+ {
+  "tag": "layout13_seed0",
+  "layout": 13,
+  "seed": 0,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 10506.7,
+   "served_kb": {
+    "eMBB": 9989.6,
+    "URLLC": 25.1,
+    "mIoT": 492.0
+   },
+   "violations": {
+    "eMBB": 53,
+    "URLLC": 1,
+    "mIoT": 0
+   },
+   "viol_total": 54,
+   "prb_used": 302828,
+   "prb_util": 0.0379,
+   "eff_kb_per_prb": 0.0347,
+   "ue_thr_p5_kbps": 3.74,
+   "ue_thr_mean_kbps": 359.1,
+   "handovers": 20
+  },
+  "wall_s": 3.3
+ },
+ {
+  "tag": "layout13_seed0",
+  "layout": 13,
+  "seed": 0,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 10588.2,
+   "served_kb": {
+    "eMBB": 10093.2,
+    "URLLC": 20.6,
+    "mIoT": 474.4
+   },
+   "violations": {
+    "eMBB": 46,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 46,
+   "prb_used": 447952,
+   "prb_util": 0.0561,
+   "eff_kb_per_prb": 0.0236,
+   "ue_thr_p5_kbps": 3.09,
+   "ue_thr_mean_kbps": 358.99,
+   "handovers": 16
+  },
+  "wall_s": 3.1
+ },
+ {
+  "tag": "layout13_seed0",
+  "layout": 13,
+  "seed": 0,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 10945.9,
+   "served_kb": {
+    "eMBB": 10430.4,
+    "URLLC": 17.1,
+    "mIoT": 498.4
+   },
+   "violations": {
+    "eMBB": 31,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 31,
+   "prb_used": 364624,
+   "prb_util": 0.0456,
+   "eff_kb_per_prb": 0.03,
+   "ue_thr_p5_kbps": 2.81,
+   "ue_thr_mean_kbps": 371.64,
+   "handovers": 20
+  },
+  "wall_s": 6.4,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 26.8479272954623,
+  "decision_ms_p95": 98.84166864944747
+ },
+ {
+  "tag": "layout13_seed1",
+  "layout": 13,
+  "seed": 1,
+  "policy": "fixed",
+  "metrics": {
+   "served_kb_total": 11326.5,
+   "served_kb": {
+    "eMBB": 10885.1,
+    "URLLC": 16.6,
+    "mIoT": 424.8
+   },
+   "violations": {
+    "eMBB": 80,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 80,
+   "prb_used": 353799,
+   "prb_util": 0.0443,
+   "eff_kb_per_prb": 0.032,
+   "ue_thr_p5_kbps": 3.18,
+   "ue_thr_mean_kbps": 391.07,
+   "handovers": 24
+  },
+  "wall_s": 3.7
+ },
+ {
+  "tag": "layout13_seed1",
+  "layout": 13,
+  "seed": 1,
+  "policy": "reactive",
+  "metrics": {
+   "served_kb_total": 12219.3,
+   "served_kb": {
+    "eMBB": 11782.8,
+    "URLLC": 15.7,
+    "mIoT": 420.8
+   },
+   "violations": {
+    "eMBB": 24,
+    "URLLC": 2,
+    "mIoT": 0
+   },
+   "viol_total": 26,
+   "prb_used": 365760,
+   "prb_util": 0.0458,
+   "eff_kb_per_prb": 0.0334,
+   "ue_thr_p5_kbps": 3.18,
+   "ue_thr_mean_kbps": 415.01,
+   "handovers": 16
+  },
+  "wall_s": 3.2
+ },
+ {
+  "tag": "layout13_seed1",
+  "layout": 13,
+  "seed": 1,
+  "policy": "twin",
+  "metrics": {
+   "served_kb_total": 11854.7,
+   "served_kb": {
+    "eMBB": 11409.7,
+    "URLLC": 16.2,
+    "mIoT": 428.8
+   },
+   "violations": {
+    "eMBB": 35,
+    "URLLC": 1,
+    "mIoT": 0
+   },
+   "viol_total": 36,
+   "prb_used": 368714,
+   "prb_util": 0.0462,
+   "eff_kb_per_prb": 0.0322,
+   "ue_thr_p5_kbps": 3.18,
+   "ue_thr_mean_kbps": 404.71,
+   "handovers": 16
+  },
+  "wall_s": 3.8,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 9.308694340957532,
+  "decision_ms_p95": 17.21101219977755
+ },
+ {
+  "tag": "burst12_seed0",
+  "layout": 12,
+  "seed": 0,
+  "policy": "reactive_burst",
+  "metrics": {
+   "served_kb_total": 10823.4,
+   "served_kb": {
+    "eMBB": 10617.5,
+    "URLLC": 13.2,
+    "mIoT": 192.8
+   },
+   "violations": {
+    "eMBB": 27,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 27,
+   "prb_used": 379693,
+   "prb_util": 0.0475,
+   "eff_kb_per_prb": 0.0285,
+   "ue_thr_p5_kbps": 0.81,
+   "ue_thr_mean_kbps": 362.51,
+   "handovers": 17
+  },
+  "wall_s": 3.6
+ },
+ {
+  "tag": "burst12_seed0",
+  "layout": 12,
+  "seed": 0,
+  "policy": "twin_burst",
+  "metrics": {
+   "served_kb_total": 10329.5,
+   "served_kb": {
+    "eMBB": 10109.4,
+    "URLLC": 8.9,
+    "mIoT": 211.2
+   },
+   "violations": {
+    "eMBB": 63,
+    "URLLC": 2,
+    "mIoT": 0
+   },
+   "viol_total": 65,
+   "prb_used": 392262,
+   "prb_util": 0.0491,
+   "eff_kb_per_prb": 0.0263,
+   "ue_thr_p5_kbps": 0.33,
+   "ue_thr_mean_kbps": 355.54,
+   "handovers": 19
+  },
+  "wall_s": 4.1,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 14.144633272673508,
+  "decision_ms_p95": 26.28398889983146
+ },
+ {
+  "tag": "burst12_seed1",
+  "layout": 12,
+  "seed": 1,
+  "policy": "reactive_burst",
+  "metrics": {
+   "served_kb_total": 9116.8,
+   "served_kb": {
+    "eMBB": 8709.1,
+    "URLLC": 15.8,
+    "mIoT": 392.0
+   },
+   "violations": {
+    "eMBB": 29,
+    "URLLC": 1,
+    "mIoT": 0
+   },
+   "viol_total": 30,
+   "prb_used": 309725,
+   "prb_util": 0.0388,
+   "eff_kb_per_prb": 0.0294,
+   "ue_thr_p5_kbps": 1.97,
+   "ue_thr_mean_kbps": 309.91,
+   "handovers": 14
+  },
+  "wall_s": 3.2
+ },
+ {
+  "tag": "burst12_seed1",
+  "layout": 12,
+  "seed": 1,
+  "policy": "twin_burst",
+  "metrics": {
+   "served_kb_total": 8931.3,
+   "served_kb": {
+    "eMBB": 8543.3,
+    "URLLC": 11.2,
+    "mIoT": 376.8
+   },
+   "violations": {
+    "eMBB": 71,
+    "URLLC": 0,
+    "mIoT": 0
+   },
+   "viol_total": 71,
+   "prb_used": 362518,
+   "prb_util": 0.0454,
+   "eff_kb_per_prb": 0.0246,
+   "ue_thr_p5_kbps": 0.8,
+   "ue_thr_mean_kbps": 309.5,
+   "handovers": 19
+  },
+  "wall_s": 4.0,
+  "decisions": 1452,
+  "fallbacks": 0,
+  "fallback_rate": 0.0,
+  "decision_ms_mean": 11.175043772730284,
+  "decision_ms_p95": 23.420009050369117
+ }
+]

@@ -1,0 +1,477 @@
+{
+ "version": "corpus_v2",
+ "date": "2026-10-03",
+ "n_slots": 1000,
+ "epoch_slots": 20,
+ "budget_policy": "random",
+ "runs": [
+  {
+   "file": "run_00_seed1000_e02815eb.npz",
+   "config_id": 0,
+   "seed": 1000,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 13
+  },
+  {
+   "file": "run_00_seed1001_e02815eb.npz",
+   "config_id": 0,
+   "seed": 1001,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 22
+  },
+  {
+   "file": "run_01_seed1010_50589df4.npz",
+   "config_id": 1,
+   "seed": 1010,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 34
+  },
+  {
+   "file": "run_01_seed1011_50589df4.npz",
+   "config_id": 1,
+   "seed": 1011,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 23
+  },
+  {
+   "file": "run_02_seed1020_06fbf8f6.npz",
+   "config_id": 2,
+   "seed": 1020,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 26
+  },
+  {
+   "file": "run_02_seed1021_06fbf8f6.npz",
+   "config_id": 2,
+   "seed": 1021,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 27
+  },
+  {
+   "file": "run_03_seed1030_5e072ddc.npz",
+   "config_id": 3,
+   "seed": 1030,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 36
+  },
+  {
+   "file": "run_03_seed1031_5e072ddc.npz",
+   "config_id": 3,
+   "seed": 1031,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 52
+  },
+  {
+   "file": "run_04_seed1040_c011f1af.npz",
+   "config_id": 4,
+   "seed": 1040,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 27
+  },
+  {
+   "file": "run_04_seed1041_c011f1af.npz",
+   "config_id": 4,
+   "seed": 1041,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 9
+  },
+  {
+   "file": "run_05_seed1050_79fe6e18.npz",
+   "config_id": 5,
+   "seed": 1050,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 21
+  },
+  {
+   "file": "run_05_seed1051_79fe6e18.npz",
+   "config_id": 5,
+   "seed": 1051,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 38
+  },
+  {
+   "file": "run_06_seed1060_5fd4350b.npz",
+   "config_id": 6,
+   "seed": 1060,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 21
+  },
+  {
+   "file": "run_06_seed1061_5fd4350b.npz",
+   "config_id": 6,
+   "seed": 1061,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 37
+  },
+  {
+   "file": "run_07_seed1070_e8bf1005.npz",
+   "config_id": 7,
+   "seed": 1070,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 31
+  },
+  {
+   "file": "run_07_seed1071_e8bf1005.npz",
+   "config_id": 7,
+   "seed": 1071,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 28
+  },
+  {
+   "file": "run_08_seed1080_ff47a147.npz",
+   "config_id": 8,
+   "seed": 1080,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 12
+  },
+  {
+   "file": "run_08_seed1081_ff47a147.npz",
+   "config_id": 8,
+   "seed": 1081,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 35
+  },
+  {
+   "file": "run_09_seed1090_684fead6.npz",
+   "config_id": 9,
+   "seed": 1090,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 45
+  },
+  {
+   "file": "run_09_seed1091_684fead6.npz",
+   "config_id": 9,
+   "seed": 1091,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 60
+  },
+  {
+   "file": "run_10_seed1100_305efd47.npz",
+   "config_id": 10,
+   "seed": 1100,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 20
+  },
+  {
+   "file": "run_10_seed1101_305efd47.npz",
+   "config_id": 10,
+   "seed": 1101,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 62
+  },
+  {
+   "file": "run_11_seed1110_4bf98aed.npz",
+   "config_id": 11,
+   "seed": 1110,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 42
+  },
+  {
+   "file": "run_11_seed1111_4bf98aed.npz",
+   "config_id": 11,
+   "seed": 1111,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 78
+  },
+  {
+   "file": "run_12_seed1120_571549a3.npz",
+   "config_id": 12,
+   "seed": 1120,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 39
+  },
+  {
+   "file": "run_12_seed1121_571549a3.npz",
+   "config_id": 12,
+   "seed": 1121,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 31
+  },
+  {
+   "file": "run_13_seed1130_f10db6d0.npz",
+   "config_id": 13,
+   "seed": 1130,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 46
+  },
+  {
+   "file": "run_13_seed1131_f10db6d0.npz",
+   "config_id": 13,
+   "seed": 1131,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 39
+  },
+  {
+   "file": "run_14_seed1140_ba643eb5.npz",
+   "config_id": 14,
+   "seed": 1140,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 14
+  },
+  {
+   "file": "run_14_seed1141_ba643eb5.npz",
+   "config_id": 14,
+   "seed": 1141,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 0.8
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 26
+  },
+  {
+   "file": "run_15_seed1150_68fb8f27.npz",
+   "config_id": 15,
+   "seed": 1150,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 38
+  },
+  {
+   "file": "run_15_seed1151_68fb8f27.npz",
+   "config_id": 15,
+   "seed": 1151,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 1.2
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 39
+  }
+ ],
+ "held_out_config_ids": [
+  12,
+  13,
+  14,
+  15
+ ],
+ "train_config_ids": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ]
+}

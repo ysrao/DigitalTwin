@@ -1,0 +1,16 @@
+{
+ "black": {
+  "mae_served": 0.7060491383075714,
+  "mae_viol": 0.03681717502574126,
+  "crps_served": -0.03796897229428093,
+  "crps_viol": 0.0041967826973026,
+  "action_sens": 0.015909994083146254
+ },
+ "gray": {
+  "mae_served": NaN,
+  "mae_viol": 0.059575646619002026,
+  "crps_served": NaN,
+  "crps_viol": null,
+  "action_sens": NaN
+ }
+}

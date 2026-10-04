@@ -1,0 +1,96 @@
+{
+ "scenario": {
+  "name": "urban-small-01",
+  "seed": 42
+ },
+ "network": {
+  "macro_sites": 7,
+  "sectors_per_site": 3,
+  "site_spacing_m": 500,
+  "small_cells": {
+   "count": 12,
+   "placement": "uniform"
+  },
+  "wraparound": true,
+  "cells": null,
+  "topology_csv": "examples/carrier_topology_example.csv",
+  "geo_reference": {
+   "lat": 37.7749,
+   "lon": -122.4194
+  }
+ },
+ "radio": {
+  "carriers": [
+   {
+    "cc_id": 0,
+    "duplex": "FDD",
+    "freq_mhz": 2100,
+    "bw_mhz": 20,
+    "numerology": 1
+   },
+   {
+    "cc_id": 1,
+    "duplex": "TDD",
+    "freq_mhz": 3500,
+    "bw_mhz": 100,
+    "numerology": 1,
+    "tdd_pattern": "DDDSU"
+   }
+  ],
+  "propagation": "UMa",
+  "tx_power_dbm": {
+   "macro": 46,
+   "pico": 30,
+   "femto": 20
+  }
+ },
+ "mobility": {
+  "classes": [
+   {
+    "name": "stationary",
+    "share": 0.5,
+    "speed_mps": 0
+   },
+   {
+    "name": "pedestrian",
+    "share": 0.3,
+    "speed_mps": 1.5
+   },
+   {
+    "name": "vehicular",
+    "share": 0.2,
+    "speed_mps": 13.9
+   }
+  ],
+  "handover": {
+   "hysteresis_db": 3,
+   "time_to_trigger_ms": 160
+  }
+ },
+ "services": {
+  "slices": [
+   {
+    "name": "eMBB",
+    "latency_ms": 20,
+    "reliability": 0.99,
+    "min_share": 0.4
+   },
+   {
+    "name": "URLLC",
+    "latency_ms": 5,
+    "reliability": 0.999,
+    "min_share": 0.2
+   },
+   {
+    "name": "mIoT",
+    "latency_ms": 1000,
+    "reliability": 0.95,
+    "min_share": 0.1
+   }
+  ]
+ },
+ "control": {
+  "budget_decision_ms": 10,
+  "forecast_horizon": 6
+ }
+}

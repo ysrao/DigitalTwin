@@ -1,0 +1,477 @@
+{
+ "version": "corpus_v1",
+ "date": "2026-10-04",
+ "n_slots": 1000,
+ "epoch_slots": 20,
+ "budget_policy": "explore",
+ "runs": [
+  {
+   "file": "run_00_seed1000_d9a6194d.npz",
+   "config_id": 0,
+   "seed": 1000,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 88
+  },
+  {
+   "file": "run_00_seed1001_d9a6194d.npz",
+   "config_id": 0,
+   "seed": 1001,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 251
+  },
+  {
+   "file": "run_01_seed1010_b2c642d4.npz",
+   "config_id": 1,
+   "seed": 1010,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 318
+  },
+  {
+   "file": "run_01_seed1011_b2c642d4.npz",
+   "config_id": 1,
+   "seed": 1011,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 279
+  },
+  {
+   "file": "run_02_seed1020_48702d17.npz",
+   "config_id": 2,
+   "seed": 1020,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 374
+  },
+  {
+   "file": "run_02_seed1021_48702d17.npz",
+   "config_id": 2,
+   "seed": 1021,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 605
+  },
+  {
+   "file": "run_03_seed1030_5aac2550.npz",
+   "config_id": 3,
+   "seed": 1030,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 144
+  },
+  {
+   "file": "run_03_seed1031_5aac2550.npz",
+   "config_id": 3,
+   "seed": 1031,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 588
+  },
+  {
+   "file": "run_04_seed1040_3f3b18d4.npz",
+   "config_id": 4,
+   "seed": 1040,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 155
+  },
+  {
+   "file": "run_04_seed1041_3f3b18d4.npz",
+   "config_id": 4,
+   "seed": 1041,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 229
+  },
+  {
+   "file": "run_05_seed1050_e53d6371.npz",
+   "config_id": 5,
+   "seed": 1050,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 238
+  },
+  {
+   "file": "run_05_seed1051_e53d6371.npz",
+   "config_id": 5,
+   "seed": 1051,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 118
+  },
+  {
+   "file": "run_06_seed1060_9c3526cd.npz",
+   "config_id": 6,
+   "seed": 1060,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 262
+  },
+  {
+   "file": "run_06_seed1061_9c3526cd.npz",
+   "config_id": 6,
+   "seed": 1061,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 222
+  },
+  {
+   "file": "run_07_seed1070_58e13dc7.npz",
+   "config_id": 7,
+   "seed": 1070,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 328
+  },
+  {
+   "file": "run_07_seed1071_58e13dc7.npz",
+   "config_id": 7,
+   "seed": 1071,
+   "cfg": {
+    "sc_count": 6,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 27,
+   "violations_total": 421
+  },
+  {
+   "file": "run_08_seed1080_54ddcdbe.npz",
+   "config_id": 8,
+   "seed": 1080,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 351
+  },
+  {
+   "file": "run_08_seed1081_54ddcdbe.npz",
+   "config_id": 8,
+   "seed": 1081,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 38
+  },
+  {
+   "file": "run_09_seed1090_9ec1271a.npz",
+   "config_id": 9,
+   "seed": 1090,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 196
+  },
+  {
+   "file": "run_09_seed1091_9ec1271a.npz",
+   "config_id": 9,
+   "seed": 1091,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 263
+  },
+  {
+   "file": "run_10_seed1100_eb4c29bb.npz",
+   "config_id": 10,
+   "seed": 1100,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 295
+  },
+  {
+   "file": "run_10_seed1101_eb4c29bb.npz",
+   "config_id": 10,
+   "seed": 1101,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 187
+  },
+  {
+   "file": "run_11_seed1110_1a52446d.npz",
+   "config_id": 11,
+   "seed": 1110,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 315
+  },
+  {
+   "file": "run_11_seed1111_1a52446d.npz",
+   "config_id": 11,
+   "seed": 1111,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "uniform",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 191
+  },
+  {
+   "file": "run_12_seed1120_9d671293.npz",
+   "config_id": 12,
+   "seed": 1120,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 153
+  },
+  {
+   "file": "run_12_seed1121_9d671293.npz",
+   "config_id": 12,
+   "seed": 1121,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 431
+  },
+  {
+   "file": "run_13_seed1130_62e492e2.npz",
+   "config_id": 13,
+   "seed": 1130,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 300
+  },
+  {
+   "file": "run_13_seed1131_62e492e2.npz",
+   "config_id": 13,
+   "seed": 1131,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 60,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 277
+  },
+  {
+   "file": "run_14_seed1140_39672546.npz",
+   "config_id": 14,
+   "seed": 1140,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 408
+  },
+  {
+   "file": "run_14_seed1141_39672546.npz",
+   "config_id": 14,
+   "seed": 1141,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 5.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 248
+  },
+  {
+   "file": "run_15_seed1150_b717481e.npz",
+   "config_id": 15,
+   "seed": 1150,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 288
+  },
+  {
+   "file": "run_15_seed1151_b717481e.npz",
+   "config_id": 15,
+   "seed": 1151,
+   "cfg": {
+    "sc_count": 12,
+    "sc_placement": "hotspot",
+    "n_ues": 90,
+    "traffic_scale": 6.0
+   },
+   "epochs": 50,
+   "cells": 33,
+   "violations_total": 682
+  }
+ ],
+ "held_out_config_ids": [
+  12,
+  13,
+  14,
+  15
+ ],
+ "train_config_ids": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
+ ]
+}
