@@ -22,7 +22,7 @@ import numpy as np
 from ..scenarios.loader import Scenario, load
 from .hetnet import build_layout
 from .numerology import slot_duration_ms, scs_khz
-from .channel import CouplingProvider, _TIER_SCENARIO
+from .channel import CouplingProvider, _TIER_SCENARIO, tier_scenario
 from .mobility import UEs
 from .traffic import TrafficGen
 from .prach import Prach
@@ -72,7 +72,7 @@ class BaselineSimulator:
         # need identical channels across policies).
         _by_kind = {}
         for i, c in enumerate(self.cells):
-            _by_kind.setdefault(_TIER_SCENARIO[c["type"]], []).append(i)
+            _by_kind.setdefault(tier_scenario(c["type"], scenario.propagation), []).append(i)
         self._tier_groups = list(_by_kind.items())  # [(kind, [cell idx])]
         self._providers = {}
         for k, f in enumerate(self._freqs_hz):

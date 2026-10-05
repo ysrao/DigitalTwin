@@ -61,7 +61,7 @@ def build_layout(scenario: Scenario, rng: np.random.Generator) -> list:
             az = (sector * 360.0 / scenario.sectors_per_site + 30.0) % 360.0
             cells.append(_make_cell(
                 scenario, cid, "macro", site_id, sector,
-                sx, sy, _MACRO_HEIGHT, az,
+                sx, sy, getattr(scenario, "macro_height_m", _MACRO_HEIGHT), az,
                 scenario.tx_power_dbm.get("macro", 46.0)))
             cid += 1
 

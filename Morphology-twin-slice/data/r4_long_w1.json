@@ -1,0 +1,962 @@
+[
+ {
+  "layout": 0,
+  "seed": 3000,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 545,
+  "prach": {
+   "attempts": 5954,
+   "collisions": 10,
+   "successes": 5944,
+   "mean_access_delay_slots": 0.132907133243607
+  },
+  "eMBB": {
+   "violations": 708,
+   "packets": 34925,
+   "reliability": 0.97973,
+   "served_kb": 409258.169,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 6.0,
+   "prb_used": 13008450.883601818
+  },
+  "URLLC": {
+   "violations": 11,
+   "packets": 2915,
+   "reliability": 0.99623,
+   "served_kb": 738.405,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 74043.43999999992
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5944,
+   "reliability": 1.0,
+   "served_kb": 4752.0,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 321724.83856229275,
+   "delay_ms_max": 110.0,
+   "delay_ms_p99": 15.0,
+   "queued_end": 4,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.07952147390063015
+ },
+ {
+  "layout": 0,
+  "seed": 3001,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 542,
+  "prach": {
+   "attempts": 3645,
+   "collisions": 10,
+   "successes": 3635,
+   "mean_access_delay_slots": 0.23383768913342504
+  },
+  "eMBB": {
+   "violations": 1233,
+   "packets": 45049,
+   "reliability": 0.97263,
+   "served_kb": 522313.661,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 7.0,
+   "prb_used": 18232535.127435952
+  },
+  "URLLC": {
+   "violations": 0,
+   "packets": 3088,
+   "reliability": 1.0,
+   "served_kb": 791.567,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 62207.120000000104
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 3635,
+   "reliability": 1.0,
+   "served_kb": 2905.6,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 313615.88006412424,
+   "delay_ms_max": 140.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 3,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.11039539470874096
+ },
+ {
+  "layout": 0,
+  "seed": 3002,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 564,
+  "prach": {
+   "attempts": 6329,
+   "collisions": 40,
+   "successes": 6289,
+   "mean_access_delay_slots": 0.47702337414533313
+  },
+  "eMBB": {
+   "violations": 1441,
+   "packets": 37583,
+   "reliability": 0.96166,
+   "served_kb": 427519.224,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 9.0,
+   "prb_used": 18789076.85632047
+  },
+  "URLLC": {
+   "violations": 9,
+   "packets": 2160,
+   "reliability": 0.99583,
+   "served_kb": 541.221,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 64217.670000000166
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 6289,
+   "reliability": 1.0,
+   "served_kb": 5024.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 318343.03289129084,
+   "delay_ms_max": 160.0,
+   "delay_ms_p99": 16.5,
+   "queued_end": 8,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.1137370895949346
+ },
+ {
+  "layout": 0,
+  "seed": 3003,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 473,
+  "prach": {
+   "attempts": 5448,
+   "collisions": 4,
+   "successes": 5444,
+   "mean_access_delay_slots": 0.06429096252755327
+  },
+  "eMBB": {
+   "violations": 562,
+   "packets": 38905,
+   "reliability": 0.98555,
+   "served_kb": 458798.712,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 5.5,
+   "prb_used": 13138510.848259974
+  },
+  "URLLC": {
+   "violations": 5,
+   "packets": 2730,
+   "reliability": 0.99817,
+   "served_kb": 711.681,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 42501.13000000008
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5444,
+   "reliability": 1.0,
+   "served_kb": 4351.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 335759.28502314433,
+   "delay_ms_max": 58.5,
+   "delay_ms_p99": 17.0,
+   "queued_end": 5,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.0801891971647245
+ },
+ {
+  "layout": 0,
+  "seed": 3004,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 600,
+  "prach": {
+   "attempts": 4715,
+   "collisions": 14,
+   "successes": 4701,
+   "mean_access_delay_slots": 0.22122952563284407
+  },
+  "eMBB": {
+   "violations": 1316,
+   "packets": 40024,
+   "reliability": 0.96712,
+   "served_kb": 458806.341,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 7.0,
+   "prb_used": 16741570.019328786
+  },
+  "URLLC": {
+   "violations": 4,
+   "packets": 3027,
+   "reliability": 0.99868,
+   "served_kb": 760.373,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 61892.730000000105
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 4701,
+   "reliability": 1.0,
+   "served_kb": 3756.0,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 363646.90885055764,
+   "delay_ms_max": 85.0,
+   "delay_ms_p99": 18.5300000000002,
+   "queued_end": 6,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.10184508669371534
+ },
+ {
+  "layout": 0,
+  "seed": 3005,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 485,
+  "prach": {
+   "attempts": 5894,
+   "collisions": 38,
+   "successes": 5856,
+   "mean_access_delay_slots": 0.4969262295081967
+  },
+  "eMBB": {
+   "violations": 795,
+   "packets": 27434,
+   "reliability": 0.97102,
+   "served_kb": 314231.627,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 8.5,
+   "prb_used": 12136935.424636066
+  },
+  "URLLC": {
+   "violations": 0,
+   "packets": 4489,
+   "reliability": 1.0,
+   "served_kb": 1179.081,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 36506.12000000002
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5856,
+   "reliability": 1.0,
+   "served_kb": 4676.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 223821.1699617788,
+   "delay_ms_max": 20.5,
+   "delay_ms_p99": 15.0,
+   "queued_end": 10,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.07354763388089684
+ },
+ {
+  "layout": 0,
+  "seed": 3006,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 542,
+  "prach": {
+   "attempts": 5088,
+   "collisions": 12,
+   "successes": 5076,
+   "mean_access_delay_slots": 0.18124507486209615
+  },
+  "eMBB": {
+   "violations": 799,
+   "packets": 31432,
+   "reliability": 0.97458,
+   "served_kb": 362644.75,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 5.0,
+   "prb_used": 10956575.822573774
+  },
+  "URLLC": {
+   "violations": 1,
+   "packets": 4473,
+   "reliability": 0.99978,
+   "served_kb": 1160.395,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 80469.7199999999
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5076,
+   "reliability": 1.0,
+   "served_kb": 4056.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 368086.8270069017,
+   "delay_ms_max": 50.5,
+   "delay_ms_p99": 20.0,
+   "queued_end": 5,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.06766175075836452
+ },
+ {
+  "layout": 0,
+  "seed": 3007,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 587,
+  "prach": {
+   "attempts": 4866,
+   "collisions": 20,
+   "successes": 4846,
+   "mean_access_delay_slots": 0.34874122988031364
+  },
+  "eMBB": {
+   "violations": 1093,
+   "packets": 33554,
+   "reliability": 0.96743,
+   "served_kb": 383905.672,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 10.5,
+   "prb_used": 19247844.190731447
+  },
+  "URLLC": {
+   "violations": 6,
+   "packets": 4189,
+   "reliability": 0.99857,
+   "served_kb": 1071.085,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 85081.76999999996
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 4846,
+   "reliability": 1.0,
+   "served_kb": 3871.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 330060.9725356494,
+   "delay_ms_max": 170.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 7,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.11665205434986212
+ },
+ {
+  "layout": 0,
+  "seed": 3008,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 504,
+  "prach": {
+   "attempts": 5641,
+   "collisions": 30,
+   "successes": 5611,
+   "mean_access_delay_slots": 0.3938691855284263
+  },
+  "eMBB": {
+   "violations": 845,
+   "packets": 33928,
+   "reliability": 0.97509,
+   "served_kb": 392116.743,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 6.0,
+   "prb_used": 13086564.024341878
+  },
+  "URLLC": {
+   "violations": 0,
+   "packets": 3563,
+   "reliability": 1.0,
+   "served_kb": 910.285,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 53238.27000000005
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5611,
+   "reliability": 1.0,
+   "served_kb": 4484.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 322948.21190967475,
+   "delay_ms_max": 45.0,
+   "delay_ms_p99": 15.0,
+   "queued_end": 5,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.07986871522031526
+ },
+ {
+  "layout": 0,
+  "seed": 3009,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 496,
+  "prach": {
+   "attempts": 3186,
+   "collisions": 6,
+   "successes": 3180,
+   "mean_access_delay_slots": 0.16037735849056603
+  },
+  "eMBB": {
+   "violations": 1606,
+   "packets": 46536,
+   "reliability": 0.96549,
+   "served_kb": 533513.746,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 8.0,
+   "prb_used": 20487863.677277267
+  },
+  "URLLC": {
+   "violations": 2,
+   "packets": 3029,
+   "reliability": 0.99934,
+   "served_kb": 777.436,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 52943.67000000009
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 3180,
+   "reliability": 1.0,
+   "served_kb": 2543.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 99227.42692177794,
+   "delay_ms_max": 20.0,
+   "delay_ms_p99": 11.1099999999999,
+   "queued_end": 1,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.12244845945502848
+ },
+ {
+  "layout": 1,
+  "seed": 3100,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 513,
+  "prach": {
+   "attempts": 5152,
+   "collisions": 18,
+   "successes": 5134,
+   "mean_access_delay_slots": 0.2960654460459681
+  },
+  "eMBB": {
+   "violations": 2226,
+   "packets": 52793,
+   "reliability": 0.95784,
+   "served_kb": 600923.927,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 9.0,
+   "prb_used": 22682283.192339066
+  },
+  "URLLC": {
+   "violations": 1,
+   "packets": 2437,
+   "reliability": 0.99959,
+   "served_kb": 605.845,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 36960.79000000004
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5134,
+   "reliability": 1.0,
+   "served_kb": 4105.6,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 190535.0622237706,
+   "delay_ms_max": 42.0,
+   "delay_ms_p99": 15.0,
+   "queued_end": 2,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.13591387713980604
+ },
+ {
+  "layout": 1,
+  "seed": 3101,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 565,
+  "prach": {
+   "attempts": 7297,
+   "collisions": 22,
+   "successes": 7275,
+   "mean_access_delay_slots": 0.22955326460481099
+  },
+  "eMBB": {
+   "violations": 823,
+   "packets": 36041,
+   "reliability": 0.97716,
+   "served_kb": 419006.412,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 6.0,
+   "prb_used": 12740071.020004107
+  },
+  "URLLC": {
+   "violations": 2,
+   "packets": 3567,
+   "reliability": 0.99944,
+   "served_kb": 921.978,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 52179.97000000008
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 7275,
+   "reliability": 1.0,
+   "served_kb": 5812.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 538536.655600038,
+   "delay_ms_max": 115.0,
+   "delay_ms_p99": 17.350000000000364,
+   "queued_end": 9,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.07908583625870844
+ },
+ {
+  "layout": 1,
+  "seed": 3102,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 558,
+  "prach": {
+   "attempts": 5979,
+   "collisions": 20,
+   "successes": 5959,
+   "mean_access_delay_slots": 0.2785702299043464
+  },
+  "eMBB": {
+   "violations": 1496,
+   "packets": 43352,
+   "reliability": 0.96549,
+   "served_kb": 494239.896,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 8.0,
+   "prb_used": 17370207.61008893
+  },
+  "URLLC": {
+   "violations": 20,
+   "packets": 3332,
+   "reliability": 0.994,
+   "served_kb": 827.107,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 120834.26999999884
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5959,
+   "reliability": 1.0,
+   "served_kb": 4761.6,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 448223.28247449524,
+   "delay_ms_max": 90.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 7,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.10642595358691176
+ },
+ {
+  "layout": 1,
+  "seed": 3103,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 514,
+  "prach": {
+   "attempts": 3890,
+   "collisions": 10,
+   "successes": 3880,
+   "mean_access_delay_slots": 0.23969072164948454
+  },
+  "eMBB": {
+   "violations": 2087,
+   "packets": 55475,
+   "reliability": 0.96238,
+   "served_kb": 633441.522,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 8.0,
+   "prb_used": 22446909.62202608
+  },
+  "URLLC": {
+   "violations": 10,
+   "packets": 3003,
+   "reliability": 0.99667,
+   "served_kb": 756.68,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 92442.04999999962
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 3880,
+   "reliability": 1.0,
+   "served_kb": 3099.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 276438.18570758234,
+   "delay_ms_max": 140.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 6,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.135356279671654
+ },
+ {
+  "layout": 1,
+  "seed": 3104,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 498,
+  "prach": {
+   "attempts": 4781,
+   "collisions": 28,
+   "successes": 4753,
+   "mean_access_delay_slots": 0.4418262150220913
+  },
+  "eMBB": {
+   "violations": 1710,
+   "packets": 49903,
+   "reliability": 0.96573,
+   "served_kb": 568154.861,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 9.0,
+   "prb_used": 21354151.664336514
+  },
+  "URLLC": {
+   "violations": 0,
+   "packets": 3249,
+   "reliability": 1.0,
+   "served_kb": 837.161,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 40050.56000000005
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 4753,
+   "reliability": 1.0,
+   "served_kb": 3796.8,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 276549.23484590003,
+   "delay_ms_max": 120.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 7,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.12856325875607302
+ },
+ {
+  "layout": 1,
+  "seed": 3105,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 514,
+  "prach": {
+   "attempts": 3428,
+   "collisions": 14,
+   "successes": 3414,
+   "mean_access_delay_slots": 0.37492677211482134
+  },
+  "eMBB": {
+   "violations": 1421,
+   "packets": 47799,
+   "reliability": 0.97027,
+   "served_kb": 555360.954,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 7.0,
+   "prb_used": 18466100.29135161
+  },
+  "URLLC": {
+   "violations": 10,
+   "packets": 4728,
+   "reliability": 0.99788,
+   "served_kb": 1204.024,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 88205.69000000002
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 3414,
+   "reliability": 1.0,
+   "served_kb": 2727.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 246295.44882395014,
+   "delay_ms_max": 155.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 5,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.11153589163671056
+ },
+ {
+  "layout": 1,
+  "seed": 3106,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 501,
+  "prach": {
+   "attempts": 6309,
+   "collisions": 34,
+   "successes": 6275,
+   "mean_access_delay_slots": 0.41434262948207173
+  },
+  "eMBB": {
+   "violations": 1178,
+   "packets": 36052,
+   "reliability": 0.96732,
+   "served_kb": 410692.348,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 7.5,
+   "prb_used": 15062625.662181476
+  },
+  "URLLC": {
+   "violations": 0,
+   "packets": 4525,
+   "reliability": 1.0,
+   "served_kb": 1176.486,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 69600.10000000005
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 6275,
+   "reliability": 1.0,
+   "served_kb": 5011.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 197239.02810412928,
+   "delay_ms_max": 20.0,
+   "delay_ms_p99": 11.5,
+   "queued_end": 11,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.09094312913595443
+ },
+ {
+  "layout": 1,
+  "seed": 3107,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 481,
+  "prach": {
+   "attempts": 5039,
+   "collisions": 22,
+   "successes": 5017,
+   "mean_access_delay_slots": 0.27705800279051224
+  },
+  "eMBB": {
+   "violations": 2454,
+   "packets": 49305,
+   "reliability": 0.95023,
+   "served_kb": 550373.926,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 20373646.719838697
+  },
+  "URLLC": {
+   "violations": 1,
+   "packets": 2978,
+   "reliability": 0.99966,
+   "served_kb": 771.722,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 46797.13000000007
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 5017,
+   "reliability": 1.0,
+   "served_kb": 4008.0,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 280708.16207116854,
+   "delay_ms_max": 64.5,
+   "delay_ms_p99": 15.0,
+   "queued_end": 7,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.12281104177069355
+ },
+ {
+  "layout": 1,
+  "seed": 3108,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 556,
+  "prach": {
+   "attempts": 4484,
+   "collisions": 10,
+   "successes": 4474,
+   "mean_access_delay_slots": 0.15645954403218595
+  },
+  "eMBB": {
+   "violations": 2023,
+   "packets": 52443,
+   "reliability": 0.96142,
+   "served_kb": 598161.78,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 9.5,
+   "prb_used": 22670057.460758522
+  },
+  "URLLC": {
+   "violations": 3,
+   "packets": 3001,
+   "reliability": 0.999,
+   "served_kb": 777.99,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 81333.05999999972
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 4474,
+   "reliability": 1.0,
+   "served_kb": 3572.0,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 364530.29136374505,
+   "delay_ms_max": 67.0,
+   "delay_ms_p99": 20.0,
+   "queued_end": 9,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.13713682768921803
+ },
+ {
+  "layout": 1,
+  "seed": 3109,
+  "embb_min": 0.3,
+  "urllc_min": 0.3,
+  "n_slots": 10000,
+  "mult": 1.0,
+  "n_ues": 60,
+  "handovers": 581,
+  "prach": {
+   "attempts": 6375,
+   "collisions": 26,
+   "successes": 6349,
+   "mean_access_delay_slots": 0.2567333438336746
+  },
+  "eMBB": {
+   "violations": 1810,
+   "packets": 41876,
+   "reliability": 0.95678,
+   "served_kb": 475038.655,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 8.0,
+   "prb_used": 16839351.87539095
+  },
+  "URLLC": {
+   "violations": 6,
+   "packets": 3322,
+   "reliability": 0.99819,
+   "served_kb": 850.874,
+   "delay_ms_p50": 0.0,
+   "delay_ms_p95": 0.0,
+   "prb_used": 80774.52999999997
+  },
+  "mIoT": {
+   "violations": 0,
+   "packets": 6349,
+   "reliability": 1.0,
+   "served_kb": 5075.2,
+   "delay_ms_p50": 5.0,
+   "delay_ms_p95": 10.0,
+   "prb_used": 443422.6447555378,
+   "delay_ms_max": 145.0,
+   "delay_ms_p99": 15.5,
+   "queued_end": 5,
+   "queued_end_max_age_ms": 10.0
+  },
+  "prb_util": 0.10301047721683246
+ }
+]

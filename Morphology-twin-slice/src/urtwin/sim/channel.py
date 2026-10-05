@@ -14,7 +14,7 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-from sionna.phy.channel.tr38901 import PanelArray, UMa, UMi
+from sionna.phy.channel.tr38901 import PanelArray, UMa, UMi, RMa
 from sionna.sys import get_pathloss, coupling_loss_db
 
 _CLIP_DB = 150.0
@@ -22,21 +22,42 @@ _CLIP_DB = 150.0
 # 3GPP 38.901 scenario per cell tier (outdoor deployments):
 # macro (25 m BS) -> UMa; pico/femto (10 m BS) -> UMi-Street Canyon.
 _TIER_SCENARIO = {"macro": "UMa", "pico": "UMi", "femto": "UMi"}
-_SCENARIO_CLS = {"UMa": UMa, "UMi": UMi}
+_SCENARIO_CLS = {"UMa": UMa, "UMi": UMi, "RMa": RMa}
+
+# Suburban morphology: macro layer on TR 38.901 RMa (h_BS 35 m), small cells
+# keep UMi-Street Canyon. RMa environment parameters (TR 38.901 Table 7.4.1-1
+# ranges W 5-50 m, h 5-50 m) set to typical suburban values.
+RMA_STREET_WIDTH_M = 20.0
+RMA_BUILDING_HEIGHT_M = 10.0
+
+
+def tier_scenario(ctype: str, propagation: str = "UMa") -> str:
+    """38.901 scenario per cell tier for the given macro-layer morphology."""
+    if ctype == "macro" and propagation == "RMa":
+        return "RMa"
+    return _TIER_SCENARIO[ctype]
 
 
 class CouplingProvider:
     def __init__(self, carrier_freq_hz: float = 3.5e9, device: str = "cpu",
-                 seed: int = 0, scenario_kind: str = "UMa"):
+                 seed: int = 0, scenario_kind: str = "UMa",
+                 sectorized: bool | None = None):
         self.device = device
         self.seed = seed
         self.scenario_kind = scenario_kind
         self._n_calls = 0
         self.device = device
+        # Macro tiers: TR 38.901 element (65 deg HPBW, 8 dBi), oriented per
+        # sector via bs_orientations in compute(). Small cells: omni element.
+        # (v1.0-v1.2 used the 38.901 element for every cell, all facing
+        # azimuth 0, plus an analytic sector pattern: fixed in v2.0.)
+        if sectorized is None:
+            sectorized = scenario_kind in ("UMa", "RMa")
+        self.sectorized = sectorized
         bs_array = PanelArray(
             num_rows_per_panel=1, num_cols_per_panel=1,
             polarization="dual", polarization_type="cross",
-            antenna_pattern="38.901",
+            antenna_pattern="38.901" if sectorized else "omni",
             carrier_frequency=carrier_freq_hz, device=device)
         ut_array = PanelArray(
             num_rows_per_panel=1, num_cols_per_panel=1,
@@ -44,10 +65,18 @@ class CouplingProvider:
             antenna_pattern="omni",
             carrier_frequency=carrier_freq_hz, device=device)
         model_cls = _SCENARIO_CLS[scenario_kind]
-        self._model = model_cls(
-            carrier_frequency=carrier_freq_hz, o2i_model="low",
-            ut_array=ut_array, bs_array=bs_array,
-            direction="downlink", device=device)
+        if scenario_kind == "RMa":
+            self._model = model_cls(
+                carrier_frequency=carrier_freq_hz,
+                ut_array=ut_array, bs_array=bs_array,
+                direction="downlink", device=device,
+                average_street_width=RMA_STREET_WIDTH_M,
+                average_building_height=RMA_BUILDING_HEIGHT_M)
+        else:
+            self._model = model_cls(
+                carrier_frequency=carrier_freq_hz, o2i_model="low",
+                ut_array=ut_array, bs_array=bs_array,
+                direction="downlink", device=device)
 
     def compute(self, ut_xy: np.ndarray, cells: list) -> np.ndarray:
         """Coupling loss [dB], shape (n_ut, n_cell). Lower = better link."""
@@ -73,6 +102,10 @@ class CouplingProvider:
 
         z3u = torch.zeros(1, n_ut, 3, device=dev)
         z3c = torch.zeros(1, n_cell, 3, device=dev)
+        bs_orient = torch.zeros(1, n_cell, 3, device=dev)  # (yaw, pitch, roll)
+        for i, c in enumerate(cells):
+            if c.get("azimuth_deg") is not None:
+                bs_orient[0, i, 0] = float(np.radians(c["azimuth_deg"]))
         in_state = torch.zeros(1, n_ut, dtype=torch.bool, device=dev)  # all outdoor
         bs_site_ids = torch.arange(n_cell, device=dev)
         # [batch, n_ut]: accepted by both the legacy (<6 GHz) and the new
@@ -81,7 +114,7 @@ class CouplingProvider:
         d2d_in = torch.zeros(1, n_ut, device=dev)
 
         self._model.set_topology(
-            ut_loc, bs_loc, z3u, z3c, z3u, in_state, None,
+            ut_loc, bs_loc, z3u, bs_orient, z3u, in_state, None,
             None, bs_site_ids, None, d2d_in)
         h, _ = self._model(num_time_samples=1, sampling_frequency=1e6)
         pl_lin, _ = get_pathloss(h)  # [1, U, C, S], linear
@@ -89,14 +122,5 @@ class CouplingProvider:
         pl_db = 10.0 * torch.log10(pl_lin).mean(dim=-1)[0]  # [U, C]
         coupling = coupling_loss_db(-pl_db).numpy()  # [U, C]
 
-        # analytic sector pattern for macro cells (omni small cells: 0 dB)
-        for i, c in enumerate(cells):
-            az = c["azimuth_deg"]
-            if az is None:
-                continue
-            dx = ut_xy[:, 0] - c["x"]
-            dy = ut_xy[:, 1] - c["y"]
-            ang = (np.degrees(np.arctan2(dy, dx)) - az + 180.0) % 360.0 - 180.0
-            pattern_db = -np.minimum(12.0 * (ang / 65.0) ** 2, 30.0)
-            coupling[:, i] -= pattern_db  # pattern loss adds to coupling loss
+        # Sector pattern now comes from the oriented 38.901 element above.
         return coupling
