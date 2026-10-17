@@ -105,13 +105,14 @@ input[type=range]{width:100%}
 <h2>twin5GNR</h2>
 <p class="sub">Sionna RT 2.2.0 ray tracing over Rancho Bernardo real terrain (USGS 3DEP) + LiDAR buildings &mdash;
 5G NR bands 0.7 / 2.5 / 3.6 / 7.125&nbsp;GHz, RX 6&nbsp;m above surface, max-depth 3 + diffraction.
-Click the map to probe any point.</p>
+Click the map to probe any point. Toggle RSRP / Capacity views.</p>
 <div id="wrap">
 <div><canvas id="map" width="612" height="612"></canvas>
-<div class="bar"></div><div class="scale"><span>-110 dBm</span><span>RSRP</span><span>-50 dBm</span></div></div>
+<div class="bar"></div><div class="scale"><span id="smin">-110 dBm</span><span id="smid">RSRP</span><span id="smax">-50 dBm</span></div></div>
 <div id="panel">
 <div class="btns" id="sitebtns"></div>
 <div class="btns" id="bandbtns"></div>
+<div class="btns" id="modebtns"></div>
 <label>EIRP: <b id="eirpv">47.0</b> dBm</label>
 <input type="range" id="eirp" min="30" max="47" step="0.5" value="47">
 <label>Bandwidth: <b id="bwv">10</b> MHz</label>
@@ -120,13 +121,14 @@ Click the map to probe any point.</p>
 <div id="stats"></div>
 </div></div>
 <p class="foot">White cells: no ray-traced path found (genuine dead zones at depth 3). EIRP slider is an analytic dB
-shift; bandwidth slider moves the noise floor only &mdash; no re-solve needed. 0.7&nbsp;GHz uses ITU-R P.2040
+shift; bandwidth slider moves the noise floor only &mdash; no re-solve needed. Capacity = Shannon bound (cap 7 bps/Hz), single cell, from the ray-traced SNR. 0.7&nbsp;GHz uses ITU-R P.2040
 materials clamped to their 1&nbsp;GHz boundary values (below the recommendation's defined range).
 Full grids: v4/data_twin_tower_&lt;site&gt;_&lt;band&gt;.npz</p>
 <script>
 const DATA=__DATA__, VIR=__VIR__, BANDS=__BANDS__;
 const VMIN=-110, VMAX=-50, BWS=[5,10,20,40,100];
-let site='nw', band='f3600', eirp=47, bwi=1;
+let site='nw', band='f3600', eirp=47, bwi=1, mode='rsrp';
+const mbps=v=>{ const snr=v-noise(); return Math.min(Math.log2(1+Math.pow(10,snr/10)),7)*BWS[bwi]; };
 const key=()=>site+'_'+band;
 const noise=()=>-174+10*Math.log10(BWS[bwi]*1e6)+9;
 const cv=document.getElementById('map'), ctx=cv.getContext('2d');
@@ -137,11 +139,17 @@ function color(v){ // v in dBm
   let t=(v-VMIN)/(VMAX-VMIN); t=Math.max(0,Math.min(1,t));
   return VIR[Math.round(t*(VIR.length-1))];
 }
+function capcolor(m){ // m in Mbps
+  if(m==null) return [255,255,255];
+  let t=m/(BWS[bwi]*7); t=Math.max(0,Math.min(1,t));
+  return VIR[Math.round(t*(VIR.length-1))];
+}
 function draw(){
   const d=DATA[key()], img=ctx.createImageData(cv.width,cv.height);
   const sh=eirp-47;
   for(let iy=0; iy<N; iy++) for(let ix=0; ix<N; ix++){
-    const v=d.rsrp[iy*N+ix], c=color(v==null?null:v+sh);
+    const v=d.rsrp[iy*N+ix];
+    const c = mode==='rsrp' ? color(v==null?null:v+sh) : capcolor(v==null?null:mbps(v+sh));
     for(let py=0; py<PX; py++) for(let px=0; px<PX; px++){
       const o=(((N-1-iy)*PX+py)*cv.width+ix*PX+px)*4;
       img.data[o]=c[0]; img.data[o+1]=c[1]; img.data[o+2]=c[2]; img.data[o+3]=255;
@@ -166,11 +174,16 @@ function stats(){
     if(r>=-90)c90++; if(r>=-100)c100++; snrs.push(r-nz); }
   snrs.sort((a,b)=>a-b);
   const med=snrs.length?snrs[Math.floor(snrs.length/2)]:NaN;
+  let mcap=0; for(const v of d.rsrp){ if(v==null) continue; mcap+=mbps(v+sh); } mcap/=n;
   document.getElementById('stats').innerHTML=
     '<b>'+d.txname+'</b> &mdash; '+d.band+' &mdash; '+n.toLocaleString()+' cells<br>'+
     'Area &ge; &minus;90 dBm: <b>'+(100*c90/n).toFixed(1)+'%</b><br>'+
     'Area &ge; &minus;100 dBm: <b>'+(100*c100/n).toFixed(1)+'%</b><br>'+
-    'Median SNR ('+BWS[bwi]+' MHz): <b>'+med.toFixed(1)+' dB</b>';
+    'Median SNR ('+BWS[bwi]+' MHz): <b>'+med.toFixed(1)+' dB</b><br>'+
+    'Mean cell capacity (Shannon): <b>'+mcap.toFixed(0)+' Mbps</b>';
+  document.getElementById('smin').textContent = mode==='rsrp' ? '-110 dBm' : '0 Mbps';
+  document.getElementById('smid').textContent = mode==='rsrp' ? 'RSRP' : 'Capacity';
+  document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : (BWS[bwi]*7)+' Mbps';
 }
 function probeAt(px,py,redraw){
   const d=DATA[key()];
@@ -195,7 +208,7 @@ function probeAt(px,py,redraw){
   ctx.beginPath(); ctx.moveTo(px-12,py); ctx.lineTo(px+12,py);
   ctx.moveTo(px,py-12); ctx.lineTo(px,py+12); ctx.stroke();
   ctx.strokeStyle='#333'; ctx.beginPath(); ctx.arc(px,py,3,0,7); ctx.stroke();
-  el.innerHTML='RSRP: <b>'+v.toFixed(1)+' dBm</b> &nbsp; SNR: <b>'+(v-nz).toFixed(1)+' dB</b><br>'+
+  el.innerHTML='RSRP: <b>'+v.toFixed(1)+' dBm</b> &nbsp; SNR: <b>'+(v-nz).toFixed(1)+' dB</b> &nbsp; Cap: <b>'+mbps(v).toFixed(0)+' Mbps</b><br>'+
     (los?'LOS path present':'NLOS only')+' &nbsp;&middot;&nbsp; '+dist.toFixed(0)+' m from '+d.txname;
 }
 let lastProbe=null;
@@ -233,6 +246,16 @@ function buildbtns(){
   mkbtns('bandbtns', BANDS.map(b=>({id:b.f,label:b.label})), band, id=>{band=id;});
 }
 buildbtns();
+(function(){
+  const bb=document.getElementById('modebtns');
+  [['rsrp','RSRP'],['cap','Capacity (Mbps)']].forEach(([id,label])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    b.className=id===mode?'on':'';
+    b.onclick=()=>{mode=id;[...bb.children].forEach(x=>x.className='');b.className='on';draw();
+      if(lastProbe) probeAt(lastProbe[0],lastProbe[1],false);};
+    bb.appendChild(b);
+  });
+})();
 draw();
 </script></body></html>
 """
