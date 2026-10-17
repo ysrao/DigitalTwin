@@ -21,7 +21,7 @@ Usage: single_tower_twin.py --chunk K   (one chunk per process; results appended
 import argparse, json, math, os, sys, time
 import numpy as np
 
-sys.path.insert(0, '.')
+sys.path.insert(0, 'v4')
 from build_scene_v4 import DEM, to_local, Z_REF
 
 S, W, N, E = 32.9925, -117.1120, 33.0375, -117.0580
@@ -38,18 +38,18 @@ CHUNK = 300              # RX points per solver invocation
 SITE = 'Site-NW'         # overridden by --site
 SUF = 'nw'
 FSTR = 'f3600'
-def _npz(): return f'data_twin_tower_{SUF}_{FSTR}.npz'
-def _png(): return f'twin_tower_{SUF}_{FSTR}_heatmap.png'
+def _npz(): return f'v4/data_twin_tower_{SUF}_{FSTR}.npz'
+def _png(): return f'v4/twin_tower_{SUF}_{FSTR}_heatmap.png'
 
 
 def build_rx_grid():
-    sites = json.load(open('data_sites_v4.json'))
+    sites = json.load(open('v4/data_sites_v4.json'))
     st = next(s for s in sites if s['name'] == SITE)
     x0, y0 = to_local(st['lon'], st['lat'])
     z_tx = float(st['terr_m'] + st['roof_m'] + TX_MAST_M - Z_REF)
-    dem = DEM('sd_data/dem_3dep.tif')
-    terr = np.load('data_terrain_500.npy')
-    bldh = np.load('data_bldh_500.npy')
+    dem = DEM('v4/sd_data/dem_3dep.tif')
+    terr = np.load('v4/data_terrain_500.npy')
+    bldh = np.load('v4/data_bldh_500.npy')
     surf = terr + bldh
     n = int(2 * HALF / STEP) + 1
     xs = x0 + (np.arange(n) - n // 2) * STEP
@@ -74,7 +74,20 @@ def solve_chunk(pts_chunk):
     import mitsuba as mi
     mi.set_variant('llvm_ad_mono_polarized')
     import sionna.rt as rt
-    s = rt.load_scene('scene_v4/scene.xml', merge_shapes=True)
+    s = rt.load_scene('v4/scene_v4/scene.xml', merge_shapes=True)
+    mat_mode = 'itu'
+    if FREQ_GHZ < 1.0:
+        # ITU-R P.2040 materials are only defined >= 1 GHz and their
+        # frequency callback RAISES below that, so clamp the callback to
+        # the 1-GHz boundary values (documented standard practice).
+        import drjit as dr
+        from sionna.rt.radio_materials.itu import itu_material
+        mat_mode = 'itu-clamped-1ghz'
+        for m in s.radio_materials.values():
+            if type(m).__name__ == 'ITURadioMaterial':
+                t = m.itu_type
+                m.frequency_update_callback = (
+                    lambda f, _t=t: itu_material(_t, dr.maximum(f, 1e9)))
     s.frequency = FREQ_GHZ * 1e9
     iso = rt.PlanarArray(num_rows=1, num_cols=1, pattern='iso', polarization='V')
     s.tx_array = iso
@@ -142,7 +155,7 @@ def main():
                  rsrp=rsrp, snr=snr,
                  meta=json.dumps(dict(eirp_dbm=EIRP_DBM, noise_dbm=meta['noise_dbm'],
                                       bw_mhz=meta['bw_mhz'], rx_h_m=RX_H_M,
-                                      freq_ghz=FREQ_GHZ, site=SITE)))
+                                      freq_ghz=FREQ_GHZ, site=SITE, mat_mode=mat_mode)))
         # heatmap
         import matplotlib
         matplotlib.use('Agg')
@@ -181,7 +194,7 @@ def main():
     np.savez(_npz(), xs=xs, ys=ys, pl=pl_all, los=los_all, done=np.array(sorted(done)),
              meta=json.dumps(dict(eirp_dbm=EIRP_DBM, noise_dbm=_noise_dbm(),
                                   bw_mhz=BW_MHZ, rx_h_m=RX_H_M,
-                                  freq_ghz=FREQ_GHZ, site=SITE)))
+                                  freq_ghz=FREQ_GHZ, site=SITE, mat_mode=mat_mode)))
     print(f'saved; chunks done: {sorted(done)}/{len(chunks)}')
 
 
