@@ -16,7 +16,8 @@ import numpy as np
 
 SITES = ['nw', 'ne', 'sw', 'se']
 BANDS = [('f700', 0.7, '0.7 GHz'), ('f2500', 2.5, '2.5 GHz'),
-         ('f3600', 3.6, '3.6 GHz'), ('f7125', 7.125, '7.125 GHz')]
+         ('f3600', 3.6, '3.6 GHz'), ('f7125', 7.125, '7.125 GHz'),
+         ('f28000', 28, '28 GHz (n257)')]
 EIRP0 = 47.0
 
 # viridis lookup, 33 entries
@@ -126,11 +127,17 @@ materials clamped to their 1&nbsp;GHz boundary values (below the recommendation'
 Full grids: v4/data_twin_tower_&lt;site&gt;_&lt;band&gt;.npz</p>
 <script>
 const DATA=__DATA__, VIR=__VIR__, BANDS=__BANDS__;
-const VMIN=-110, VMAX=-50, BWS=[5,10,20,40,100];
+const VMIN=-110, VMAX=-50;
+const BANDCFG={f700:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
+ f2500:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
+ f3600:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
+ f7125:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
+ f28000:{emin:40,emax:65,edef:55,bws:[100,200,400],bwdef:1}};
+const BWS=()=>BANDCFG[band].bws;
 let site='nw', band='f3600', eirp=47, bwi=1, mode='rsrp';
-const mbps=v=>{ const snr=v-noise(); return Math.min(Math.log2(1+Math.pow(10,snr/10)),7)*BWS[bwi]; };
+const mbps=v=>{ const snr=v-noise(); return Math.min(Math.log2(1+Math.pow(10,snr/10)),7)*BWS()[bwi]; };
 const key=()=>site+'_'+band;
-const noise=()=>-174+10*Math.log10(BWS[bwi]*1e6)+9;
+const noise=()=>-174+10*Math.log10(BWS()[bwi]*1e6)+9;
 const cv=document.getElementById('map'), ctx=cv.getContext('2d');
 const N=DATA[key()].n, PX=12; // cv.width == N*PX exactly: integer pixel writes
 
@@ -141,7 +148,7 @@ function color(v){ // v in dBm
 }
 function capcolor(m){ // m in Mbps
   if(m==null) return [255,255,255];
-  let t=m/(BWS[bwi]*7); t=Math.max(0,Math.min(1,t));
+  let t=m/(BWS()[bwi]*7); t=Math.max(0,Math.min(1,t));
   return VIR[Math.round(t*(VIR.length-1))];
 }
 function draw(){
@@ -179,11 +186,11 @@ function stats(){
     '<b>'+d.txname+'</b> &mdash; '+d.band+' &mdash; '+n.toLocaleString()+' cells<br>'+
     'Area &ge; &minus;90 dBm: <b>'+(100*c90/n).toFixed(1)+'%</b><br>'+
     'Area &ge; &minus;100 dBm: <b>'+(100*c100/n).toFixed(1)+'%</b><br>'+
-    'Median SNR ('+BWS[bwi]+' MHz): <b>'+med.toFixed(1)+' dB</b><br>'+
+    'Median SNR ('+BWS()[bwi]+' MHz): <b>'+med.toFixed(1)+' dB</b><br>'+
     'Mean cell capacity (Shannon): <b>'+mcap.toFixed(0)+' Mbps</b>';
   document.getElementById('smin').textContent = mode==='rsrp' ? '-110 dBm' : '0 Mbps';
   document.getElementById('smid').textContent = mode==='rsrp' ? 'RSRP' : 'Capacity';
-  document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : (BWS[bwi]*7)+' Mbps';
+  document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : (BWS()[bwi]*7)+' Mbps';
 }
 function probeAt(px,py,redraw){
   const d=DATA[key()];
@@ -224,7 +231,7 @@ document.getElementById('eirp').addEventListener('input',e=>{
   if(lastProbe) probeAt(lastProbe[0],lastProbe[1],false); });
 document.getElementById('bw').addEventListener('input',e=>{
   bwi=parseInt(e.target.value);
-  document.getElementById('bwv').textContent=BWS[bwi]; draw();
+  document.getElementById('bwv').textContent=BWS()[bwi]; draw();
   if(lastProbe) probeAt(lastProbe[0],lastProbe[1],false); });
 function mkbtns(elid, items, cur, onpick){
   const bb=document.getElementById(elid); bb.innerHTML='';
@@ -232,8 +239,13 @@ function mkbtns(elid, items, cur, onpick){
     const b=document.createElement('button'); b.textContent=it.label;
     b.className=it.id===cur?'on':'';
     b.onclick=()=>{onpick(it.id);
-      document.getElementById('eirp').value=47; eirp=47;
-      document.getElementById('eirpv').textContent='47.0';
+      const cfg=BANDCFG[band];
+      const es=document.getElementById('eirp');
+      es.min=cfg.emin; es.max=cfg.emax; es.value=cfg.edef; eirp=cfg.edef;
+      document.getElementById('eirpv').textContent=cfg.edef.toFixed(1);
+      const bs=document.getElementById('bw');
+      bs.max=cfg.bws.length-1; bs.value=cfg.bwdef; bwi=cfg.bwdef;
+      document.getElementById('bwv').textContent=cfg.bws[cfg.bwdef];
       lastProbe=null;
       document.getElementById('probe').innerHTML='Click anywhere on the map to probe signal.';
       [...bb.children].forEach(x=>x.className='');b.className='on';draw();};

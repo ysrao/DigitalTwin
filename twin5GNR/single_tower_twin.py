@@ -123,18 +123,22 @@ def solve_chunk(pts_chunk):
     import sionna.rt as rt
     s = rt.load_scene('v4/scene_v4/scene.xml', merge_shapes=True)
     mat_mode = 'itu'
-    if FREQ_GHZ < 1.0:
-        # ITU-R P.2040 materials are only defined >= 1 GHz and their
-        # frequency callback RAISES below that, so clamp the callback to
-        # the 1-GHz boundary values (documented standard practice).
+    # ITU-R P.2040 Table 3 bounds: most materials >= 1 GHz (concrete to
+    # 100 GHz), but the *ground* types stop at 10 GHz. The frequency
+    # callback RAISES outside those ranges, so clamp per material:
+    #   grounds -> [1, 10] GHz boundary values, others -> 1 GHz floor.
+    if FREQ_GHZ < 1.0 or FREQ_GHZ > 10.0:
         import drjit as dr
         from sionna.rt.radio_materials.itu import itu_material
-        mat_mode = 'itu-clamped-1ghz'
+        GROUND_TYPES = {'very_dry_ground', 'medium_dry_ground', 'wet_ground'}
+        mat_mode = 'itu-clamped-1ghz' if FREQ_GHZ < 1.0 else 'itu-clamped-10ghz'
         for m in s.radio_materials.values():
             if type(m).__name__ == 'ITURadioMaterial':
                 t = m.itu_type
+                lo, hi = (1e9, 10e9) if t in GROUND_TYPES else (1e9, 1e12)
                 m.frequency_update_callback = (
-                    lambda f, _t=t: itu_material(_t, dr.maximum(f, 1e9)))
+                    lambda f, _t=t, _lo=lo, _hi=hi:
+                        itu_material(_t, dr.minimum(dr.maximum(f, _lo), _hi)))
     s.frequency = FREQ_GHZ * 1e9
     # isotropic in the solver: antenna pattern applied in post-processing
     iso = rt.PlanarArray(num_rows=1, num_cols=1, pattern='iso', polarization='V')
@@ -194,7 +198,8 @@ def main():
     SITE = args.site; SUF = SITE.split('-')[1].lower()
     FREQ_GHZ = args.freq_ghz; BW_MHZ = args.bw_mhz; TILT_DEG = args.tilt_deg
     FSTR = f'f{int(round(FREQ_GHZ*1000))}'
-    MAT_MODE = 'itu-clamped-1ghz' if FREQ_GHZ < 1.0 else 'itu'
+    MAT_MODE = ('itu-clamped-1ghz' if FREQ_GHZ < 1.0
+                else 'itu-clamped-10ghz' if FREQ_GHZ > 10.0 else 'itu')
 
     st, tx, xs, ys, pts = build_rx_grid()
     n = len(xs)
