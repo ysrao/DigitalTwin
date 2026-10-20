@@ -28,6 +28,32 @@ Plus an interactive browser viewer (`twin_viewer.html`): site switcher,
 band switcher, EIRP slider (analytic, instant), bandwidth slider 5-100 MHz
 (analytic noise floor, instant), click-to-probe RSRP/SNR/LOS readouts.
 
+## Uplink
+
+The viewer has a **Downlink / Uplink toggle**. The uplink layer
+(`ul_post.py`, method in `UL_METHOD.md`) reuses the same stored ray-traced
+paths and mirrors the DL post-processing with only the link direction
+changed — all of it **modelled, not measured**:
+
+- UE transmit 23 dBm, omni 0 dBi; base-station receive uses the same
+  TR 38.901 sector pattern **by reciprocity** on the stored path angles,
+  plus the same 12.04 dB 4x4 array gain
+- UL noise floor: −174 dBm/Hz + 10·log10(BW) + BS noise figure 4 dB +
+  3 dB interference rise; capacity = Shannon bound, cap 7 bps/Hz (same
+  convention as DL)
+- FDD n28 reuses the DL path gains for its paired uplink band (stated
+  approximation, no invented frequency correction)
+- Because both directions share the same per-sector channel powers, UL
+  RSRP = DL RSRP − 3.96 dB exactly on every served cell (verified on all
+  20 site-bands); UL coverage ≥ −90 dBm runs 1–4 points below DL, and
+  mean UL capacity is within ~1–2 Mbps of DL at FR1, ~15–20% below at
+  28 GHz / 200 MHz
+- In UL mode the EIRP slider is disabled (base-station EIRP does not
+  affect the uplink); the map, stats and click-probe show UL RSRP / UL SNR
+
+Per-band UL grids live in `data_twin_tower_<site>_<band>_ul.npz`
+(`ul_rsrp`, `ul_snr`, `ul_cap_mbps` at the viewer-default bandwidth).
+
 ## Provenance (read this first)
 
 - Ray-tracing output only: path gain per grid cell. RSRP/SNR are derived
@@ -55,7 +81,8 @@ for k in 0 1 2 3 4 5 6 7 8; do
 done
 python single_tower_twin.py --site Site-NW --freq-ghz 3.6 --post   # stats + heatmap
 
-# 3. build the interactive viewer (needs all sites x bands .npz)
+# 3. uplink post (needs all sites x bands solver .npz) + build the viewer
+python ul_post.py        # -> data_twin_tower_<site>_<band>_ul.npz
 python build_viewer.py   # -> twin_viewer.html, open in any browser
 ```
 
@@ -72,8 +99,11 @@ python build_viewer.py   # -> twin_viewer.html, open in any browser
 | `single_tower_twin.py` | chunked full-area RT + RSRP/SNR post |
 | `sionna_cal_v4.py` | 192-point independent calibration vs 3GPP UMa |
 | `planner_v4.py` | statistical multi-site SINR/capacity layer |
+| `ul_post.py` | uplink post: UL RSRP/SNR/capacity grids from the stored paths |
+| `UL_METHOD.md` | uplink model, assumptions and results table |
 | `build_viewer.py` | generates the standalone `twin_viewer.html` |
 | `data_twin_tower_<site>.npz` | per-site grids: pl, los, rsrp, snr |
+| `data_twin_tower_<site>_<band>_ul.npz` | per-site-band uplink grids: ul_rsrp, ul_snr, ul_cap_mbps |
 
 ## Data licenses
 

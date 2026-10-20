@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 """Build twin_viewer.html: interactive multi-band digital twin viewer.
 
-Embeds precomputed Sionna RT grids (4 sites x 4 bands) as JSON.
+Embeds precomputed Sionna RT grids (4 sites x 5 bands) as JSON.
 No dependencies, no server, no install - open in any browser.
 
 Interactions:
   - site switcher (4 precomputed maps, instant)
-  - band switcher: 0.7 / 2.5 / 3.6 / 7.125 GHz (precomputed, instant)
+  - band switcher: 0.7 / 2.5 / 3.6 / 7.125 / 28 GHz (precomputed, instant)
+  - DL/UL toggle: uplink grids come from ul_post.py (same stored paths,
+    reciprocal BS receive pattern; UE TX 23 dBm). EIRP slider is DL-only
+    and is disabled in UL mode.
   - EIRP slider 30-47 dBm (analytic dB shift, instant recolor + stats)
   - bandwidth slider 5-100 MHz (analytic noise floor -> SNR, instant)
   - click-to-probe: RSRP/SNR/LOS/distance readout
+
+Paths: reads the npz files in the CURRENT directory (this clone has no
+v4/ subdir). to_local is inlined from build_scene_v4.py (identical
+constants) to avoid that module's heavy import chain.
 """
 import json
 import numpy as np
@@ -36,14 +43,24 @@ for i in range(len(VIRIDIS) - 1):
 VIR.append(VIRIDIS[-1])
 
 
+def to_local(lon, lat):
+    """Inlined from build_scene_v4.py (identical constants/formula)."""
+    lat0, lon0 = 33.015, -117.085
+    kx = 111320.0 * np.cos(np.radians(lat0))
+    ky = 110574.0
+    return (np.asarray(lon) - lon0) * kx, (np.asarray(lat) - lat0) * ky
+
+
 def main():
     data = {}
     for s in SITES:
         for fstr, fghz, blabel in BANDS:
             key = f'{s}_{fstr}'
-            d = np.load(f'v4/data_twin_tower_{s}_{fstr}.npz')
+            d = np.load(f'data_twin_tower_{s}_{fstr}.npz')
+            du = np.load(f'data_twin_tower_{s}_{fstr}_ul.npz')
             xs, ys = d['xs'], d['ys']
             rsrp = d['rsrp']
+            ulrsrp = du['ul_rsrp']
             los = d['los']
             meta = json.loads(str(d['meta']))
             n = len(xs)
@@ -54,6 +71,9 @@ def main():
                 # RSRP at reference EIRP, 0.1 dB; NaN -> null
                 'rsrp': [None if np.isnan(v) else round(float(v), 1)
                          for v in rsrp.reshape(-1)],
+                # UL RSRP (UE TX 23 dBm, reciprocal pattern; ul_post.py)
+                'ulrsrp': [None if np.isnan(v) else round(float(v), 1)
+                           for v in ulrsrp.reshape(-1)],
                 'los': ''.join('1' if v else '0' for v in los.reshape(-1)),
                 'tx': [round(float(xs[n // 2]), 1), round(float(ys[n // 2]), 1)],
                 'txname': meta['site'],
@@ -61,10 +81,7 @@ def main():
                 'mat': meta.get('mat_mode', 'itu'),
             }
     # tx is grid centre by construction; store actual TX local coords instead
-    sites_json = json.load(open('v4/data_sites_v4.json'))
-    import sys
-    sys.path.insert(0, 'v4')
-    from build_scene_v4 import to_local
+    sites_json = json.load(open('data_sites_v4.json'))
     for sj in sites_json:
         key = sj['name'].split('-')[1].lower()
         x, y = to_local(sj['lon'], sj['lat'])
@@ -77,8 +94,8 @@ def main():
     html = html.replace('__VIR__', json.dumps(VIR))
     html = html.replace('__BANDS__', json.dumps(
         [{'f': fstr, 'label': blabel} for fstr, _, blabel in BANDS]))
-    open('v4/twin_viewer.html', 'w').write(html)
-    print('wrote v4/twin_viewer.html (%d KB, %d maps)' % (len(html) // 1024, len(data)))
+    open('twin_viewer.html', 'w').write(html)
+    print('wrote twin_viewer.html (%d KB, %d maps)' % (len(html) // 1024, len(data)))
 
 
 _HTML = """<!DOCTYPE html>
@@ -113,9 +130,11 @@ Click the map to probe any point. Toggle RSRP / Capacity views.</p>
 <div id="panel">
 <div class="btns" id="sitebtns"></div>
 <div class="btns" id="bandbtns"></div>
+<div class="btns" id="linkbtns"></div>
 <div class="btns" id="modebtns"></div>
 <label>EIRP: <b id="eirpv">47.0</b> dBm</label>
 <input type="range" id="eirp" min="30" max="47" step="0.5" value="47">
+<div id="ulnote" style="display:none;font-size:13px;color:#555;margin:2px 0 6px">UL: phone TX 23 dBm &mdash; base-station EIRP does not affect the uplink, so the EIRP slider is disabled.</div>
 <label>Bandwidth: <b id="bwv">10</b> MHz</label>
 <input type="range" id="bw" min="0" max="4" step="1" value="1">
 <div id="probe">Click anywhere on the map to probe signal.</div>
@@ -124,7 +143,10 @@ Click the map to probe any point. Toggle RSRP / Capacity views.</p>
 <p class="foot">White cells: no ray-traced path found (genuine dead zones at depth 3). EIRP slider is an analytic dB
 shift; bandwidth slider moves the noise floor only &mdash; no re-solve needed. Capacity = Shannon bound (cap 7 bps/Hz), single cell, from the ray-traced SNR. 0.7&nbsp;GHz uses ITU-R P.2040
 materials clamped to their 1&nbsp;GHz boundary values (below the recommendation's defined range).
-Full grids: v4/data_twin_tower_&lt;site&gt;_&lt;band&gt;.npz</p>
+Full grids: data_twin_tower_&lt;site&gt;_&lt;band&gt;.npz (downlink) and data_twin_tower_&lt;site&gt;_&lt;band&gt;_ul.npz (uplink)</p>
+<p class="foot" id="ulfoot" style="display:none">Uplink (modelled, not measured): UE transmit 23 dBm, omni 0 dBi; base-station receive
+uses the same TR 38.901 sector pattern by reciprocity on the stored ray paths + 12.0 dB 4&times;4 array gain; BS noise figure 4 dB plus
+3 dB interference rise; capacity = Shannon bound (cap 7 bps/Hz) from the UL SNR. Full model + assumptions: UL_METHOD.md (generator: ul_post.py).</p>
 <script>
 const DATA=__DATA__, VIR=__VIR__, BANDS=__BANDS__;
 const VMIN=-110, VMAX=-50;
@@ -134,10 +156,16 @@ const BANDCFG={f700:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
  f7125:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
  f28000:{emin:40,emax:65,edef:55,bws:[100,200,400],bwdef:1}};
 const BWS=()=>BANDCFG[band].bws;
-let site='nw', band='f3600', eirp=47, bwi=1, mode='rsrp';
+let site='nw', band='f3600', eirp=47, bwi=1, mode='rsrp', link='dl';
 const mbps=v=>{ const snr=v-noise(); return Math.min(Math.log2(1+Math.pow(10,snr/10)),7)*BWS()[bwi]; };
 const key=()=>site+'_'+band;
-const noise=()=>-174+10*Math.log10(BWS()[bwi]*1e6)+9;
+// DL: UE noise figure 9 dB. UL: BS noise figure 4 dB + 3 dB interference rise.
+const noise=()=> link==='dl' ? -174+10*Math.log10(BWS()[bwi]*1e6)+9
+                             : -174+10*Math.log10(BWS()[bwi]*1e6)+4+3;
+// Active RSRP grid + analytic shift: EIRP slider shifts DL only (UL is set
+// by the phone's 23 dBm TX, so no shift and the slider is disabled).
+const arr=()=> link==='dl' ? DATA[key()].rsrp : DATA[key()].ulrsrp;
+const shift=()=> link==='dl' ? eirp-47 : 0;
 const cv=document.getElementById('map'), ctx=cv.getContext('2d');
 const N=DATA[key()].n, PX=12; // cv.width == N*PX exactly: integer pixel writes
 
@@ -152,10 +180,10 @@ function capcolor(m){ // m in Mbps
   return VIR[Math.round(t*(VIR.length-1))];
 }
 function draw(){
-  const d=DATA[key()], img=ctx.createImageData(cv.width,cv.height);
-  const sh=eirp-47;
+  const d=DATA[key()], A=arr(), img=ctx.createImageData(cv.width,cv.height);
+  const sh=shift();
   for(let iy=0; iy<N; iy++) for(let ix=0; ix<N; ix++){
-    const v=d.rsrp[iy*N+ix];
+    const v=A[iy*N+ix];
     const c = mode==='rsrp' ? color(v==null?null:v+sh) : capcolor(v==null?null:mbps(v+sh));
     for(let py=0; py<PX; py++) for(let px=0; px<PX; px++){
       const o=(((N-1-iy)*PX+py)*cv.width+ix*PX+px)*4;
@@ -175,21 +203,21 @@ function draw(){
 function km(p){ const d=DATA[key()];
   return [(p[0]-d.x0)/(d.step*N)*cv.width, cv.height-(p[1]-d.y0)/(d.step*N)*cv.height]; }
 function stats(){
-  const d=DATA[key()], sh=eirp-47, nz=noise();
+  const d=DATA[key()], A=arr(), sh=shift(), nz=noise();
   let c90=0,c100=0,n=0,snrs=[];
-  for(const v of d.rsrp){ if(v==null) continue; n++; const r=v+sh;
+  for(const v of A){ if(v==null) continue; n++; const r=v+sh;
     if(r>=-90)c90++; if(r>=-100)c100++; snrs.push(r-nz); }
   snrs.sort((a,b)=>a-b);
   const med=snrs.length?snrs[Math.floor(snrs.length/2)]:NaN;
-  let mcap=0; for(const v of d.rsrp){ if(v==null) continue; mcap+=mbps(v+sh); } mcap/=n;
+  let mcap=0; for(const v of A){ if(v==null) continue; mcap+=mbps(v+sh); } mcap/=n;
   document.getElementById('stats').innerHTML=
-    '<b>'+d.txname+'</b> &mdash; '+d.band+' &mdash; '+n.toLocaleString()+' cells<br>'+
+    '<b>'+d.txname+'</b> &mdash; '+d.band+(link==='ul'?' &mdash; Uplink':'')+' &mdash; '+n.toLocaleString()+' cells<br>'+
     'Area &ge; &minus;90 dBm: <b>'+(100*c90/n).toFixed(1)+'%</b><br>'+
     'Area &ge; &minus;100 dBm: <b>'+(100*c100/n).toFixed(1)+'%</b><br>'+
     'Median SNR ('+BWS()[bwi]+' MHz): <b>'+med.toFixed(1)+' dB</b><br>'+
     'Mean cell capacity (Shannon): <b>'+mcap.toFixed(0)+' Mbps</b>';
   document.getElementById('smin').textContent = mode==='rsrp' ? '-110 dBm' : '0 Mbps';
-  document.getElementById('smid').textContent = mode==='rsrp' ? 'RSRP' : 'Capacity';
+  document.getElementById('smid').textContent = mode==='rsrp' ? (link==='ul'?'UL RSRP':'RSRP') : 'Capacity';
   document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : (BWS()[bwi]*7)+' Mbps';
 }
 function probeAt(px,py,redraw){
@@ -197,8 +225,9 @@ function probeAt(px,py,redraw){
   const fx=px/PX, fy=(cv.height-py)/PX; // grid coords, fy=0 south
   const ix=Math.floor(fx), iy=Math.floor(fy);
   if(ix<0||iy<0||ix>=N-1||iy>=N-1) return;
-  const sh=eirp-47, nz=noise();
-  const g=(x,y)=>d.rsrp[y*N+x];
+  const sh=shift(), nz=noise();
+  const A=arr();
+  const g=(x,y)=>A[y*N+x];
   const v00=g(ix,iy),v10=g(ix+1,iy),v01=g(ix,iy+1),v11=g(ix+1,iy+1);
   const el=document.getElementById('probe');
   if(v00==null&&v10==null&&v01==null&&v11==null){
@@ -215,7 +244,7 @@ function probeAt(px,py,redraw){
   ctx.beginPath(); ctx.moveTo(px-12,py); ctx.lineTo(px+12,py);
   ctx.moveTo(px,py-12); ctx.lineTo(px,py+12); ctx.stroke();
   ctx.strokeStyle='#333'; ctx.beginPath(); ctx.arc(px,py,3,0,7); ctx.stroke();
-  el.innerHTML='RSRP: <b>'+v.toFixed(1)+' dBm</b> &nbsp; SNR: <b>'+(v-nz).toFixed(1)+' dB</b> &nbsp; Cap: <b>'+mbps(v).toFixed(0)+' Mbps</b><br>'+
+  el.innerHTML=(link==='ul'?'UL RSRP: <b>':'RSRP: <b>')+v.toFixed(1)+' dBm</b> &nbsp; SNR: <b>'+(v-nz).toFixed(1)+' dB</b> &nbsp; Cap: <b>'+mbps(v).toFixed(0)+' Mbps</b><br>'+
     (los?'LOS path present':'NLOS only')+' &nbsp;&middot;&nbsp; '+dist.toFixed(0)+' m from '+d.txname;
 }
 let lastProbe=null;
@@ -248,7 +277,7 @@ function mkbtns(elid, items, cur, onpick){
       document.getElementById('bwv').textContent=cfg.bws[cfg.bwdef];
       lastProbe=null;
       document.getElementById('probe').innerHTML='Click anywhere on the map to probe signal.';
-      [...bb.children].forEach(x=>x.className='');b.className='on';draw();};
+      [...bb.children].forEach(x=>x.className='');b.className='on';applyLink();draw();};
     bb.appendChild(b);
   }
 }
@@ -258,6 +287,21 @@ function buildbtns(){
   mkbtns('bandbtns', BANDS.map(b=>({id:b.f,label:b.label})), band, id=>{band=id;});
 }
 buildbtns();
+function applyLink(){
+  document.getElementById('eirp').disabled = link==='ul';
+  document.getElementById('ulnote').style.display = link==='ul' ? 'block' : 'none';
+  document.getElementById('ulfoot').style.display = link==='ul' ? 'block' : 'none';
+}
+(function(){
+  const bb=document.getElementById('linkbtns');
+  [['dl','Downlink'],['ul','Uplink']].forEach(([id,label])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    b.className=id===link?'on':'';
+    b.onclick=()=>{link=id;[...bb.children].forEach(x=>x.className='');b.className='on';applyLink();draw();
+      if(lastProbe) probeAt(lastProbe[0],lastProbe[1],false);};
+    bb.appendChild(b);
+  });
+})();
 (function(){
   const bb=document.getElementById('modebtns');
   [['rsrp','RSRP'],['cap','Capacity (Mbps)']].forEach(([id,label])=>{
