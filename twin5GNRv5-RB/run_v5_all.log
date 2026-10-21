@@ -1,0 +1,202 @@
+Site-SW f3600 street chunk 0/8: 300 pts in 44s; paths/RX median 78
+Site-SW f3600 street chunk 1/8: 300 pts in 43s; paths/RX median 28
+Site-SW f3600 street chunk 2/8: 300 pts in 41s; paths/RX median 44
+Site-SW f3600 street chunk 3/8: 300 pts in 42s; paths/RX median 160
+Site-SW f3600 street chunk 4/8: 300 pts in 40s; paths/RX median 101
+Site-SW f3600 street chunk 5/8: 300 pts in 39s; paths/RX median 135
+Site-SW f3600 street chunk 6/8: 300 pts in 39s; paths/RX median 158
+Site-SW f3600 street chunk 7/8: 300 pts in 35s; paths/RX median 101
+Site-SW f3600 street chunk 8/8: 201 pts in 25s; paths/RX median 73
+Site-SW f3600 street: no-path 8.0%  LOS 17.3%  RSRP>=-90 (tilt 4) 45.5% of all cells  diffuse share of power median 94.6%
+Site-SW f3600 roof chunk 0/8: 300 pts in 36s; paths/RX median 163
+Site-SW f3600 roof chunk 1/8: 300 pts in 37s; paths/RX median 110
+Site-SW f3600 roof chunk 2/8: 300 pts in 37s; paths/RX median 207
+Site-SW f3600 roof chunk 3/8: 300 pts in 40s; paths/RX median 428
+Site-SW f3600 roof chunk 4/8: 300 pts in 43s; paths/RX median 534
+Site-SW f3600 roof chunk 5/8: 300 pts in 38s; paths/RX median 536
+Site-SW f3600 roof chunk 6/8: 300 pts in 36s; paths/RX median 433
+Site-SW f3600 roof chunk 7/8: 300 pts in 36s; paths/RX median 263
+Site-SW f3600 roof chunk 8/8: 201 pts in 24s; paths/RX median 182
+Site-SW f3600 roof: no-path 2.7%  LOS 36.7%  RSRP>=-90 (tilt 4) 58.0% of all cells  diffuse share of power median 49.0%
+Site-SW f700 street chunk 0/8: 300 pts in 37s; paths/RX median 78
+Site-SW f700 street chunk 1/8: 300 pts in 37s; paths/RX median 28
+Site-SW f700 street chunk 2/8: 300 pts in 37s; paths/RX median 44
+Site-SW f700 street chunk 3/8: 300 pts in 39s; paths/RX median 160
+Site-SW f700 street chunk 4/8: 300 pts in 36s; paths/RX median 101
+Site-SW f700 street chunk 5/8: 300 pts in 38s; paths/RX median 135
+Site-SW f700 street chunk 6/8: 300 pts in 35s; paths/RX median 158
+Site-SW f700 street chunk 7/8: 300 pts in 33s; paths/RX median 101
+Site-SW f700 street chunk 8/8: 201 pts in 22s; paths/RX median 73
+Site-SW f700 street: no-path 8.0%  LOS 17.3%  RSRP>=-90 (tilt 4) 71.6% of all cells  diffuse share of power median 77.5%
+Site-SW f700 roof chunk 0/8: 300 pts in 36s; paths/RX median 163
+Site-SW f700 roof chunk 1/8: 300 pts in 38s; paths/RX median 110
+Site-SW f700 roof chunk 2/8: 300 pts in 37s; paths/RX median 207
+Site-SW f700 roof chunk 3/8: 300 pts in 37s; paths/RX median 426
+Site-SW f700 roof chunk 4/8: 300 pts in 36s; paths/RX median 534
+Site-SW f700 roof chunk 5/8: 300 pts in 36s; paths/RX median 535
+Site-SW f700 roof chunk 6/8: 300 pts in 36s; paths/RX median 433
+Site-SW f700 roof chunk 7/8: 300 pts in 35s; paths/RX median 264
+Site-SW f700 roof chunk 8/8: 201 pts in 23s; paths/RX median 183
+Site-SW f700 roof: no-path 2.7%  LOS 36.7%  RSRP>=-90 (tilt 4) 83.7% of all cells  diffuse share of power median 20.9%
+Site-SW f2500 street chunk 0/8: 300 pts in 37s; paths/RX median 78
+Site-SW f2500 street chunk 1/8: 300 pts in 37s; paths/RX median 28
+Site-SW f2500 street chunk 2/8: 300 pts in 37s; paths/RX median 44
+Site-SW f2500 street chunk 3/8: 300 pts in 38s; paths/RX median 160
+Site-SW f2500 street chunk 4/8: 300 pts in 36s; paths/RX median 101
+Site-SW f2500 street chunk 5/8: 300 pts in 36s; paths/RX median 135
+Site-SW f2500 street chunk 6/8: 300 pts in 35s; paths/RX median 158
+Site-SW f2500 street chunk 7/8: 300 pts in 33s; paths/RX median 101
+Site-SW f2500 street chunk 8/8: 201 pts in 21s; paths/RX median 73
+Site-SW f2500 street: no-path 8.0%  LOS 17.3%  RSRP>=-90 (tilt 4) 52.7% of all cells  diffuse share of power median 92.3%
+Site-SW f2500 roof chunk 0/8: 300 pts in 35s; paths/RX median 163
+Site-SW f2500 roof chunk 1/8: 300 pts in 38s; paths/RX median 110
+Site-SW f2500 roof chunk 2/8: 300 pts in 38s; paths/RX median 207
+Site-SW f2500 roof chunk 3/8: 300 pts in 39s; paths/RX median 427
+Site-SW f2500 roof chunk 4/8: 300 pts in 36s; paths/RX median 534
+Site-SW f2500 roof chunk 5/8: 300 pts in 37s; paths/RX median 536
+Site-SW f2500 roof chunk 6/8: 300 pts in 36s; paths/RX median 433
+Site-SW f2500 roof chunk 7/8: 300 pts in 36s; paths/RX median 264
+Site-SW f2500 roof chunk 8/8: 201 pts in 24s; paths/RX median 183
+Site-SW f2500 roof: no-path 2.7%  LOS 36.7%  RSRP>=-90 (tilt 4) 65.3% of all cells  diffuse share of power median 40.9%
+Site-SW f7125 street chunk 0/8: 300 pts in 37s; paths/RX median 78
+Site-SW f7125 street chunk 1/8: 300 pts in 36s; paths/RX median 28
+Site-SW f7125 street chunk 2/8: 300 pts in 38s; paths/RX median 44
+Site-SW f7125 street chunk 3/8: 300 pts in 38s; paths/RX median 160
+Site-SW f7125 street chunk 4/8: 300 pts in 36s; paths/RX median 101
+Site-SW f7125 street chunk 5/8: 300 pts in 36s; paths/RX median 135
+Site-SW f7125 street chunk 6/8: 300 pts in 35s; paths/RX median 158
+Site-SW f7125 street chunk 7/8: 300 pts in 33s; paths/RX median 101
+Site-SW f7125 street chunk 8/8: 201 pts in 21s; paths/RX median 73
+Site-SW f7125 street: no-path 8.0%  LOS 17.3%  RSRP>=-90 (tilt 4) 34.5% of all cells  diffuse share of power median 97.1%
+Site-SW f7125 roof chunk 0/8: 300 pts in 35s; paths/RX median 163
+Site-SW f7125 roof chunk 1/8: 300 pts in 38s; paths/RX median 110
+Site-SW f7125 roof chunk 2/8: 300 pts in 38s; paths/RX median 207
+Site-SW f7125 roof chunk 3/8: 300 pts in 37s; paths/RX median 427
+Site-SW f7125 roof chunk 4/8: 300 pts in 37s; paths/RX median 534
+Site-SW f7125 roof chunk 5/8: 300 pts in 39s; paths/RX median 534
+Site-SW f7125 roof chunk 6/8: 300 pts in 37s; paths/RX median 433
+Site-SW f7125 roof chunk 7/8: 300 pts in 35s; paths/RX median 264
+Site-SW f7125 roof chunk 8/8: 201 pts in 23s; paths/RX median 183
+Site-SW f7125 roof: no-path 2.7%  LOS 36.7%  RSRP>=-90 (tilt 4) 48.6% of all cells  diffuse share of power median 63.6%
+Site-SW f28000 street chunk 0/8: 300 pts in 37s; paths/RX median 78
+Site-SW f28000 street chunk 1/8: 300 pts in 36s; paths/RX median 28
+Site-SW f28000 street chunk 2/8: 300 pts in 36s; paths/RX median 44
+Site-SW f28000 street chunk 3/8: 300 pts in 38s; paths/RX median 160
+Site-SW f28000 street chunk 4/8: 300 pts in 36s; paths/RX median 101
+Site-SW f28000 street chunk 5/8: 300 pts in 37s; paths/RX median 135
+Site-SW f28000 street chunk 6/8: 300 pts in 35s; paths/RX median 158
+Site-SW f28000 street chunk 7/8: 300 pts in 35s; paths/RX median 101
+Site-SW f28000 street chunk 8/8: 201 pts in 22s; paths/RX median 73
+Site-SW f28000 street: no-path 8.0%  LOS 17.3%  RSRP>=-90 (tilt 4) 21.5% of all cells  diffuse share of power median 99.3%
+Site-SW f28000 roof chunk 0/8: 300 pts in 36s; paths/RX median 163
+Site-SW f28000 roof chunk 1/8: 300 pts in 37s; paths/RX median 110
+Site-SW f28000 roof chunk 2/8: 300 pts in 37s; paths/RX median 207
+Site-SW f28000 roof chunk 3/8: 300 pts in 38s; paths/RX median 426
+Site-SW f28000 roof chunk 4/8: 300 pts in 35s; paths/RX median 534
+Site-SW f28000 roof chunk 5/8: 300 pts in 36s; paths/RX median 536
+Site-SW f28000 roof chunk 6/8: 300 pts in 36s; paths/RX median 433
+Site-SW f28000 roof chunk 7/8: 300 pts in 35s; paths/RX median 264
+Site-SW f28000 roof chunk 8/8: 201 pts in 23s; paths/RX median 183
+Site-SW f28000 roof: no-path 2.7%  LOS 36.7%  RSRP>=-90 (tilt 4) 39.4% of all cells  diffuse share of power median 88.0%
+Site-SE f3600 street chunk 0/8: 300 pts in 36s; paths/RX median 7
+Site-SE f3600 street chunk 1/8: 300 pts in 42s; paths/RX median 16
+Site-SE f3600 street chunk 2/8: 300 pts in 42s; paths/RX median 24
+Site-SE f3600 street chunk 3/8: 300 pts in 43s; paths/RX median 64
+Site-SE f3600 street chunk 4/8: 300 pts in 43s; paths/RX median 128
+Site-SE f3600 street chunk 5/8: 300 pts in 45s; paths/RX median 72
+Site-SE f3600 street chunk 6/8: 300 pts in 48s; paths/RX median 48
+Site-SE f3600 street chunk 7/8: 300 pts in 47s; paths/RX median 36
+Site-SE f3600 street chunk 8/8: 201 pts in 31s; paths/RX median 25
+Site-SE f3600 street: no-path 10.7%  LOS 15.7%  RSRP>=-90 (tilt 4) 42.4% of all cells  diffuse share of power median 93.6%
+Site-SE f3600 roof chunk 0/8: 300 pts in 37s; paths/RX median 86
+Site-SE f3600 roof chunk 1/8: 300 pts in 41s; paths/RX median 124
+Site-SE f3600 roof chunk 2/8: 300 pts in 40s; paths/RX median 92
+Site-SE f3600 roof chunk 3/8: 300 pts in 40s; paths/RX median 248
+Site-SE f3600 roof chunk 4/8: 300 pts in 41s; paths/RX median 318
+Site-SE f3600 roof chunk 5/8: 300 pts in 43s; paths/RX median 248
+Site-SE f3600 roof chunk 6/8: 300 pts in 42s; paths/RX median 189
+Site-SE f3600 roof chunk 7/8: 300 pts in 41s; paths/RX median 182
+Site-SE f3600 roof chunk 8/8: 201 pts in 27s; paths/RX median 176
+Site-SE f3600 roof: no-path 2.3%  LOS 39.6%  RSRP>=-90 (tilt 4) 61.0% of all cells  diffuse share of power median 5.6%
+Site-SE f700 street chunk 0/8: 300 pts in 32s; paths/RX median 7
+Site-SE f700 street chunk 1/8: 300 pts in 44s; paths/RX median 16
+Site-SE f700 street chunk 2/8: 300 pts in 40s; paths/RX median 24
+Site-SE f700 street chunk 3/8: 300 pts in 40s; paths/RX median 64
+Site-SE f700 street chunk 4/8: 300 pts in 42s; paths/RX median 128
+Site-SE f700 street chunk 5/8: 300 pts in 44s; paths/RX median 72
+Site-SE f700 street chunk 6/8: 300 pts in 44s; paths/RX median 48
+Site-SE f700 street chunk 7/8: 300 pts in 44s; paths/RX median 36
+Site-SE f700 street chunk 8/8: 201 pts in 28s; paths/RX median 25
+Site-SE f700 street: no-path 10.7%  LOS 15.7%  RSRP>=-90 (tilt 4) 70.7% of all cells  diffuse share of power median 73.5%
+Site-SE f700 roof chunk 0/8: 300 pts in 37s; paths/RX median 86
+Site-SE f700 roof chunk 1/8: 300 pts in 42s; paths/RX median 124
+Site-SE f700 roof chunk 2/8: 300 pts in 41s; paths/RX median 92
+Site-SE f700 roof chunk 3/8: 300 pts in 41s; paths/RX median 248
+Site-SE f700 roof chunk 4/8: 300 pts in 41s; paths/RX median 317
+Site-SE f700 roof chunk 5/8: 300 pts in 44s; paths/RX median 248
+Site-SE f700 roof chunk 6/8: 300 pts in 42s; paths/RX median 189
+Site-SE f700 roof chunk 7/8: 300 pts in 42s; paths/RX median 182
+Site-SE f700 roof chunk 8/8: 201 pts in 27s; paths/RX median 176
+Site-SE f700 roof: no-path 2.3%  LOS 39.6%  RSRP>=-90 (tilt 4) 87.7% of all cells  diffuse share of power median 2.6%
+Site-SE f2500 street chunk 0/8: 300 pts in 33s; paths/RX median 7
+Site-SE f2500 street chunk 1/8: 300 pts in 41s; paths/RX median 16
+Site-SE f2500 street chunk 2/8: 300 pts in 41s; paths/RX median 24
+Site-SE f2500 street chunk 3/8: 300 pts in 40s; paths/RX median 64
+Site-SE f2500 street chunk 4/8: 300 pts in 43s; paths/RX median 128
+Site-SE f2500 street chunk 5/8: 300 pts in 44s; paths/RX median 72
+Site-SE f2500 street chunk 6/8: 300 pts in 45s; paths/RX median 48
+Site-SE f2500 street chunk 7/8: 300 pts in 43s; paths/RX median 36
+Site-SE f2500 street chunk 8/8: 201 pts in 27s; paths/RX median 25
+Site-SE f2500 street: no-path 10.7%  LOS 15.7%  RSRP>=-90 (tilt 4) 49.4% of all cells  diffuse share of power median 90.8%
+Site-SE f2500 roof chunk 0/8: 300 pts in 38s; paths/RX median 86
+Site-SE f2500 roof chunk 1/8: 300 pts in 42s; paths/RX median 124
+Site-SE f2500 roof chunk 2/8: 300 pts in 41s; paths/RX median 92
+Site-SE f2500 roof chunk 3/8: 300 pts in 40s; paths/RX median 248
+Site-SE f2500 roof chunk 4/8: 300 pts in 40s; paths/RX median 317
+Site-SE f2500 roof chunk 5/8: 300 pts in 44s; paths/RX median 248
+Site-SE f2500 roof chunk 6/8: 300 pts in 43s; paths/RX median 189
+Site-SE f2500 roof chunk 7/8: 300 pts in 41s; paths/RX median 182
+Site-SE f2500 roof chunk 8/8: 201 pts in 28s; paths/RX median 176
+Site-SE f2500 roof: no-path 2.3%  LOS 39.6%  RSRP>=-90 (tilt 4) 67.9% of all cells  diffuse share of power median 4.6%
+Site-SE f7125 street chunk 0/8: 300 pts in 32s; paths/RX median 7
+Site-SE f7125 street chunk 1/8: 300 pts in 39s; paths/RX median 16
+Site-SE f7125 street chunk 2/8: 300 pts in 42s; paths/RX median 24
+Site-SE f7125 street chunk 3/8: 300 pts in 39s; paths/RX median 64
+Site-SE f7125 street chunk 4/8: 300 pts in 40s; paths/RX median 128
+Site-SE f7125 street chunk 5/8: 300 pts in 42s; paths/RX median 72
+Site-SE f7125 street chunk 6/8: 300 pts in 44s; paths/RX median 48
+Site-SE f7125 street chunk 7/8: 300 pts in 44s; paths/RX median 36
+Site-SE f7125 street chunk 8/8: 201 pts in 27s; paths/RX median 25
+Site-SE f7125 street: no-path 10.7%  LOS 15.7%  RSRP>=-90 (tilt 4) 32.3% of all cells  diffuse share of power median 96.6%
+Site-SE f7125 roof chunk 0/8: 300 pts in 38s; paths/RX median 86
+Site-SE f7125 roof chunk 1/8: 300 pts in 41s; paths/RX median 124
+Site-SE f7125 roof chunk 2/8: 300 pts in 41s; paths/RX median 92
+Site-SE f7125 roof chunk 3/8: 300 pts in 40s; paths/RX median 248
+--- relaunch after service restart Wed Oct 21 17:58:54 UTC 2026 ---
+Site-SE f7125 roof chunk 4/8: 300 pts in 69s; paths/RX median 318
+Site-SE f7125 roof chunk 5/8: 300 pts in 59s; paths/RX median 248
+Site-SE f7125 roof chunk 6/8: 300 pts in 54s; paths/RX median 189
+Site-SE f7125 roof chunk 7/8: 300 pts in 54s; paths/RX median 182
+Site-SE f7125 roof chunk 8/8: 201 pts in 35s; paths/RX median 177
+Site-SE f7125 roof: no-path 2.3%  LOS 39.6%  RSRP>=-90 (tilt 4) 52.5% of all cells  diffuse share of power median 7.9%
+Site-SE f28000 street chunk 0/8: 300 pts in 55s; paths/RX median 7
+Site-SE f28000 street chunk 1/8: 300 pts in 53s; paths/RX median 16
+Site-SE f28000 street chunk 2/8: 300 pts in 52s; paths/RX median 24
+Site-SE f28000 street chunk 3/8: 300 pts in 56s; paths/RX median 64
+Site-SE f28000 street chunk 4/8: 300 pts in 60s; paths/RX median 128
+Site-SE f28000 street chunk 5/8: 300 pts in 64s; paths/RX median 72
+Site-SE f28000 street chunk 6/8: 300 pts in 64s; paths/RX median 47
+Site-SE f28000 street chunk 7/8: 300 pts in 62s; paths/RX median 36
+Site-SE f28000 street chunk 8/8: 201 pts in 40s; paths/RX median 25
+Site-SE f28000 street: no-path 10.7%  LOS 15.7%  RSRP>=-90 (tilt 4) 21.3% of all cells  diffuse share of power median 99.1%
+Site-SE f28000 roof chunk 0/8: 300 pts in 53s; paths/RX median 86
+Site-SE f28000 roof chunk 1/8: 300 pts in 54s; paths/RX median 124
+Site-SE f28000 roof chunk 2/8: 300 pts in 53s; paths/RX median 92
+Site-SE f28000 roof chunk 3/8: 300 pts in 52s; paths/RX median 248
+Site-SE f28000 roof chunk 4/8: 300 pts in 49s; paths/RX median 317
+Site-SE f28000 roof chunk 5/8: 300 pts in 53s; paths/RX median 248
+Site-SE f28000 roof chunk 6/8: 300 pts in 53s; paths/RX median 189
+Site-SE f28000 roof chunk 7/8: 300 pts in 52s; paths/RX median 182
+Site-SE f28000 roof chunk 8/8: 201 pts in 35s; paths/RX median 176
+Site-SE f28000 roof: no-path 2.3%  LOS 39.6%  RSRP>=-90 (tilt 4) 44.0% of all cells  diffuse share of power median 19.6%
+ALL_DONE
