@@ -7,9 +7,11 @@ No dependencies, no server, no install - open in any browser.
 Interactions:
   - site switcher (4 precomputed maps, instant)
   - band switcher: 0.7 / 2.5 / 3.6 / 7.125 / 28 GHz (precomputed, instant)
-  - DL/UL toggle: uplink grids come from ul_post.py (same stored paths,
-    reciprocal BS receive pattern; UE TX 23 dBm). EIRP slider is DL-only
-    and is disabled in UL mode.
+  - DL/UL toggle: uplink grids come from ul_post.py v3 (link-budget
+    method mirroring the user's LTE link-budget workbook: UE TX 23 dBm
+    + workbook UE antenna fit, BS NF 3 dB + target RoT 4 dB, UL
+    throughput = Shannon cap 5 bps/Hz x (1 - 22.34% overhead)). EIRP
+    slider is DL-only and is disabled in UL mode.
   - EIRP slider 30-47 dBm (analytic dB shift, instant recolor + stats)
   - bandwidth slider 5-100 MHz (analytic noise floor -> SNR, instant)
   - click-to-probe: RSRP/SNR/LOS/distance readout
@@ -90,10 +92,21 @@ def main():
             if k in data:
                 data[k]['tx'] = [round(float(x), 1), round(float(y), 1)]
 
+    # UL v3 per-band UE antenna gain / EIRP (ul_post.py formulas; the
+    # workbook handset fit 6.7292*ln(f_MHz) - 51.61, clamped > 3600 MHz)
+    ueg, ueeirp = {}, {}
+    for fstr, fghz, _ in BANDS:
+        f_mhz = int(round(fghz * 1000))
+        g = 6.7292 * np.log(min(f_mhz, 3600)) - 51.61
+        ueg[fstr] = round(float(g), 2)
+        ueeirp[fstr] = round(23.0 + float(g), 2)
+
     html = _HTML.replace('__DATA__', json.dumps(data, separators=(',', ':')))
     html = html.replace('__VIR__', json.dumps(VIR))
     html = html.replace('__BANDS__', json.dumps(
         [{'f': fstr, 'label': blabel} for fstr, _, blabel in BANDS]))
+    html = html.replace('__UEG__', json.dumps(ueg))
+    html = html.replace('__UEEIRP__', json.dumps(ueeirp))
     open('twin_viewer.html', 'w').write(html)
     print('wrote twin_viewer.html (%d KB, %d maps)' % (len(html) // 1024, len(data)))
 
@@ -134,7 +147,7 @@ Click the map to probe any point. Toggle RSRP / Capacity views.</p>
 <div class="btns" id="modebtns"></div>
 <label>EIRP: <b id="eirpv">47.0</b> dBm</label>
 <input type="range" id="eirp" min="30" max="47" step="0.5" value="47">
-<div id="ulnote" style="display:none;font-size:13px;color:#555;margin:2px 0 6px">UL: phone TX 23 dBm &mdash; base-station EIRP does not affect the uplink, so the EIRP slider is disabled.</div>
+<div id="ulnote" style="display:none;font-size:13px;color:#555;margin:2px 0 6px">UL: phone EIRP 15.5 dBm (23 dBm TX, UE antenna &minus;7.5 dBi) &mdash; base-station EIRP does not affect the uplink, so the EIRP slider is disabled.</div>
 <label>Bandwidth: <b id="bwv">10</b> MHz</label>
 <input type="range" id="bw" min="0" max="4" step="1" value="1">
 <div id="probe">Click anywhere on the map to probe signal.</div>
@@ -144,11 +157,15 @@ Click the map to probe any point. Toggle RSRP / Capacity views.</p>
 shift; bandwidth slider moves the noise floor only &mdash; no re-solve needed. Capacity = Shannon bound (cap 7 bps/Hz), single cell, from the ray-traced SNR. 0.7&nbsp;GHz uses ITU-R P.2040
 materials clamped to their 1&nbsp;GHz boundary values (below the recommendation's defined range).
 Full grids: data_twin_tower_&lt;site&gt;_&lt;band&gt;.npz (downlink) and data_twin_tower_&lt;site&gt;_&lt;band&gt;_ul.npz (uplink)</p>
-<p class="foot" id="ulfoot" style="display:none">Uplink (modelled, not measured): UE transmit 23 dBm, omni 0 dBi; base-station receive
-uses the same TR 38.901 sector pattern by reciprocity on the stored ray paths + 12.0 dB 4&times;4 array gain; BS noise figure 4 dB plus
-3 dB interference rise; capacity = Shannon bound (cap 7 bps/Hz) from the UL SNR. Full model + assumptions: UL_METHOD.md (generator: ul_post.py).</p>
+<p class="foot" id="ulfoot" style="display:none">Uplink v3 (modelled, not measured) &mdash; link-budget method mirroring the user&rsquo;s LTE link-budget workbook
+(Qualcomm 80-W2559-5): the budget is closed per direction at the ray-traced path loss. Phone transmit 23 dBm plus the workbook UE antenna fit
+6.7292&middot;ln(f<sub>MHz</sub>) &minus; 51.61 dBi (&minus;7.5 dBi at 0.7 GHz, +1.0 at 2.5 GHz, +3.5 at 3.6 GHz, clamped above 3.6 GHz);
+base-station receive uses the same TR 38.901 sector pattern by reciprocity on the stored ray paths + 12.0 dB 4&times;4 array gain;
+noise = BS noise figure 3 dB + target RoT 4 dB over thermal; capacity = Shannon bound, cap 5 bps/Hz (single-layer UE),
+&times; (1 &minus; 22.34%) workbook UL overhead. Full model, edge budgets and results: UL_METHOD.md (generator: ul_post.py).</p>
 <script>
 const DATA=__DATA__, VIR=__VIR__, BANDS=__BANDS__;
+const UEG=__UEG__, UEEIRP=__UEEIRP__;
 const VMIN=-110, VMAX=-50;
 const BANDCFG={f700:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
  f2500:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
@@ -157,11 +174,16 @@ const BANDCFG={f700:{emin:30,emax:47,edef:47,bws:[5,10,20,40,100],bwdef:1},
  f28000:{emin:40,emax:65,edef:55,bws:[100,200,400],bwdef:1}};
 const BWS=()=>BANDCFG[band].bws;
 let site='nw', band='f3600', eirp=47, bwi=1, mode='rsrp', link='dl';
-const mbps=v=>{ const snr=v-noise(); return Math.min(Math.log2(1+Math.pow(10,snr/10)),7)*BWS()[bwi]; };
+// Shannon cap: DL 7 bps/Hz; UL 5 bps/Hz (single-layer UE, v3).
+// UL throughput also carries the workbook UL overhead factor 0.7766.
+const secap=()=> link==='dl' ? 7 : 5;
+const capmax=()=> link==='dl' ? BWS()[bwi]*7 : BWS()[bwi]*5*0.7766;
+const mbps=v=>{ const snr=v-noise(); const se=Math.min(Math.log2(1+Math.pow(10,snr/10)),secap());
+  return link==='dl' ? se*BWS()[bwi] : se*BWS()[bwi]*0.7766; };
 const key=()=>site+'_'+band;
-// DL: UE noise figure 9 dB. UL: BS noise figure 4 dB + 3 dB interference rise.
+// DL: UE noise figure 9 dB. UL (v3, workbook): BS NF 3 dB + target RoT 4 dB.
 const noise=()=> link==='dl' ? -174+10*Math.log10(BWS()[bwi]*1e6)+9
-                             : -174+10*Math.log10(BWS()[bwi]*1e6)+4+3;
+                             : -174+10*Math.log10(BWS()[bwi]*1e6)+3+4;
 // Active RSRP grid + analytic shift: EIRP slider shifts DL only (UL is set
 // by the phone's 23 dBm TX, so no shift and the slider is disabled).
 const arr=()=> link==='dl' ? DATA[key()].rsrp : DATA[key()].ulrsrp;
@@ -176,7 +198,7 @@ function color(v){ // v in dBm
 }
 function capcolor(m){ // m in Mbps
   if(m==null) return [255,255,255];
-  let t=m/(BWS()[bwi]*7); t=Math.max(0,Math.min(1,t));
+  let t=m/capmax(); t=Math.max(0,Math.min(1,t));
   return VIR[Math.round(t*(VIR.length-1))];
 }
 function draw(){
@@ -218,7 +240,7 @@ function stats(){
     'Mean cell capacity (Shannon): <b>'+mcap.toFixed(0)+' Mbps</b>';
   document.getElementById('smin').textContent = mode==='rsrp' ? '-110 dBm' : '0 Mbps';
   document.getElementById('smid').textContent = mode==='rsrp' ? (link==='ul'?'UL RSRP':'RSRP') : 'Capacity';
-  document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : (BWS()[bwi]*7)+' Mbps';
+  document.getElementById('smax').textContent = mode==='rsrp' ? '-50 dBm' : Math.round(capmax())+' Mbps';
 }
 function probeAt(px,py,redraw){
   const d=DATA[key()];
@@ -291,6 +313,11 @@ function applyLink(){
   document.getElementById('eirp').disabled = link==='ul';
   document.getElementById('ulnote').style.display = link==='ul' ? 'block' : 'none';
   document.getElementById('ulfoot').style.display = link==='ul' ? 'block' : 'none';
+  if(link==='ul'){
+    document.getElementById('ulnote').textContent =
+      'UL: phone EIRP '+UEEIRP[band].toFixed(1)+' dBm (23 dBm TX, UE antenna '+
+      UEG[band].toFixed(1)+' dBi) \u2014 base-station EIRP does not affect the uplink, so the EIRP slider is disabled.';
+  }
 }
 (function(){
   const bb=document.getElementById('linkbtns');

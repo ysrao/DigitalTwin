@@ -31,28 +31,69 @@ band switcher, EIRP slider (analytic, instant), bandwidth slider 5-100 MHz
 ## Uplink
 
 The viewer has a **Downlink / Uplink toggle**. The uplink layer
-(`ul_post.py`, method in `UL_METHOD.md`) reuses the same stored ray-traced
-paths and mirrors the DL post-processing with only the link direction
-changed — all of it **modelled, not measured**:
+(`ul_post.py`, method in `UL_METHOD.md`) is **UL v3 — the link-budget
+method**: it closes a per-direction budget, mirroring the user's own
+LTE link-budget workbook (Qualcomm 80-W2559-5 Rev A), on top of the
+same audited ray-traced path loss — all of it **modelled, not
+measured**:
 
-- UE transmit 23 dBm, omni 0 dBi; base-station receive uses the same
-  TR 38.901 sector pattern **by reciprocity** on the stored path angles,
-  plus the same 12.04 dB 4x4 array gain
-- UL noise floor: −174 dBm/Hz + 10·log10(BW) + BS noise figure 4 dB +
-  3 dB interference rise; capacity = Shannon bound, cap 7 bps/Hz (same
-  convention as DL)
+- UE transmit 23 dBm (workbook: 24) plus the workbook's handset
+  antenna fit 6.7292·ln(f_MHz) − 51.61 dBi: −7.53 dBi at 0.7 GHz,
+  +1.04 at 2.5 GHz, +3.49 at 3.6 GHz, clamped above 3.6 GHz (the
+  LTE-era fit runs away at FR3/mmWave; the clamp is a stated
+  adaptation). Base-station receive uses the same TR 38.901 sector
+  pattern **by reciprocity** on the stored path angles plus the same
+  12.04 dB 4x4 array gain — the workbook's 18 dBi eNB antenna lives
+  inside that composition and is not added twice
+- UL noise floor: −174 dBm/Hz + 10·log10(BW) + eNB noise figure 3 dB
+  + target RoT 4 dB; capacity = Shannon bound, cap 5 bps/Hz
+  (single-layer UE), × (1 − 22.34%) workbook UL overhead; DL keeps
+  its cap-7 convention
+- v1 (reciprocal shortcut, ratio ~1.0) and v2 (two tuned constants,
+  ratio ~1.5) were both rejected — v3 adopts the workbook's budget
+  terms instead of fitting the answer. Pooled DL/UL mean-capacity
+  ratios are now **1.94 / 1.76 / 1.71 / 1.71** at 0.7 / 2.5 / 3.6 /
+  7.125 GHz and **1.18** at 28 GHz (median 0.99 — at mmWave the
+  workbook budget leaves the median UL cell level with DL; reported
+  as computed). Still short of the field's 3–5: that ratio is a
+  loaded multi-cell effect no single-tower budget contains, and the
+  workbook reaches its own "uplink limiting" verdict (all its
+  band/morphology columns) through MAPL comparisons at its borders.
+  `UL_METHOD.md` has the full method, the workbook-vs-twin line
+  items, workbook-style edge budgets with its margin stack, and the
+  honest reading
+- The UL−DL RSRP shift is now band-dependent (UE EIRP − 26.96 dBm):
+  −11.49 dB at 0.7 GHz, −2.92 dB at 2.5 GHz, −0.47 dB at 3.6 GHz and
+  above; UL coverage ≥ −90 dBm runs below DL in every site-band —
+  by 8.5–10.4 points at 0.7 GHz, within ~2 points elsewhere
 - FDD n28 reuses the DL path gains for its paired uplink band (stated
   approximation, no invented frequency correction)
-- Because both directions share the same per-sector channel powers, UL
-  RSRP = DL RSRP − 3.96 dB exactly on every served cell (verified on all
-  20 site-bands); UL coverage ≥ −90 dBm runs 1–4 points below DL, and
-  mean UL capacity is within ~1–2 Mbps of DL at FR1, ~15–20% below at
-  28 GHz / 200 MHz
 - In UL mode the EIRP slider is disabled (base-station EIRP does not
   affect the uplink); the map, stats and click-probe show UL RSRP / UL SNR
 
 Per-band UL grids live in `data_twin_tower_<site>_<band>_ul.npz`
 (`ul_rsrp`, `ul_snr`, `ul_cap_mbps` at the viewer-default bandwidth).
+
+**Comparison — ray-traced layer vs link-budget layer** (same workbook
+budget terms; average user TP in Mbps, mean of the 4 sites). The RT
+layer receives at a 6 m rooftop CPE; the budget layer
+(`budget_check.py`, `budget_single.py`, details in `BUDGET_CHECK.md`
+and `UL_METHOD.md`) is the twin's stochastic 3GPP UMa planner at a
+1.5 m street-level handset, unserved counted as zero:
+
+| Band | RT DL | RT UL | RT ratio | Budget (single tower) DL | UL | ratio | Budget (loaded) DL | UL | ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| 0.7 GHz | 52.4 | 26.9 | 1.94 | 13.3 | 0.8 | 17.0 | 16.9 | 2.5 | 6.74 |
+| 2.5 GHz | 43.8 | 24.9 | 1.76 | 13.9 | 2.4 | 5.9 | 14.3 | 3.6 | 4.00 |
+| 3.6 GHz | 41.7 | 24.3 | 1.71 | 15.0 | 3.4 | 4.4 | 13.2 | 4.0 | 3.25 |
+| 7.125 GHz | 38.4 | 22.4 | 1.71 | 17.8 | 4.4 | 4.0 | 11.3 | 3.6 | 3.13 |
+
+The workbook marks the uplink limiting in every band/morphology and
+field experience puts DL/UL at 3–5; the budget layer brackets that
+range, the rooftop RT layer does not — the difference is the
+operating point (receiver height and clutter), not the budget.
+28 GHz is excluded: NLOS-dominated tile, UMa extrapolated (RT 1.18;
+budget-layer 22.6, not credible).
 
 ## Provenance (read this first)
 
