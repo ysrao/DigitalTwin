@@ -1,0 +1,389 @@
+<title>twin5GNR Rancho Bernardo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an upgrade planner. Scenario cards (before / after) and the user mix on top, the comparison table, then the map with its probe. Review notes last. */
+:root{
+  --bg:#f3f5f3; --surface:#ffffff; --sunk:#e9edea; --fg:#17201e; --muted:#5b6965; --line:#d5dcd8;
+  --accent:#0d6a87; --accent-ink:#ffffff; --before:#7a5c12; --after:#0d6a87; --tx:#d4462a; --dead:#ffffff; --off:#e4e8e5;
+  --ok:#2f7d4f; --warn:#b26a00; --bad:#b3261e; --info:#5b6965;
+  --ok-bg:#e3f1e8; --warn-bg:#fbefd9; --bad-bg:#f9e1df; --info-bg:#e8ecea;
+  --up:#1f7a57; --down:#b3261e;
+  --display:"Archivo Narrow","Arial Narrow",system-ui,sans-serif;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101615; --surface:#182120; --sunk:#131b1a; --fg:#e3eae7; --muted:#93a39e; --line:#2b3634;
+  --accent:#4fb4d3; --accent-ink:#0b1414; --before:#e2b44f; --after:#4fb4d3; --tx:#ff6b4a; --dead:#2a3331; --off:#1d2524;
+  --ok:#6cc58f; --warn:#e7a948; --bad:#f08178; --info:#93a39e;
+  --ok-bg:#16301f; --warn-bg:#33270f; --bad-bg:#3a1a18; --info-bg:#1f2927; --up:#6cc58f; --down:#f08178; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101615; --surface:#182120; --sunk:#131b1a; --fg:#e3eae7; --muted:#93a39e; --line:#2b3634;
+  --accent:#4fb4d3; --accent-ink:#0b1414; --before:#e2b44f; --after:#4fb4d3; --tx:#ff6b4a; --dead:#2a3331; --off:#1d2524;
+  --ok:#6cc58f; --warn:#e7a948; --bad:#f08178; --info:#93a39e;
+  --ok-bg:#16301f; --warn-bg:#33270f; --bad-bg:#3a1a18; --info-bg:#1f2927; --up:#6cc58f; --down:#f08178; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:34px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:2.1rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.45rem;font-weight:600}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0;max-width:70ch}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:10px}
+.lede{color:var(--muted)}
+.section{display:flex;flex-direction:column;gap:14px}
+.cap{font-size:.84rem;color:var(--muted);max-width:92ch}
+label.lbl,.lbl{font-family:var(--mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+select,input[type=number]{font:500 .9rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:5px 7px;min-width:0;width:100%}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{font:500 .86rem var(--body);padding:6px 10px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+
+/* planner */
+.planner{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:980px){.planner{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.mixcard{grid-column:1/-1}}
+@media (max-width:620px){.planner{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card h3{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.a{background:var(--before)} .dot.b{background:var(--after)}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f.wide{grid-column:1/-1}
+.presets{display:flex;flex-wrap:wrap;gap:5px}
+.presets button{font-size:.76rem;padding:3px 7px}
+.mixrow{display:grid;grid-template-columns:minmax(0,1fr) 3.2em;gap:8px;align-items:center;font-size:.88rem}
+.mixrow output{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.note{font-size:.8rem;color:var(--muted)}
+.sitebar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+
+/* results */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:7px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:.86rem}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+td{font-family:var(--mono)}
+thead th{font-family:var(--body);font-weight:600;color:var(--muted);font-size:.76rem;vertical-align:bottom}
+thead tr.grp th{text-align:center;color:var(--fg)}
+tbody th{text-align:left;font-weight:500}
+tbody th small{display:block;color:var(--muted);font-weight:400;font-size:.74rem}
+tr.blend th,tr.blend td{font-weight:600;background:var(--sunk)}
+td .a{color:var(--before)} td .b{color:var(--after)}
+td .tv{display:block} td .td{display:block;font-size:.76rem;color:var(--muted)}
+td .td.up{color:var(--up)} td .td.down{color:var(--down)}
+table#restbl{min-width:760px}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+table.txt th,table.txt td{white-space:normal;vertical-align:top}
+
+/* map */
+.mapgrid{display:grid;grid-template-columns:minmax(0,612px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
+.mapbox{display:flex;flex-direction:column;gap:8px;min-width:0}
+canvas{width:100%;max-width:612px;aspect-ratio:1/1;height:auto;display:block;border:1px solid var(--line);border-radius:4px;cursor:crosshair;touch-action:manipulation;background:var(--off)}
+.legend{max-width:612px;display:flex;flex-direction:column;gap:4px}
+.ramp{height:9px;border-radius:2px}
+.ticks{position:relative;height:17px;font-family:var(--mono);font-size:.72rem;color:var(--muted);margin:0 14px}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.cats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted)}
+.sw{display:inline-block;width:11px;height:11px;border:1px solid var(--line);vertical-align:-1px;margin-right:5px}
+.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.readout{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:12px 14px;font-size:.88rem}
+.kv{display:grid;grid-template-columns:auto auto auto;gap:3px 14px}
+.kv .h{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right}
+.kv .h:first-child{text-align:left}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* assumptions + review */
+.asm table{min-width:760px}
+.asm td{font-family:var(--body)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:12px 14px}
+details summary{cursor:pointer;font-family:var(--display);font-weight:600;font-size:1.05rem}
+details[open] summary{margin-bottom:10px}
+.pill{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;font-weight:500;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.high{background:var(--bad-bg);color:var(--bad)}
+.pill.med{background:var(--warn-bg);color:var(--warn)} .pill.low,.pill.info{background:var(--info-bg);color:var(--info)}
+code{font-family:var(--mono);font-size:.86em;overflow-wrap:anywhere}
+footer{font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Single-tower planner · Sionna RT 2.2.0 with diffuse scattering · v5</span>
+  <h1>twin5GNR — Rancho Bernardo</h1>
+  <p class="lede">Compare a tower's current setup with a proposed change for a mix of rooftop CPEs and handsets. Coverage comes from ray tracing at two heights: 6 m above the roof for CPEs and 1.5 m street level for handsets. Throughput follows your LTE link-budget workbook's terms. Values are modelled, not measured, and the scattering and foliage terms are uncalibrated assumptions.</p>
+</header>
+
+<section class="section" aria-labelledby="h-res">
+  <h2 id="h-res">Current and change</h2>
+  <p class="cap" id="rescap"></p>
+  <div class="tblwrap"><table id="restbl"></table></div>
+  <p class="cap">Throughput is the mean per user over every cell of that class inside the radius, with unserved cells counted as zero. With load at 0% it is single-user throughput on an empty cell. With a load ρ, each user gets (1 − ρ) of it (processor sharing). DL service needs SINR ≥ −8.7 dB (control channel). UL service needs the UE to close a 1-RB PUSCH at −0.7 dB.</p>
+</section>
+
+<section class="section" aria-labelledby="h-plan">
+  <h2 id="h-plan">Scenario</h2>
+  <div class="sitebar">
+    <div class="f"><span class="lbl">Site</span><div class="seg" id="sitebtns"></div></div>
+    <span class="note" id="sitenote"></span>
+  </div>
+  <div class="planner">
+    <div class="card" id="cardA"><h3><span class="dot a"></span>Current</h3><div class="fields" id="fieldsA"></div></div>
+    <div class="card" id="cardB"><h3><span class="dot b"></span>Change</h3><div class="fields" id="fieldsB"></div></div>
+    <div class="card mixcard">
+      <h3>User mix</h3>
+      <div id="mix"></div>
+      <div class="fields">
+        <div class="f"><label class="lbl" for="radius">Service radius</label><select id="radius"><option value="500">500 m</option><option value="1000" selected>1 km</option><option value="1500">Whole 2 × 2 km box</option></select></div>
+        <div class="f"><label class="lbl" for="o2i">Building entry loss</label><select id="o2i"><option value="low" selected>Low-loss (standard glass)</option><option value="high">High-loss (coated glass)</option></select></div>
+        <div class="f"><label class="lbl" for="iref">Indoor signal enters via</label><select id="iref"><option value="sides" selected>All exposed sides (power average)</option><option value="facade">Nearest open point (conservative)</option></select></div>
+        <div class="f"><label class="lbl" for="foliage">Foliage</label><select id="foliage"><option value="1" selected>On (NLCD canopy)</option><option value="0">Off</option></select></div>
+        <div class="f"><label class="lbl" for="thr">RSRP coverage threshold</label><select id="thr"><option value="-100">−100 dBm</option><option value="-105">−105 dBm</option><option value="-110" selected>−110 dBm</option><option value="-115">−115 dBm</option><option value="-120">−120 dBm</option></select></div>
+      </div>
+      <p class="note">Shares are normalised to 100%. Each class sits where it would in reality: CPEs and indoor handsets in building cells, outdoor and in-vehicle handsets in open cells.</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" aria-labelledby="h-map">
+  <h2 id="h-map">Map</h2>
+  <div class="mapgrid">
+    <div class="mapbox">
+      <canvas id="map" width="612" height="612" aria-label="Map of the selected class and metric; click a cell to compare current and change"></canvas>
+      <div class="legend"><div class="ramp" id="ramp"></div><div class="ticks" id="ticks" aria-hidden="true"></div><div class="cats" id="cats"></div></div>
+    </div>
+    <div class="side">
+      <div class="f"><span class="lbl">Show</span><div class="seg" id="viewbtns"></div></div>
+      <div class="f"><span class="lbl">User class</span><div class="seg" id="clsbtns"></div></div>
+      <div class="f"><span class="lbl">Metric</span><div class="seg" id="metbtns"></div></div>
+      <div class="readout" id="probe">Click a cell to compare current and change for the selected class.</div>
+      <p class="note" id="mapnote"></p>
+    </div>
+  </div>
+</section>
+
+<section class="section asm" aria-labelledby="h-asm">
+  <h2 id="h-asm">Device classes and model terms</h2>
+  <div class="tblwrap"><table id="asmtbl"></table></div>
+  <p class="cap">Common to all classes: UE noise figure 7 dB; gNB noise figure 3 dB and target rise over thermal 4 dB (workbook). Handset antenna follows the workbook fit 6.7292·ln(f<sub>MHz</sub>) − 51.61, capped at 2.14 dBi. Efficiency uses the workbook's 36.942 CQI curves, the 2×2 SU-MIMO curve and the Vendor-B 4×4 curve, with the workbook's DL overhead (normal CP, 3 PDCCH symbols, 2 or 4 ports) and UL overhead 22.34%. TDD special slots are 10:2:2 symbols. Foliage uses Weissberger's model on the line-of-sight share of power (capped at 20 dB) with NLCD 2021 canopy cover and 8 m trees. Ray tracing: max depth 3, specular + diffuse (scattering 0.3 buildings, 0.2 ground) + edge diffraction, 1M rays per source.</p>
+</section>
+
+<!--__REVIEW__-->
+
+<footer>
+  <span>Data: USGS 3DEP elevation (public domain), SanGIS building outlines (license check pending per DATA_LICENSES.md), building heights from the planner's LiDAR-derived raster, NLCD 2021 Tree Canopy Cover (USFS/MRLC, public domain).</span>
+  <span>Single tower: no neighbour cells. Use the DL interference input to approximate them.</span>
+</footer>
+</div>
+
+<script>
+/*__MODEL__*/
+</script>
+<script>
+(function(){
+'use strict';
+const DATA="__DATA__";
+const M=window.TwinModel;
+const $=id=>document.getElementById(id);
+const CL=['cpe','indoor','ped','veh'];
+const VIR=[[68,1,84],[72,35,116],[64,67,135],[52,94,141],[41,120,142],[32,144,140],[34,167,133],[68,191,112],[121,209,81],[189,222,38],[253,231,37]];
+const PX=12;
+function b64(s,T){const bin=atob(s),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new T(u.buffer);}
+const cache={};
+function grid(site,band){
+  const k=site+'_'+band; if(cache[k]) return cache[k];
+  const S=DATA.sites[site], B=S.bands[band]; if(!B) return null;
+  const n=S.n, n2=n*n, bld=b64(S.bld,Uint8Array), dist=new Float32Array(n2);
+  for(let iy=0;iy<n;iy++)for(let ix=0;ix<n;ix++){const x=S.x0+ix*S.step,y=S.y0+iy*S.step;dist[iy*n+ix]=Math.hypot(x-S.tx[0],y-S.tx[1]);}
+  const g={n,n2,dist,bld:Array.from(bld,v=>v===1)};
+  for(const rx of ['roof','street','indoor']){
+    const q=b64(B[rx].ref,Int16Array), ph=b64(B[rx].phi,Uint8Array), dp=b64(S.depth[rx==='indoor'?'street':rx],Uint8Array);
+    const ref=[]; for(let t=0;t<M.TILTS.length;t++){const a=new Float32Array(n2);for(let i=0;i<n2;i++){const v=q[t*n2+i];a[i]=v===-32768?NaN:v/10;}ref.push(a);}
+    g[rx]={ref,phi:Float32Array.from(ph,v=>v/255),depth:Float32Array.from(dp)};
+  }
+  return cache[k]=g;
+}
+const sitesAvail=Object.keys(DATA.sites);
+const st={site:sitesAvail.includes('nw')?'nw':sitesAvail[0],
+  A:{band:'f700',bw:10,eirp:47,tilt:4,ports:2,tdd:'DDDSU',iot:0,loadDL:0,loadUL:0},
+  B:{band:'f3600',bw:40,eirp:47,tilt:4,ports:4,tdd:'DDDSU',iot:0,loadDL:0,loadUL:0},
+  common:{mix:{cpe:30,indoor:40,ped:20,veh:10},radius:1000,o2i:'low',indoorRef:'sides',foliage:true,rsrpThr:-110},
+  map:{view:'B',cls:'ped',metric:'dl'},probe:null};
+const PRESETS=[['CBRS Cat-B',47],['Vodacom LTE macro',57],['Vodacom n41',60]];
+function bandsFor(site){return Object.keys(M.BANDS).filter(b=>DATA.sites[site].bands[b]);}
+function fixScenario(sc){
+  const av=bandsFor(st.site); if(!av.includes(sc.band)) sc.band=av[0];
+  const b=M.BANDS[sc.band]; if(!(sc.bw in b.nrb)) sc.bw=b.bwdef;
+}
+function scFields(key){
+  const sc=st[key], box=$('fields'+key), b=M.BANDS[sc.band], av=bandsFor(st.site);
+  const opt=(v,l,sel)=>'<option value="'+v+'"'+(sel?' selected':'')+'>'+l+'</option>';
+  box.innerHTML=
+   '<div class="f"><label class="lbl" for="'+key+'band">Band</label><select id="'+key+'band">'+Object.keys(M.BANDS).map(k=>opt(k,M.BANDS[k].label+' · '+M.BANDS[k].nr+(av.includes(k)?'':' (tracing)'),k===sc.band)).join('')+'</select></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'bw">Bandwidth</label><select id="'+key+'bw">'+Object.keys(b.nrb).map(v=>opt(v,v+' MHz',+v===sc.bw)).join('')+'</select></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'eirp">EIRP per carrier (dBm)</label><input type="number" id="'+key+'eirp" min="30" max="70" step="0.5" value="'+sc.eirp+'"><span class="note" id="'+key+'pre"></span></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'tilt">Electrical tilt</label><select id="'+key+'tilt">'+M.TILTS.map(t=>opt(t,t+'°',t===sc.tilt)).join('')+'</select></div>'+
+   '<div class="f wide"><span class="lbl">EIRP presets</span><div class="presets">'+PRESETS.map(([l,v])=>'<button type="button" data-k="'+key+'" data-v="'+v+'">'+l+' '+v+'</button>').join('')+'</div></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'ports">gNB antenna ports</label><select id="'+key+'ports">'+opt(2,'2T2R',sc.ports===2)+opt(4,'4T4R',sc.ports===4)+'</select></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'tdd">TDD pattern</label><select id="'+key+'tdd"'+(b.duplex==='FDD'?' disabled':'')+'>'+(b.duplex==='FDD'?opt('DDDSU','FDD (paired)',true):Object.keys(M.TDD).map(t=>opt(t,t+' · DL '+Math.round(M.TDD[t].dl*100)+'%',t===sc.tdd)).join(''))+'</select></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'iot">DL interference rise (dB)</label><input type="number" id="'+key+'iot" min="0" max="20" step="0.5" value="'+sc.iot+'"></div>'+
+   '<div class="f"><label class="lbl" for="'+key+'ld">Cell load DL / UL (%)</label><div class="seg" style="flex-wrap:nowrap"><input type="number" id="'+key+'ld" min="0" max="95" step="5" value="'+Math.round(sc.loadDL*100)+'" aria-label="DL load %"><input type="number" id="'+key+'lu" min="0" max="95" step="5" value="'+Math.round(sc.loadUL*100)+'" aria-label="UL load %"></div></div>';
+  const on=(id,ev,fn)=>$(id).addEventListener(ev,fn);
+  on(key+'band','change',e=>{sc.band=e.target.value;fixScenario(sc);scFields(key);update();});
+  on(key+'bw','change',e=>{sc.bw=+e.target.value;update();});
+  on(key+'eirp','input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){sc.eirp=Math.max(30,Math.min(70,v));update();}});
+  on(key+'tilt','change',e=>{sc.tilt=+e.target.value;update();});
+  on(key+'ports','change',e=>{sc.ports=+e.target.value;update();});
+  on(key+'tdd','change',e=>{sc.tdd=e.target.value;update();});
+  on(key+'iot','input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){sc.iot=Math.max(0,Math.min(20,v));update();}});
+  on(key+'ld','input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){sc.loadDL=Math.max(0,Math.min(95,v))/100;update();}});
+  on(key+'lu','input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){sc.loadUL=Math.max(0,Math.min(95,v))/100;update();}});
+  box.querySelectorAll('.presets button').forEach(bt=>bt.addEventListener('click',()=>{sc.eirp=+bt.dataset.v;$(key+'eirp').value=sc.eirp;update();}));
+}
+function mixUI(){
+  const box=$('mix');
+  box.innerHTML=CL.map(k=>'<div class="mixrow"><label for="mix_'+k+'">'+M.CLASSES[k].label+' <span class="note">· '+M.CLASSES[k].mobility+'</span><input type="range" id="mix_'+k+'" min="0" max="100" step="5" value="'+st.common.mix[k]+'"></label><output id="mo_'+k+'"></output></div>').join('');
+  CL.forEach(k=>$('mix_'+k).addEventListener('input',e=>{st.common.mix[k]=+e.target.value;update();}));
+}
+function mixPct(){const s=CL.reduce((a,k)=>a+st.common.mix[k],0)||1;const o={};CL.forEach(k=>o[k]=st.common.mix[k]/s);return o;}
+let RES=null;
+function compute(){
+  const gA=grid(st.site,st.A.band), gB=grid(st.site,st.B.band);
+  RES={A:M.blend(gA,st.A,st.common),B:M.blend(gB,st.B,st.common),gA,gB};
+}
+const fmt=(v,d)=>(v<0?'−':'')+Math.abs(v).toFixed(d);
+function table(){
+  const pct=mixPct(), A=RES.A, B=RES.B;
+  const cols=[['servedDL','DL served',v=>(v*100).toFixed(1)+'%',v=>fmt(v*100,1)+' pt'],['servedUL','UL served',v=>(v*100).toFixed(1)+'%',v=>fmt(v*100,1)+' pt'],
+    ['cov','RSRP ≥ thr',v=>(v*100).toFixed(1)+'%',v=>fmt(v*100,1)+' pt'],['dl','DL Mbps',v=>v.toFixed(1),v=>fmt(v,1)],['ul','UL Mbps',v=>v.toFixed(2),v=>fmt(v,2)],['ratio','DL/UL',v=>isFinite(v)?v.toFixed(2):'—',v=>isFinite(v)?fmt(v,2):'—']];
+  let h='<thead><tr><th style="text-align:left">Class (share)</th>'+cols.map(c=>'<th>'+c[1]+'<br><span style="font-weight:400">current → change</span></th>').join('')+'</tr></thead><tbody>';
+  const row=(name,sub,a,b,cls)=>{
+    let r='<tr'+(cls?' class="'+cls+'"':'')+'><th scope="row">'+name+(sub?'<small>'+sub+'</small>':'')+'</th>';
+    for(const [k,,f,fd] of cols){const d=b[k]-a[k];const good=k==='ratio'?null:(d>1e-9?'up':(d<-1e-9?'down':''));
+      r+='<td><span class="tv"><span class="a">'+f(a[k])+'</span> → <span class="b">'+f(b[k])+'</span></span><span class="td '+(good||'')+'">'+(isFinite(d)?(d>0?'+':'')+fd(d):'—')+'</span></td>';}
+    return r+'</tr>';};
+  for(const k of CL) h+=row(M.CLASSES[k].label+' ('+Math.round(pct[k]*100)+'%)',A.per[k].n+' cells · '+M.CLASSES[k].mobility,A.per[k],B.per[k]);
+  h+=row('Blended, weighted by mix','',A.all,B.all,'blend');
+  $('restbl').innerHTML=h+'</tbody>';
+  const bA=M.BANDS[st.A.band], bB=M.BANDS[st.B.band];
+  $('rescap').textContent=DATA.sites[st.site].name+', within '+(st.common.radius>1400?'the whole 2 × 2 km box':st.common.radius+' m')+'. Current: '+bA.label+' '+st.A.bw+' MHz, '+st.A.eirp+' dBm, tilt '+st.A.tilt+'°, '+st.A.ports+'T. Change: '+bB.label+' '+st.B.bw+' MHz, '+st.B.eirp+' dBm, tilt '+st.B.tilt+'°, '+st.B.ports+'T.';
+}
+// ---- map ----
+const cv=$('map'),ctx=cv.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function hex(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(h.substr(i,2),16));}
+const vir=t=>{t=Math.max(0,Math.min(1,t));const x=t*(VIR.length-1),i=Math.min(VIR.length-2,Math.floor(x)),f=x-i;return VIR[i].map((v,j)=>Math.round(v+(VIR[i+1][j]-v)*f));};
+function div(t){ // -1..1, red-ish to neutral to teal-ish
+  const neg=[179,38,30],pos=[31,122,87],mid=[238,240,238];t=Math.max(-1,Math.min(1,t));const e=t<0?neg:pos,a=Math.abs(t);
+  return mid.map((v,j)=>Math.round(v+(e[j]-v)*a));}
+function cellVal(g,key,i){const sc=st[key],gr=g[M.gridKey(st.map.cls,st.common)];return M.cell(gr.ref[M.TILTS.indexOf(sc.tilt)][i],gr.phi[i],gr.depth[i],st.map.cls,sc,st.common);}
+function metricOf(r,m){if(!r)return null;return m==='rsrp'?r.rsrp:m==='dl'?r.dl:m==='ul'?r.ul:null;}
+function draw(){
+  const S=DATA.sites[st.site],n=S.n,img=ctx.createImageData(cv.width,cv.height),C=M.CLASSES[st.map.cls];
+  const off=hex(css('--off')||'#e4e8e5'),dead=hex(css('--dead')||'#ffffff'),okc=hex(css('--ok')),wc=hex(css('--warn')),bc=hex(css('--bad'));
+  const met=st.map.metric, view=st.map.view;
+  const vals=new Array(n*n).fill(undefined);
+  let lo=-130,hi=-60,mx=0;
+  for(let i=0;i<n*n;i++){
+    const inCls=(C.cells==='building')===RES.gA.bld[i]; if(!inCls) continue;
+    const ra=cellVal(RES.gA,'A',i), rb=cellVal(RES.gB,'B',i);
+    if(met==='svc'){const r=view==='A'?ra:rb;vals[i]=r?(r.servedDL&&r.servedUL?2:(r.servedDL?1:0)):-1;continue;}
+    const va=metricOf(ra,met), vb=metricOf(rb,met);
+    if(view==='D'){vals[i]=(va===null&&vb===null)?null:((vb===null?(met==='rsrp'?-140:0):vb)-(va===null?(met==='rsrp'?-140:0):va));if(vals[i]!==null)mx=Math.max(mx,Math.abs(vals[i]));}
+    else{vals[i]=view==='A'?va:vb; if(met!=='rsrp'){if(va!==null)mx=Math.max(mx,va);if(vb!==null)mx=Math.max(mx,vb);}}
+  }
+  if(met!=='rsrp'&&view!=='D'){lo=0;hi=mx||1;}
+  if(view==='D'){mx=mx||1;}
+  for(let iy=0;iy<n;iy++)for(let ix=0;ix<n;ix++){
+    const i=iy*n+ix,v=vals[i];let c;
+    if(v===undefined)c=off; else if(met==='svc')c=v===2?okc:v===1?wc:v===0?bc:dead;
+    else if(v===null)c=dead; else if(view==='D')c=div(v/mx); else c=vir((v-lo)/(hi-lo));
+    for(let py=0;py<PX;py++){let o=(((n-1-iy)*PX+py)*cv.width+ix*PX)*4;for(let px=0;px<PX;px++,o+=4){img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];img.data[o+3]=255;}}
+  }
+  ctx.putImageData(img,0,0);
+  // radius ring
+  const R=st.common.radius; if(R<1400){ctx.strokeStyle='rgba(0,0,0,.55)';ctx.setLineDash([5,4]);ctx.lineWidth=1.5;const t=toPx(S.tx);ctx.beginPath();ctx.arc(t[0],t[1],R/S.step*PX,0,7);ctx.stroke();ctx.setLineDash([]);}
+  const t=toPx(S.tx);ctx.fillStyle=css('--tx')||'#d4462a';ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(t[0],t[1]-10);ctx.lineTo(t[0]-8,t[1]+6);ctx.lineTo(t[0]+8,t[1]+6);ctx.closePath();ctx.fill();ctx.stroke();
+  const L=500/S.step*PX,x0=16,y0=cv.height-18;ctx.lineWidth=5;ctx.strokeStyle='rgba(0,0,0,.55)';ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+L,y0);ctx.stroke();ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+L,y0);ctx.stroke();
+  ctx.font='500 13px "IBM Plex Mono", monospace';ctx.fillStyle='#fff';ctx.strokeStyle='rgba(0,0,0,.6)';ctx.lineWidth=3;ctx.strokeText('500 m',x0,y0-8);ctx.fillText('500 m',x0,y0-8);
+  if(st.probe){const [ix,iy]=st.probe;ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.strokeRect(ix*PX+1,cv.height-(iy+1)*PX+1,PX-2,PX-2);ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.strokeRect(ix*PX-.5,cv.height-(iy+1)*PX-.5,PX+1,PX+1);}
+  legend(met,view,lo,hi,mx);
+}
+function toPx(p){const S=DATA.sites[st.site];return [((p[0]-S.x0)/S.step+.5)*PX,cv.height-((p[1]-S.y0)/S.step+.5)*PX];}
+function legend(met,view,lo,hi,mx){
+  const ramp=$('ramp'),tk=$('ticks'),cats=$('cats'),unit=met==='rsrp'?' dBm':' Mbps';
+  const offKey='<span><span class="sw" style="background:var(--off)"></span>Other classes\' cells</span>';
+  if(met==='svc'){ramp.style.display='none';tk.innerHTML='';
+    cats.innerHTML='<span><span class="sw" style="background:var(--ok)"></span>DL and UL served</span><span><span class="sw" style="background:var(--warn)"></span>DL only (uplink can\'t close)</span><span><span class="sw" style="background:var(--bad)"></span>Not served</span><span><span class="sw" style="background:var(--dead)"></span>No ray path</span>'+offKey;return;}
+  ramp.style.display='';
+  if(view==='D'){ramp.style.background='linear-gradient(90deg,rgb(179,38,30),rgb(238,240,238),rgb(31,122,87))';
+    const m=met==='rsrp'?mx:mx;tk.innerHTML=[[-1,'−'+m.toFixed(met==='ul'?2:1)],[0,'0'],[1,'+'+m.toFixed(met==='ul'?2:1)+unit]].map(([p,l])=>'<span style="left:'+((p+1)*50)+'%">'+l+'</span>').join('');
+    cats.innerHTML='<span>Change minus current. Teal: the change helps; red: it hurts.</span>'+offKey;return;}
+  ramp.style.background='linear-gradient(90deg,#440154,#3b528b,#21918c,#5ec962,#fde725)';
+  const n=5,steps=[];for(let k=0;k<=n;k++)steps.push(lo+(hi-lo)*k/n);
+  tk.innerHTML=steps.map((v,k)=>'<span style="left:'+(k*100/n)+'%">'+(met==='rsrp'?fmt(v,0):v.toFixed(met==='ul'?1:0))+(k===n?unit:'')+'</span>').join('');
+  cats.innerHTML=(met==='rsrp'?'<span>True per-RE RSRP, clamped at −130 and −60 dBm.</span>':'<span>Per-user throughput; same scale for current and change.</span>')+'<span><span class="sw" style="background:var(--dead)"></span>No ray path</span>'+offKey;
+}
+function probe(){
+  const el=$('probe');if(!st.probe){el.textContent='Click a cell to compare current and change for the selected class.';return;}
+  const S=DATA.sites[st.site],[ix,iy]=st.probe,i=iy*S.n+ix,C=M.CLASSES[st.map.cls];
+  const inCls=(C.cells==='building')===RES.gA.bld[i];
+  const d=RES.gA.dist[i];
+  if(!inCls){el.innerHTML='<b>'+(RES.gA.bld[i]?'Building':'Open ground')+'</b> cell, '+d.toFixed(0)+' m from '+S.name+'. '+C.label+'s are placed in '+(C.cells==='building'?'building':'open')+' cells; pick another class or cell.';return;}
+  const a=cellVal(RES.gA,'A',i),b=cellVal(RES.gB,'B',i);
+  const v=(r,k,dg)=>r?(k==='served'?(r.servedDL?'DL':'—')+' / '+(r.servedUL?'UL':'—'):fmt(r[k],dg)):'no path';
+  el.innerHTML='<div class="kv"><span class="h">'+C.label+', '+d.toFixed(0)+' m</span><span class="h">Current</span><span class="h">Change</span>'+
+    [['RSRP (dBm)','rsrp',1],['DL SINR (dB)','sinrDL',1],['UL SNR (dB)','snrUL',1],['DL Mbps','dl',1],['UL Mbps','ul',2],['Foliage loss on LOS (dB)','veg',1],['Served','served',0]]
+    .map(([l,k,dg])=>'<dt>'+l+'</dt><dd>'+v(a,k,dg)+'</dd><dd>'+v(b,k,dg)+'</dd>').join('')+'</div>';
+}
+cv.addEventListener('click',ev=>{const r=cv.getBoundingClientRect(),px=(ev.clientX-r.left)*cv.width/r.width,py=(ev.clientY-r.top)*cv.height/r.height;
+  const n=DATA.sites[st.site].n,ix=Math.floor(px/PX),iy=Math.floor((cv.height-py)/PX);if(ix<0||iy<0||ix>=n||iy>=n)return;st.probe=[ix,iy];draw();probe();});
+function seg(id,items,get,set){const box=$(id);box.innerHTML='';for(const [v,l] of items){const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.v=v;b.setAttribute('aria-pressed',String(v===get()));
+  b.onclick=()=>{set(v);[...box.children].forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v)));update(false);};box.appendChild(b);}}
+function asm(){
+  const b=M.BANDS[st.B.band];
+  let h='<thead><tr><th style="text-align:left">Class</th><th style="text-align:left">Mobility</th><th style="text-align:left">Ray-traced grid</th><th style="text-align:left">Placed in</th><th>Antenna gain</th><th>UE TX power</th><th>Extra loss</th><th>Max DL layers</th></tr></thead><tbody>';
+  for(const k of CL){const C=M.CLASSES[k];
+    const pen=k==='indoor'?'O2I '+M.o2iLoss(b.fghz,st.common.o2i).toFixed(1)+' dB ('+st.common.o2i+'-loss, incl. indoor distance)':(k==='veh'?'Car body 9 dB (TR 38.901)':'none');
+    h+='<tr><th scope="row">'+C.label+'</th><td style="text-align:left">'+C.mobility+'</td><td style="text-align:left">'+(C.grid==='roof'?'6 m above roof':'1.5 m street level')+'</td><td style="text-align:left">'+(C.cells==='building'?'building cells':'open cells')+'</td><td>'+fmt(C.gain(b),2)+' dBi</td><td>'+C.ptx(b)+' dBm</td><td style="text-align:left">'+pen+'</td><td>'+Math.min(st.B.ports,C.rx(b))+' of '+C.rx(b)+'</td></tr>';}
+  $('asmtbl').innerHTML=h+'</tbody>';
+  $('mapnote').textContent='Values shown at '+b.label+' for the change scenario; the class table above updates with the change band.';
+}
+function update(rebuild=true){
+  fixScenario(st.A);fixScenario(st.B);
+  for(const k of ['A','B']){const sc=st[k],b=M.BANDS[sc.band],el=$(k+'pre');if(el)el.textContent='= '+(sc.eirp-10*Math.log10(12*b.nrb[sc.bw])).toFixed(1)+' dBm per resource element';}
+  const pct=mixPct();CL.forEach(k=>{const o=$('mo_'+k);if(o)o.textContent=Math.round(pct[k]*100)+'%';});
+  compute();table();draw();probe();asm();
+}
+function siteUI(){
+  seg('sitebtns',sitesAvail.map(s=>[s,DATA.sites[s].name]),()=>st.site,v=>{st.site=v;st.probe=null;fixScenario(st.A);fixScenario(st.B);scFields('A');scFields('B');});
+  const S=DATA.sites[st.site];$('sitenote').textContent='Rooftop site, mast '+S.mast.toFixed(0)+' m above ground; bands ray-traced so far: '+bandsFor(st.site).map(b=>M.BANDS[b].label).join(', ')+'.';
+}
+$('radius').addEventListener('change',e=>{st.common.radius=+e.target.value;update();});
+$('o2i').addEventListener('change',e=>{st.common.o2i=e.target.value;update();});
+$('foliage').addEventListener('change',e=>{st.common.foliage=e.target.value==='1';update();});
+$('iref').addEventListener('change',e=>{st.common.indoorRef=e.target.value;update();});
+$('thr').addEventListener('change',e=>{st.common.rsrpThr=+e.target.value;update();});
+seg('viewbtns',[['A','Current'],['B','Change'],['D','Delta']],()=>st.map.view,v=>st.map.view=v);
+seg('clsbtns',CL.map(k=>[k,M.CLASSES[k].label]),()=>st.map.cls,v=>st.map.cls=v);
+seg('metbtns',[['rsrp','RSRP'],['dl','DL Mbps'],['ul','UL Mbps'],['svc','Service']],()=>st.map.metric,v=>st.map.metric=v);
+fixScenario(st.A);fixScenario(st.B);siteUI();scFields('A');scFields('B');mixUI();
+document.getElementById('sitebtns').addEventListener('click',()=>siteUI());
+// default probe: the open cell nearest to a point ~400 m east of the tower
+(function(){const S=DATA.sites[st.site],g=grid(st.site,st.B.band),cx=Math.round((S.tx[0]-S.x0)/S.step)+10,cy=Math.round((S.tx[1]-S.y0)/S.step);
+  let best=null;for(let iy=0;iy<S.n;iy++)for(let ix=0;ix<S.n;ix++){if(g.bld[iy*S.n+ix])continue;const d=(ix-cx)**2+(iy-cy)**2;if(!best||d<best[0])best=[d,ix,iy];}
+  st.probe=best?[best[1],best[2]]:null;})();
+update();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>draw());new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}catch(e){}
+document.fonts&&document.fonts.ready.then(()=>draw());
+})();
+</script>

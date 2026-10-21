@@ -1,0 +1,13 @@
+# Single-tower digital twin - tested on Python 3.12, CPU-only Linux
+sionna==2.2.0
+sionna-rt==2.2.0
+mitsuba==3.9.1
+drjit==1.5.0
+numpy
+scipy
+matplotlib
+shapely
+tifffile
+mapbox-earcut
+laspy
+numba
