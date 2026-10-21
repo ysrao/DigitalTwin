@@ -233,7 +233,3 @@ redistribution.
 ## License
 
 MIT (proposed) - see `LICENSE`. Final license choice is the author's.
-
-## Original package
-
-`twin5GNR_v5.zip` is the original Claude v5 package exactly as delivered (28 MB; NW/NE fully traced, SW/SE partial). The surrounding tree is the completed version: all four sites traced, the DL efficiency-cap fix applied, and the viewer rebuilt (Current/Change labels).
