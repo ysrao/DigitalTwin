@@ -1,0 +1,512 @@
+[
+ {
+  "band": "f700",
+  "band_label": "0.7 GHz",
+  "rx": "roof",
+  "receiver_class": "Rooftop CPE",
+  "bandwidth_mhz": 10,
+  "grid_points": 625,
+  "no_path_pct": 2.6,
+  "los_pct": 59.4,
+  "reference_power_dbm": {
+   "finite_pct": 97.4,
+   "median": -40.68,
+   "mean": -50.33,
+   "p10": -77.61,
+   "p90": -32.16
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 93.8,
+  "rsrp_dbm": {
+   "finite_pct": 97.4,
+   "median": -59.63,
+   "mean": -69.28,
+   "p10": -96.56,
+   "p90": -51.11
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 79.4,
+  "rsrp_ge_-90_dbm_pct_served_cells": 81.4,
+  "dl_served_pct": 96.2,
+  "dl_sinr_db": {
+   "finite_pct": 96.2,
+   "median": 65.76,
+   "mean": 56.84,
+   "p10": 29.8,
+   "p90": 74.19
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 127.26,
+   "median": 141.33,
+   "p90": 141.33,
+   "max": 141.33
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 132.34,
+   "median": 141.33
+  },
+  "diffuse_power_share_median_pct": 0.5,
+  "paths_per_rx_median": 677.0,
+  "maps": [
+   "f700_roof_rsrp.png",
+   "f700_roof_throughput.png"
+  ]
+ },
+ {
+  "band": "f700",
+  "band_label": "0.7 GHz",
+  "rx": "street",
+  "receiver_class": "Outdoor handset",
+  "bandwidth_mhz": 10,
+  "grid_points": 625,
+  "no_path_pct": 19.4,
+  "los_pct": 15.2,
+  "reference_power_dbm": {
+   "finite_pct": 80.6,
+   "median": -65.2,
+   "mean": -63.26,
+   "p10": -85.16,
+   "p90": -38.04
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 75.7,
+  "rsrp_dbm": {
+   "finite_pct": 80.6,
+   "median": -100.68,
+   "mean": -98.73,
+   "p10": -120.64,
+   "p90": -73.52
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 23.5,
+  "rsrp_ge_-90_dbm_pct_served_cells": 29.2,
+  "dl_served_pct": 79.7,
+  "dl_sinr_db": {
+   "finite_pct": 79.7,
+   "median": 24.78,
+   "mean": 27.03,
+   "p10": 5.98,
+   "p90": 51.74
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 38.87,
+   "median": 42.58,
+   "p90": 71.2,
+   "max": 71.2
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 48.78,
+   "median": 58.8
+  },
+  "diffuse_power_share_median_pct": 97.4,
+  "paths_per_rx_median": 27.0,
+  "maps": [
+   "f700_street_rsrp.png",
+   "f700_street_throughput.png"
+  ]
+ },
+ {
+  "band": "f2500",
+  "band_label": "2.5 GHz",
+  "rx": "roof",
+  "receiver_class": "Rooftop CPE",
+  "bandwidth_mhz": 60,
+  "grid_points": 625,
+  "no_path_pct": 2.6,
+  "los_pct": 59.4,
+  "reference_power_dbm": {
+   "finite_pct": 97.4,
+   "median": -51.74,
+   "mean": -61.06,
+   "p10": -87.25,
+   "p90": -43.24
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 89.6,
+  "rsrp_dbm": {
+   "finite_pct": 97.4,
+   "median": -75.62,
+   "mean": -84.95,
+   "p10": -111.14,
+   "p90": -67.13
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 62.2,
+  "rsrp_ge_-90_dbm_pct_served_cells": 63.9,
+  "dl_served_pct": 95.2,
+  "dl_sinr_db": {
+   "finite_pct": 95.2,
+   "median": 46.91,
+   "mean": 38.71,
+   "p10": 12.98,
+   "p90": 55.22
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 490.95,
+   "median": 657.2,
+   "p90": 657.2,
+   "max": 657.2
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 515.7,
+   "median": 657.2
+  },
+  "diffuse_power_share_median_pct": 0.6,
+  "paths_per_rx_median": 677.0,
+  "maps": [
+   "f2500_roof_rsrp.png",
+   "f2500_roof_throughput.png"
+  ]
+ },
+ {
+  "band": "f2500",
+  "band_label": "2.5 GHz",
+  "rx": "street",
+  "receiver_class": "Outdoor handset",
+  "bandwidth_mhz": 60,
+  "grid_points": 625,
+  "no_path_pct": 19.4,
+  "los_pct": 15.2,
+  "reference_power_dbm": {
+   "finite_pct": 80.6,
+   "median": -75.68,
+   "mean": -73.69,
+   "p10": -95.06,
+   "p90": -49.05
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 68.3,
+  "rsrp_dbm": {
+   "finite_pct": 80.6,
+   "median": -107.53,
+   "mean": -105.54,
+   "p10": -126.91,
+   "p90": -80.9
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 18.2,
+  "rsrp_ge_-90_dbm_pct_served_cells": 22.6,
+  "dl_served_pct": 75.5,
+  "dl_sinr_db": {
+   "finite_pct": 75.5,
+   "median": 15.85,
+   "mean": 18.91,
+   "p10": 1.11,
+   "p90": 41.48
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 213.17,
+   "median": 130.92,
+   "p90": 627.88,
+   "max": 657.2
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 282.26,
+   "median": 187.22
+  },
+  "diffuse_power_share_median_pct": 99.3,
+  "paths_per_rx_median": 27.0,
+  "maps": [
+   "f2500_street_rsrp.png",
+   "f2500_street_throughput.png"
+  ]
+ },
+ {
+  "band": "f3600",
+  "band_label": "3.6 GHz",
+  "rx": "roof",
+  "receiver_class": "Rooftop CPE",
+  "bandwidth_mhz": 40,
+  "grid_points": 625,
+  "no_path_pct": 2.6,
+  "los_pct": 59.4,
+  "reference_power_dbm": {
+   "finite_pct": 97.4,
+   "median": -54.91,
+   "mean": -64.31,
+   "p10": -90.53,
+   "p90": -46.41
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 87.0,
+  "rsrp_dbm": {
+   "finite_pct": 97.4,
+   "median": -76.95,
+   "mean": -86.35,
+   "p10": -112.57,
+   "p90": -68.46
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 61.1,
+  "rsrp_ge_-90_dbm_pct_served_cells": 62.7,
+  "dl_served_pct": 95.2,
+  "dl_sinr_db": {
+   "finite_pct": 95.2,
+   "median": 45.58,
+   "mean": 37.3,
+   "p10": 11.29,
+   "p90": 53.91
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 314.64,
+   "median": 428.85,
+   "p90": 430.02,
+   "max": 430.02
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 330.51,
+   "median": 430.02
+  },
+  "diffuse_power_share_median_pct": 0.6,
+  "paths_per_rx_median": 677.0,
+  "maps": [
+   "f3600_roof_rsrp.png",
+   "f3600_roof_throughput.png"
+  ]
+ },
+ {
+  "band": "f3600",
+  "band_label": "3.6 GHz",
+  "rx": "street",
+  "receiver_class": "Outdoor handset",
+  "bandwidth_mhz": 40,
+  "grid_points": 625,
+  "no_path_pct": 19.4,
+  "los_pct": 15.2,
+  "reference_power_dbm": {
+   "finite_pct": 80.6,
+   "median": -79.03,
+   "mean": -77.06,
+   "p10": -98.45,
+   "p90": -52.23
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 64.3,
+  "rsrp_dbm": {
+   "finite_pct": 80.6,
+   "median": -107.93,
+   "mean": -105.96,
+   "p10": -127.36,
+   "p90": -81.13
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 17.9,
+  "rsrp_ge_-90_dbm_pct_served_cells": 22.2,
+  "dl_served_pct": 75.0,
+  "dl_sinr_db": {
+   "finite_pct": 75.0,
+   "median": 15.43,
+   "mean": 18.66,
+   "p10": 0.84,
+   "p90": 41.34
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 136.65,
+   "median": 81.92,
+   "p90": 410.02,
+   "max": 430.02
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 182.1,
+   "median": 120.24
+  },
+  "diffuse_power_share_median_pct": 99.6,
+  "paths_per_rx_median": 27.0,
+  "maps": [
+   "f3600_street_rsrp.png",
+   "f3600_street_throughput.png"
+  ]
+ },
+ {
+  "band": "f7125",
+  "band_label": "7.125 GHz",
+  "rx": "roof",
+  "receiver_class": "Rooftop CPE",
+  "bandwidth_mhz": 100,
+  "grid_points": 625,
+  "no_path_pct": 2.6,
+  "los_pct": 59.4,
+  "reference_power_dbm": {
+   "finite_pct": 97.4,
+   "median": -60.84,
+   "mean": -70.31,
+   "p10": -96.68,
+   "p90": -52.35
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 77.9,
+  "rsrp_dbm": {
+   "finite_pct": 97.4,
+   "median": -87.0,
+   "mean": -96.47,
+   "p10": -122.83,
+   "p90": -78.51
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 56.0,
+  "rsrp_ge_-90_dbm_pct_served_cells": 57.5,
+  "dl_served_pct": 92.3,
+  "dl_sinr_db": {
+   "finite_pct": 92.3,
+   "median": 36.1,
+   "mean": 28.44,
+   "p10": 2.76,
+   "p90": 43.95
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 687.41,
+   "median": 994.44,
+   "p90": 1097.55,
+   "max": 1107.5
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 744.6,
+   "median": 1016.64
+  },
+  "diffuse_power_share_median_pct": 0.6,
+  "paths_per_rx_median": 676.0,
+  "maps": [
+   "f7125_roof_rsrp.png",
+   "f7125_roof_throughput.png"
+  ]
+ },
+ {
+  "band": "f7125",
+  "band_label": "7.125 GHz",
+  "rx": "street",
+  "receiver_class": "Outdoor handset",
+  "bandwidth_mhz": 100,
+  "grid_points": 625,
+  "no_path_pct": 19.4,
+  "los_pct": 15.2,
+  "reference_power_dbm": {
+   "finite_pct": 80.6,
+   "median": -85.07,
+   "mean": -83.2,
+   "p10": -104.46,
+   "p90": -58.22
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 53.0,
+  "rsrp_dbm": {
+   "finite_pct": 80.6,
+   "median": -118.08,
+   "mean": -116.21,
+   "p10": -137.47,
+   "p90": -91.23
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 5.9,
+  "rsrp_ge_-90_dbm_pct_served_cells": 7.3,
+  "dl_served_pct": 66.7,
+  "dl_sinr_db": {
+   "finite_pct": 66.7,
+   "median": 6.96,
+   "mean": 11.08,
+   "p10": -4.06,
+   "p90": 31.95
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 212.4,
+   "median": 39.06,
+   "p90": 893.64,
+   "max": 1107.5
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 318.35,
+   "median": 136.24
+  },
+  "diffuse_power_share_median_pct": 99.8,
+  "paths_per_rx_median": 27.0,
+  "maps": [
+   "f7125_street_rsrp.png",
+   "f7125_street_throughput.png"
+  ]
+ },
+ {
+  "band": "f28000",
+  "band_label": "28 GHz",
+  "rx": "roof",
+  "receiver_class": "Rooftop CPE",
+  "bandwidth_mhz": 200,
+  "grid_points": 625,
+  "no_path_pct": 2.6,
+  "los_pct": 59.4,
+  "reference_power_dbm": {
+   "finite_pct": 97.4,
+   "median": -72.73,
+   "mean": -82.31,
+   "p10": -108.64,
+   "p90": -64.25
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 63.0,
+  "rsrp_dbm": {
+   "finite_pct": 97.4,
+   "median": -84.73,
+   "mean": -94.31,
+   "p10": -120.63,
+   "p90": -76.25
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 58.7,
+  "rsrp_ge_-90_dbm_pct_served_cells": 60.3,
+  "dl_served_pct": 90.7,
+  "dl_sinr_db": {
+   "finite_pct": 90.7,
+   "median": 32.47,
+   "mean": 25.18,
+   "p10": -0.58,
+   "p90": 40.24
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 691.19,
+   "median": 1079.08,
+   "p90": 1079.08,
+   "max": 1079.08
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 761.89,
+   "median": 1079.08
+  },
+  "diffuse_power_share_median_pct": 0.6,
+  "paths_per_rx_median": 677.0,
+  "maps": [
+   "f28000_roof_rsrp.png",
+   "f28000_roof_throughput.png"
+  ]
+ },
+ {
+  "band": "f28000",
+  "band_label": "28 GHz",
+  "rx": "street",
+  "receiver_class": "Outdoor handset",
+  "bandwidth_mhz": 200,
+  "grid_points": 625,
+  "no_path_pct": 19.4,
+  "los_pct": 15.2,
+  "reference_power_dbm": {
+   "finite_pct": 80.6,
+   "median": -97.67,
+   "mean": -95.45,
+   "p10": -116.59,
+   "p90": -70.15
+  },
+  "reference_power_ge_-90_dbm_pct_all_cells": 25.3,
+  "rsrp_dbm": {
+   "finite_pct": 80.6,
+   "median": -127.52,
+   "mean": -125.31,
+   "p10": -146.45,
+   "p90": -100.01
+  },
+  "rsrp_ge_-90_dbm_pct_all_cells": 1.0,
+  "rsrp_ge_-90_dbm_pct_served_cells": 1.2,
+  "dl_served_pct": 34.1,
+  "dl_sinr_db": {
+   "finite_pct": 34.1,
+   "median": 8.7,
+   "mean": 6.7,
+   "p10": -7.12,
+   "p90": 19.81
+  },
+  "dl_throughput_mbps_all_cells_unserved_zero": {
+   "mean": 85.97,
+   "median": 0.0,
+   "p90": 361.34,
+   "max": 1079.08
+  },
+  "dl_throughput_mbps_served_only": {
+   "mean": 252.26,
+   "median": 194.24
+  },
+  "diffuse_power_share_median_pct": 99.9,
+  "paths_per_rx_median": 27.0,
+  "maps": [
+   "f28000_street_rsrp.png",
+   "f28000_street_throughput.png"
+  ]
+ }
+]
