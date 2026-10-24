@@ -26,37 +26,37 @@
  {
   "band_mhz": 3600,
   "bw_mhz": 10.0,
-  "ue_eirp_dbm": 26.49,
+  "ue_eirp_dbm": 25.14,
   "dl_mean": 13.154853279659022,
-  "ul_mean": 4.043580549020201,
-  "ratio": 3.2532685129387544,
+  "ul_mean": 3.623111754072594,
+  "ratio": 3.6308163182855684,
   "dl_median_served": 9.747498794054287,
-  "ul_median_served": 19.117774806825672,
+  "ul_median_served": 19.721191456850605,
   "dl_service_frac": 0.871292,
-  "ul_service_frac": 0.182972
+  "ul_service_frac": 0.161644
  },
  {
   "band_mhz": 7125,
   "bw_mhz": 10.0,
-  "ue_eirp_dbm": 26.49,
+  "ue_eirp_dbm": 25.14,
   "dl_mean": 11.32027457446379,
-  "ul_mean": 3.6166926804956834,
-  "ratio": 3.1300073228539556,
+  "ul_mean": 3.2418920484574083,
+  "ratio": 3.4918727722134744,
   "dl_median_served": 10.488176857412732,
-  "ul_median_served": 19.88755003583234,
+  "ul_median_served": 20.840693386904206,
   "dl_service_frac": 0.706492,
-  "ul_service_frac": 0.161192
+  "ul_service_frac": 0.141896
  },
  {
   "band_mhz": 28000,
   "bw_mhz": 200.0,
-  "ue_eirp_dbm": 26.49,
+  "ue_eirp_dbm": 25.14,
   "dl_mean": 75.91081721017221,
-  "ul_mean": 3.357621958209925,
-  "ratio": 22.60850630445696,
+  "ul_mean": 2.5063402976692934,
+  "ratio": 30.287514141939752,
   "dl_median_served": 142.78052274844936,
-  "ul_median_served": 194.1234820664767,
+  "ul_median_served": 197.9184360362505,
   "dl_service_frac": 0.353348,
-  "ul_service_frac": 0.013008
+  "ul_service_frac": 0.009628
  }
 ]

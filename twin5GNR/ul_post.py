@@ -50,11 +50,12 @@ History (why this file looks the way it does):
     - UE antenna gain g_ue(f) = 6.7292*ln(f_MHz) - 51.61 dBi -- the
       workbook's handset-antenna fit (-7.53 dBi at 700 MHz, so the
       workbook's UE EIRP is 24 - 7.53 = 16.47 dBm). The twin uses the
-      user-set UE power 23 dBm (workbook: 24 dBm). For f > 3600 MHz
-      g_ue is CLAMPED to its 3600 MHz value (+3.49 dBi): the fit is an
-      LTE handset model and unclamped it runs away (+8.09 dBi at
-      7.125 GHz, +17.30 dBi at 28 GHz); the clamp is an explicit twin
-      adaptation, stated here and in UL_METHOD.md.
+      user-set UE power 23 dBm (workbook: 24 dBm). The workbook's own
+      formula caps the fit: g_ue = MIN(6.7292*ln(f_MHz) - 51.61, 2.14)
+      dBi (verified in the workbook's sheets 2026-10-21; the cap binds
+      above ~2.9 GHz). v3 originally clamped at the 3600 MHz value
+      (+3.49 dBi) instead, overstating UE EIRP by 1.35 dB at >= 3.6 GHz;
+      corrected to the workbook's own cap.
     - eNB receiver noise figure 3 dB (workbook 700 sheets; its AWS
       sheets use 2.5 dB).
     - Target RoT (rise over thermal) +4 dB, added to the noise floor
@@ -140,11 +141,9 @@ PL_CHECK_KEY = 'se_f3600'   # designated file for the PL cross-check
 
 
 def ue_ant_gain_dbi(f_mhz):
-    """Workbook handset antenna fit g = 6.7292*ln(f_MHz) - 51.61 dBi,
-    clamped above 3600 MHz to the 3600 MHz value (explicit adaptation:
-    the LTE-era fit runs away at FR3/mmWave frequencies)."""
-    f_eff = min(float(f_mhz), 3600.0)
-    return 6.7292 * np.log(f_eff) - 51.61
+    """Workbook handset antenna fit, exactly as the workbook writes it:
+    g = MIN(6.7292*ln(f_MHz) - 51.61, 2.14) dBi."""
+    return min(6.7292 * np.log(float(f_mhz)) - 51.61, 2.14)
 
 
 def tr38901_gain_db(theta, phi, tilt_deg, az_deg):
@@ -334,8 +333,8 @@ def main():
                     '(Qualcomm 80-W2559-5 Rev A): per-direction budget '
                     'closed at the ray-traced path loss. UE TX 23 dBm '
                     '(workbook 24) + workbook UE antenna fit '
-                    '6.7292*ln(f_MHz)-51.61 dBi, clamped above 3600 MHz '
-                    'to the 3600 MHz value; BS receive = TR 38.901 '
+                    'MIN(6.7292*ln(f_MHz)-51.61, 2.14) dBi (the '
+                    'workbook\'s own cap); BS receive = TR 38.901 '
                     'sector pattern + 12.04 dB 4x4 array by reciprocity '
                     '(the workbook 18 dBi eNB antenna lives inside this '
                     'composition, not added again); noise = -174 dBm/Hz '

@@ -25,8 +25,8 @@ METHOD (per band; sites = the 4-site Rancho Bernardo layout, street level)
     Unserved (SINR < -10.3 dB, workbook PDSCH 256K required SNR) -> TP 0.
   - UL: received grid per sector = UE_EIRP - PL + sector pattern;
     UE_EIRP = 23 + g_ue(f), g_ue(f) = 6.7292*ln(f_MHz) - 51.61 (workbook
-    handset antenna fit; -7.53 dBi @ 700 MHz), clamped above 3600 MHz to
-    the 3600 MHz value (+3.49 dBi) — documented adaptation, the LTE-era fit
+    handset antenna fit; -7.53 dBi @ 700 MHz), capped at +2.14 dBi by the
+    workbook's own MIN() formula (binds above ~2.9 GHz)
     is not credible at FR3/mmWave. Serving sector = DL best server
     (reciprocity). Noise = thermal + 10log10(BW) + eNB NF 3 dB + target
     RoT 4 dB (workbook UL interference treatment).
@@ -84,9 +84,9 @@ BANDS = [(700, 10e6), (2500, 10e6), (3600, 10e6), (7125, 10e6), (28000, 200e6)]
 
 
 def g_ue(f_mhz):
-    """Workbook handset antenna fit, clamped above 3600 MHz (adaptation)."""
+    """Workbook handset antenna fit, capped at 2.14 dBi (workbook's own MIN)."""
     g = 6.7292 * math.log(f_mhz) - 51.61
-    return min(g, 6.7292 * math.log(3600.0) - 51.61)
+    return min(g, 2.14)   # workbook's own cap: MIN(fit, 2.14)
 
 
 # ============ functions copied from planner_v4.py (verbatim, attribution) ====
