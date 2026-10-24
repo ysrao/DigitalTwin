@@ -1,0 +1,115 @@
+{
+ "note": "UL computed from the same stored SF ray-traced path gains (channel reciprocity) with twin_model.py UL budget layer: UE 23 dBm handset / 26 dBm rooftop CPE (23 at 28 GHz), BS NF 3 dB + RoT 4 dB, workbook UE antenna fit capped +2.14 dBi, TDD DDDSU UL fraction, single-user unloaded. MODELLED, not measured. This is the UL layer whose LTE-vs-NR basis Rao has on hold for the published twin.",
+ "ul": [
+  {
+   "band": "f700",
+   "band_label": "0.7 GHz",
+   "rx": "roof",
+   "receiver_class": "Rooftop CPE",
+   "dl_mean_mbps": 127.26,
+   "ul_mean_mbps": 35.32,
+   "dl_ul_ratio_of_means": 3.6,
+   "ul_served_pct": 97.4,
+   "ul_median_mbps_served": 40.71
+  },
+  {
+   "band": "f700",
+   "band_label": "0.7 GHz",
+   "rx": "street",
+   "receiver_class": "Outdoor handset",
+   "dl_mean_mbps": 38.87,
+   "ul_mean_mbps": 16.68,
+   "dl_ul_ratio_of_means": 2.33,
+   "ul_served_pct": 80.2,
+   "ul_median_mbps_served": 19.13
+  },
+  {
+   "band": "f2500",
+   "band_label": "2.5 GHz",
+   "rx": "roof",
+   "receiver_class": "Rooftop CPE",
+   "dl_mean_mbps": 490.95,
+   "ul_mean_mbps": 42.38,
+   "dl_ul_ratio_of_means": 11.58,
+   "ul_served_pct": 95.8,
+   "ul_median_mbps_served": 56.85
+  },
+  {
+   "band": "f2500",
+   "band_label": "2.5 GHz",
+   "rx": "street",
+   "receiver_class": "Outdoor handset",
+   "dl_mean_mbps": 213.17,
+   "ul_mean_mbps": 16.0,
+   "dl_ul_ratio_of_means": 13.32,
+   "ul_served_pct": 79.5,
+   "ul_median_mbps_served": 15.51
+  },
+  {
+   "band": "f3600",
+   "band_label": "3.6 GHz",
+   "rx": "roof",
+   "receiver_class": "Rooftop CPE",
+   "dl_mean_mbps": 314.64,
+   "ul_mean_mbps": 27.15,
+   "dl_ul_ratio_of_means": 11.59,
+   "ul_served_pct": 95.5,
+   "ul_median_mbps_served": 36.18
+  },
+  {
+   "band": "f3600",
+   "band_label": "3.6 GHz",
+   "rx": "street",
+   "receiver_class": "Outdoor handset",
+   "dl_mean_mbps": 136.65,
+   "ul_mean_mbps": 10.26,
+   "dl_ul_ratio_of_means": 13.32,
+   "ul_served_pct": 79.2,
+   "ul_median_mbps_served": 10.0
+  },
+  {
+   "band": "f7125",
+   "band_label": "7.125 GHz",
+   "rx": "roof",
+   "receiver_class": "Rooftop CPE",
+   "dl_mean_mbps": 687.41,
+   "ul_mean_mbps": 54.83,
+   "dl_ul_ratio_of_means": 12.54,
+   "ul_served_pct": 95.2,
+   "ul_median_mbps_served": 73.31
+  },
+  {
+   "band": "f7125",
+   "band_label": "7.125 GHz",
+   "rx": "street",
+   "receiver_class": "Outdoor handset",
+   "dl_mean_mbps": 212.4,
+   "ul_mean_mbps": 14.99,
+   "dl_ul_ratio_of_means": 14.17,
+   "ul_served_pct": 76.0,
+   "ul_median_mbps_served": 7.16
+  },
+  {
+   "band": "f28000",
+   "band_label": "28 GHz",
+   "rx": "roof",
+   "receiver_class": "Rooftop CPE",
+   "dl_mean_mbps": 691.19,
+   "ul_mean_mbps": 84.8,
+   "dl_ul_ratio_of_means": 8.15,
+   "ul_served_pct": 94.1,
+   "ul_median_mbps_served": 117.17
+  },
+  {
+   "band": "f28000",
+   "band_label": "28 GHz",
+   "rx": "street",
+   "receiver_class": "Outdoor handset",
+   "dl_mean_mbps": 85.97,
+   "ul_mean_mbps": 10.64,
+   "dl_ul_ratio_of_means": 8.08,
+   "ul_served_pct": 57.8,
+   "ul_median_mbps_served": 1.95
+  }
+ ]
+}

@@ -17,4 +17,4 @@ Method in brief: L20 Cesium tiles converted to a Sionna scene (1,024 tiles,
 centre, 30 m AGL (assumption); Sionna RT 2.2.0 ray tracing; RSRP and DL
 throughput derived with the twin5GNR v5 workbook model. Path gains are
 **simulated**, throughput **modelled** — nothing here is measured.
-Uplink is not part of this package.
+Uplink (modelled, summary level): `UL_NOTES.md` and `UL_summary.json`.
