@@ -70,6 +70,22 @@ Receiver grids: 25×25 at 40 m spacing. Roof = surface + 6 m (rooftop CPE). Stre
 <p>RSRP is true per-RE RSRP for the band-default bandwidth and receiver class (rooftop CPE: +9 dBi; outdoor handset: workbook antenna fit capped at +2.14 dBi).
 DL served and throughput come from the twin5GNR v5 throughput model (LTE-workbook CQI curves, MIMO gain, overheads, TDD DDDSU), single-user and unloaded, no inter-cell interference — <b>modelled</b> on top of the ray-traced path gains. Throughput maps use a per-band colour scale (a shared 0–1200 Mbps scale would wash out the narrow low bands); each map's colour bar shows its own maximum.</p>
 
+
+<h2>Uplink (modelled)</h2>
+<table><tr><th>Band</th><th>Receiver</th><th>DL Mbps mean</th><th>UL Mbps mean</th><th>DL/UL ratio</th><th>UL served</th><th>UL Mbps median (served)</th></tr>
+<tr><td>0.7 GHz</td><td>Rooftop CPE</td><td>127.3</td><td>35.3</td><td>3.60</td><td>97.4%</td><td>40.7</td></tr>
+<tr><td>0.7 GHz</td><td>Outdoor handset</td><td>38.9</td><td>16.7</td><td>2.33</td><td>80.2%</td><td>19.1</td></tr>
+<tr><td>2.5 GHz</td><td>Rooftop CPE</td><td>490.9</td><td>42.4</td><td>11.58</td><td>95.8%</td><td>56.9</td></tr>
+<tr><td>2.5 GHz</td><td>Outdoor handset</td><td>213.2</td><td>16.0</td><td>13.32</td><td>79.5%</td><td>15.5</td></tr>
+<tr><td>3.6 GHz</td><td>Rooftop CPE</td><td>314.6</td><td>27.1</td><td>11.59</td><td>95.5%</td><td>36.2</td></tr>
+<tr><td>3.6 GHz</td><td>Outdoor handset</td><td>136.7</td><td>10.3</td><td>13.32</td><td>79.2%</td><td>10.0</td></tr>
+<tr><td>7.125 GHz</td><td>Rooftop CPE</td><td>687.4</td><td>54.8</td><td>12.54</td><td>95.2%</td><td>73.3</td></tr>
+<tr><td>7.125 GHz</td><td>Outdoor handset</td><td>212.4</td><td>15.0</td><td>14.17</td><td>76.0%</td><td>7.2</td></tr>
+<tr><td>28 GHz</td><td>Rooftop CPE</td><td>691.2</td><td>84.8</td><td>8.15</td><td>94.1%</td><td>117.2</td></tr>
+<tr><td>28 GHz</td><td>Outdoor handset</td><td>86.0</td><td>10.6</td><td>8.08</td><td>57.8%</td><td>1.9</td></tr>
+</table>
+<p>Uplink is <b>modelled</b> from the same stored ray-traced path gains (channel reciprocity), closed with the twin's UL link-budget layer (the v3 link-budget method — see <i>twin5GNR/UL_METHOD.md</i> in this repository): UE 23 dBm handset / 26 dBm rooftop CPE (23 dBm at 28 GHz), BS noise figure 3 dB + rise-over-thermal 4 dB, UE antenna from the link-budget workbook fit capped at +2.14 dBi, TDD DDDSU uplink fraction, single-user and unloaded. UL maps were not rendered for this scene; the figures above are the computed summary (machine-readable form: <i>UL_summary.json</i>; notes: <i>UL_NOTES.md</i>).</p>
+
 <h2>Heat maps</h2>
 <figure><figcaption><b>0.7 GHz — roof</b> (Rooftop CPE, 10 MHz)</figcaption>
 <img src="maps/f700_roof_rsrp.png" alt="RSRP map 0.7 GHz roof"><img src="maps/f700_roof_throughput.png" alt="Throughput map 0.7 GHz roof"></figure><figure><figcaption><b>0.7 GHz — street</b> (Outdoor handset, 10 MHz)</figcaption>
@@ -88,7 +104,7 @@ DL served and throughput come from the twin5GNR v5 throughput model (LTE-workboo
 <div class="note">
 <b>Simulated</b> — path gains, LOS and diffuse shares: Sionna RT 2.2.0 ray tracing on the Vexcel mesh scene, settings above.<br>
 <b>Modelled</b> — RSRP and DL throughput: derived from the simulated path gains with the stated EIRP, bandwidth, antenna and workbook terms (twin_model.py, the same code as the twin5GNR v5 viewer).<br>
-<b>Not computed</b> — uplink; multi-cell interference / SINR under load; indoor receivers (street grid is outdoor at the facade); vegetation (no separate layer in the fused mesh); the wider 5×5 km area (only the 1 km² eval set is in hand).<br>
+<b>Not computed</b> — multi-cell interference / SINR under load; indoor receivers (street grid is outdoor at the facade); vegetation (no separate layer in the fused mesh); the wider 5×5 km area (only the 1 km² eval set is in hand).<br>
 <b>Assumptions to calibrate</b> — concrete-only material, S = 0.3 scattering, TX height 30 m AGL at the tile centre, ground/street placement from the mesh-derived opening.
 </div>
 </body></html>
