@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>twin5GNR on the Vexcel SF mesh — first run</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:24px auto;max-width:1080px;padding:0 16px;color:#1c2733;line-height:1.5}
+h1{font-size:1.5rem} h2{margin-top:2rem;font-size:1.15rem}
+table{border-collapse:collapse;width:100%;font-size:.9rem} th,td{border:1px solid #c9d4de;padding:6px 8px;text-align:right} th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+figure{margin:1.2rem 0} figure img{width:49%;vertical-align:top} figcaption{margin-bottom:.4rem}
+.note{background:#f2f6fa;border:1px solid #d7e3ee;border-radius:8px;padding:10px 14px}
+code{background:#eef2f6;padding:1px 5px;border-radius:4px}
+</style></head><body>
+<h1>twin5GNR on the Vexcel San Francisco mesh — first run</h1>
+<p><b>Area:</b> downtown San Francisco (Chinatown / Nob Hill), tileset centre 37.801105, −122.404175;
+local ENU extent x [-484, 484] m, y [-482, 482] m.
+<b>Scene:</b> 1024 L20 tiles, 1,946,731 vertices, 1,196,963 faces, converted from the Vexcel 1 km² Cesium eval set.</p>
+
+<h2>Configuration (same conventions as twin5GNR v5)</h2>
+<div class="note">
+Transmitter at the tile centre, 30 m above the local ground surface (stated assumption — no SF site data was supplied).
+3 sectors (azimuth 90/210/330°), TR 38.901 element pattern, 4×4 array, tilts 0–10° (results shown at 4°), 47 dBm boresight EIRP.
+Solver: Sionna RT 2.2.0 PathSolver, max_depth 3, LOS + specular + diffuse (Lambertian) + diffraction + edge diffraction, 1M samples/source.
+Material: the fused Vexcel mesh carries a single ITU concrete radio material with scattering coefficient S = 0.3 (assumption — the mesh does not separate ground, buildings and vegetation).
+Receiver grids: 25×25 at 40 m spacing. Roof = surface + 6 m (rooftop CPE). Street = ground + 1.5 m (outdoor handset), points inside building footprints nudged to the nearest open cell within 30 m; ground from a morphological opening of the mesh surface.
+</div>
+
+<h2>Results</h2>
+<table><tr><th>Band</th><th>Grid</th><th>BW</th><th>No path</th><th>LOS</th><th>RSRP median (dBm)</th><th>RSRP ≥ −90 (all cells)</th><th>DL served</th><th>DL Mbps mean (all cells)</th><th>DL Mbps median (served)</th></tr>
+<tr><td>0.7 GHz</td><td>roof</td><td>10 MHz</td>
+<td>2.6%</td><td>59.4%</td>
+<td>-59.63</td><td>79.4%</td>
+<td>96.2%</td><td>127.26</td>
+<td>141.33</td></tr><tr><td>0.7 GHz</td><td>street</td><td>10 MHz</td>
+<td>19.4%</td><td>15.2%</td>
+<td>-100.68</td><td>23.5%</td>
+<td>79.7%</td><td>38.87</td>
+<td>58.8</td></tr><tr><td>2.5 GHz</td><td>roof</td><td>60 MHz</td>
+<td>2.6%</td><td>59.4%</td>
+<td>-75.62</td><td>62.2%</td>
+<td>95.2%</td><td>490.95</td>
+<td>657.2</td></tr><tr><td>2.5 GHz</td><td>street</td><td>60 MHz</td>
+<td>19.4%</td><td>15.2%</td>
+<td>-107.53</td><td>18.2%</td>
+<td>75.5%</td><td>213.17</td>
+<td>187.22</td></tr><tr><td>3.6 GHz</td><td>roof</td><td>40 MHz</td>
+<td>2.6%</td><td>59.4%</td>
+<td>-76.95</td><td>61.1%</td>
+<td>95.2%</td><td>314.64</td>
+<td>430.02</td></tr><tr><td>3.6 GHz</td><td>street</td><td>40 MHz</td>
+<td>19.4%</td><td>15.2%</td>
+<td>-107.93</td><td>17.9%</td>
+<td>75.0%</td><td>136.65</td>
+<td>120.24</td></tr><tr><td>7.125 GHz</td><td>roof</td><td>100 MHz</td>
+<td>2.6%</td><td>59.4%</td>
+<td>-87.0</td><td>56.0%</td>
+<td>92.3%</td><td>687.41</td>
+<td>1016.64</td></tr><tr><td>7.125 GHz</td><td>street</td><td>100 MHz</td>
+<td>19.4%</td><td>15.2%</td>
+<td>-118.08</td><td>5.9%</td>
+<td>66.7%</td><td>212.4</td>
+<td>136.24</td></tr><tr><td>28 GHz</td><td>roof</td><td>200 MHz</td>
+<td>2.6%</td><td>59.4%</td>
+<td>-84.73</td><td>58.7%</td>
+<td>90.7%</td><td>691.19</td>
+<td>1079.08</td></tr><tr><td>28 GHz</td><td>street</td><td>200 MHz</td>
+<td>19.4%</td><td>15.2%</td>
+<td>-127.52</td><td>1.0%</td>
+<td>34.1%</td><td>85.97</td>
+<td>194.24</td></tr>
+</table>
+<p>RSRP is true per-RE RSRP for the band-default bandwidth and receiver class (rooftop CPE: +9 dBi; outdoor handset: workbook antenna fit capped at +2.14 dBi).
+DL served and throughput come from the twin5GNR v5 throughput model (LTE-workbook CQI curves, MIMO gain, overheads, TDD DDDSU), single-user and unloaded, no inter-cell interference — <b>modelled</b> on top of the ray-traced path gains. Throughput maps use a per-band colour scale (a shared 0–1200 Mbps scale would wash out the narrow low bands); each map's colour bar shows its own maximum.</p>
+
+
+<h2>Uplink (modelled)</h2>
+<table><tr><th>Band</th><th>Receiver</th><th>DL Mbps mean</th><th>UL Mbps mean</th><th>DL/UL ratio</th><th>UL served</th><th>UL Mbps median (served)</th></tr>
+<tr><td>0.7 GHz</td><td>Rooftop CPE</td><td>127.3</td><td>35.3</td><td>3.60</td><td>97.4%</td><td>40.7</td></tr>
+<tr><td>0.7 GHz</td><td>Outdoor handset</td><td>38.9</td><td>16.7</td><td>2.33</td><td>80.2%</td><td>19.1</td></tr>
+<tr><td>2.5 GHz</td><td>Rooftop CPE</td><td>490.9</td><td>42.4</td><td>11.58</td><td>95.8%</td><td>56.9</td></tr>
+<tr><td>2.5 GHz</td><td>Outdoor handset</td><td>213.2</td><td>16.0</td><td>13.32</td><td>79.5%</td><td>15.5</td></tr>
+<tr><td>3.6 GHz</td><td>Rooftop CPE</td><td>314.6</td><td>27.1</td><td>11.59</td><td>95.5%</td><td>36.2</td></tr>
+<tr><td>3.6 GHz</td><td>Outdoor handset</td><td>136.7</td><td>10.3</td><td>13.32</td><td>79.2%</td><td>10.0</td></tr>
+<tr><td>7.125 GHz</td><td>Rooftop CPE</td><td>687.4</td><td>54.8</td><td>12.54</td><td>95.2%</td><td>73.3</td></tr>
+<tr><td>7.125 GHz</td><td>Outdoor handset</td><td>212.4</td><td>15.0</td><td>14.17</td><td>76.0%</td><td>7.2</td></tr>
+<tr><td>28 GHz</td><td>Rooftop CPE</td><td>691.2</td><td>84.8</td><td>8.15</td><td>94.1%</td><td>117.2</td></tr>
+<tr><td>28 GHz</td><td>Outdoor handset</td><td>86.0</td><td>10.6</td><td>8.08</td><td>57.8%</td><td>1.9</td></tr>
+</table>
+<p>Uplink is <b>modelled</b> from the same stored ray-traced path gains (channel reciprocity), closed with the twin's UL link-budget layer (the v3 link-budget method — see <i>twin5GNR/UL_METHOD.md</i> in this repository): UE 23 dBm handset / 26 dBm rooftop CPE (23 dBm at 28 GHz), BS noise figure 3 dB + rise-over-thermal 4 dB, UE antenna from the link-budget workbook fit capped at +2.14 dBi, TDD DDDSU uplink fraction, single-user and unloaded. UL maps were not rendered for this scene; the figures above are the computed summary (machine-readable form: <i>UL_summary.json</i>; notes: <i>UL_NOTES.md</i>).</p>
+
+<h2>Heat maps</h2>
+<figure><figcaption><b>0.7 GHz — roof</b> (Rooftop CPE, 10 MHz)</figcaption>
+<img src="maps/f700_roof_rsrp.png" alt="RSRP map 0.7 GHz roof"><img src="maps/f700_roof_throughput.png" alt="Throughput map 0.7 GHz roof"></figure><figure><figcaption><b>0.7 GHz — street</b> (Outdoor handset, 10 MHz)</figcaption>
+<img src="maps/f700_street_rsrp.png" alt="RSRP map 0.7 GHz street"><img src="maps/f700_street_throughput.png" alt="Throughput map 0.7 GHz street"></figure><figure><figcaption><b>2.5 GHz — roof</b> (Rooftop CPE, 60 MHz)</figcaption>
+<img src="maps/f2500_roof_rsrp.png" alt="RSRP map 2.5 GHz roof"><img src="maps/f2500_roof_throughput.png" alt="Throughput map 2.5 GHz roof"></figure><figure><figcaption><b>2.5 GHz — street</b> (Outdoor handset, 60 MHz)</figcaption>
+<img src="maps/f2500_street_rsrp.png" alt="RSRP map 2.5 GHz street"><img src="maps/f2500_street_throughput.png" alt="Throughput map 2.5 GHz street"></figure><figure><figcaption><b>3.6 GHz — roof</b> (Rooftop CPE, 40 MHz)</figcaption>
+<img src="maps/f3600_roof_rsrp.png" alt="RSRP map 3.6 GHz roof"><img src="maps/f3600_roof_throughput.png" alt="Throughput map 3.6 GHz roof"></figure><figure><figcaption><b>3.6 GHz — street</b> (Outdoor handset, 40 MHz)</figcaption>
+<img src="maps/f3600_street_rsrp.png" alt="RSRP map 3.6 GHz street"><img src="maps/f3600_street_throughput.png" alt="Throughput map 3.6 GHz street"></figure><figure><figcaption><b>7.125 GHz — roof</b> (Rooftop CPE, 100 MHz)</figcaption>
+<img src="maps/f7125_roof_rsrp.png" alt="RSRP map 7.125 GHz roof"><img src="maps/f7125_roof_throughput.png" alt="Throughput map 7.125 GHz roof"></figure><figure><figcaption><b>7.125 GHz — street</b> (Outdoor handset, 100 MHz)</figcaption>
+<img src="maps/f7125_street_rsrp.png" alt="RSRP map 7.125 GHz street"><img src="maps/f7125_street_throughput.png" alt="Throughput map 7.125 GHz street"></figure><figure><figcaption><b>28 GHz — roof</b> (Rooftop CPE, 200 MHz)</figcaption>
+<img src="maps/f28000_roof_rsrp.png" alt="RSRP map 28 GHz roof"><img src="maps/f28000_roof_throughput.png" alt="Throughput map 28 GHz roof"></figure><figure><figcaption><b>28 GHz — street</b> (Outdoor handset, 200 MHz)</figcaption>
+<img src="maps/f28000_street_rsrp.png" alt="RSRP map 28 GHz street"><img src="maps/f28000_street_throughput.png" alt="Throughput map 28 GHz street"></figure>
+
+
+<h2>Provenance</h2>
+<div class="note">
+<b>Simulated</b> — path gains, LOS and diffuse shares: Sionna RT 2.2.0 ray tracing on the Vexcel mesh scene, settings above.<br>
+<b>Modelled</b> — RSRP and DL throughput: derived from the simulated path gains with the stated EIRP, bandwidth, antenna and workbook terms (twin_model.py, the same code as the twin5GNR v5 viewer).<br>
+<b>Not computed</b> — multi-cell interference / SINR under load; indoor receivers (street grid is outdoor at the facade); vegetation (no separate layer in the fused mesh); the wider 5×5 km area (only the 1 km² eval set is in hand).<br>
+<b>Assumptions to calibrate</b> — concrete-only material, S = 0.3 scattering, TX height 30 m AGL at the tile centre, ground/street placement from the mesh-derived opening.
+</div>
+</body></html>
