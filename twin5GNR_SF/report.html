@@ -86,6 +86,37 @@ DL served and throughput come from the twin5GNR v5 throughput model (LTE-workboo
 </table>
 <p>Uplink is <b>modelled</b> from the same stored ray-traced path gains (channel reciprocity), closed with the twin's UL link-budget layer (the v3 link-budget method — see <i>twin5GNR/UL_METHOD.md</i> in this repository): UE 23 dBm handset / 26 dBm rooftop CPE (23 dBm at 28 GHz), BS noise figure 3 dB + rise-over-thermal 4 dB, UE antenna from the link-budget workbook fit capped at +2.14 dBi, TDD DDDSU uplink fraction, single-user and unloaded. UL maps were not rendered for this scene; the figures above are the computed summary (machine-readable form: <i>UL_summary.json</i>; notes: <i>UL_NOTES.md</i>).</p>
 
+
+<h2>Vegetation — ITU-R P.833-10 (modelled, post-trace)</h2>
+<p>Vegetation is computed <b>post-trace</b>, not inside Sionna RT: the fused Vexcel mesh carries no separate vegetation layer, so foliage loss is applied afterwards to the LOS component of each cell, weighted by its LOS power share (&phi;), using the foliage depth <i>d</i> (m) along the straight TX&ndash;RX line. No Sionna re-run.</p>
+<p><b>Canopy source (surveyed positions):</b> City of San Francisco Street Tree List (DataSF dataset tkzw-k3nq), <b>1,919 public street trees</b> in the 1 km tile. Top species: Indian Laurel Fig 261, London Plane 244, Victorian Box 148, Brisbane Box 125, Banyan Fig 69. Median trunk diameter (DBH) 11 in. Each tree is modelled as a canopy disc; the TX&ndash;RX line is sampled every 5 m and path length inside a disc is accumulated while the line height is within that tree&rsquo;s crown range. Foliage depth, street: mean 3.09 m, median 0.00 m, p90 10.05 m, max 30.24 m, 37.3% of cells &gt; 0; roof: mean 1.18 m.</p>
+<p><b>Model:</b> ITU-R P.833-10 Eq. (1), A<sub>ev</sub> = A<sub>m</sub>[1 &minus; exp(&minus;d&gamma;/A<sub>m</sub>)], where &gamma; is specific attenuation (dB/m) and A<sub>m</sub> the maximum attenuation (dB). Parameters are <b>interpolated/assumed, uncalibrated</b> (from P.833-10 Table 1 / Fig. 2 and 28 GHz forest measurements):</p>
+<table><tr><th>Band</th><th>&gamma; (dB/m)</th><th>A<sub>m</sub> (dB)</th></tr>
+<tr><td>0.7 GHz</td><td>0.20</td><td>20</td></tr>
+<tr><td>2.5 GHz</td><td>0.40</td><td>32</td></tr>
+<tr><td>3.6 GHz</td><td>0.55</td><td>38</td></tr>
+<tr><td>7.125 GHz</td><td>0.90</td><td>45</td></tr>
+<tr><td>28 GHz</td><td>2.20</td><td>50</td></tr>
+</table>
+<p>Scenario for the tables below: street/pedestrian, EIRP 47 dBm, tilt 4&deg;, ports 4, TDD DDDSU. Mean DL is over cells with a ray path in the bin; n is that cell count.</p>
+<p><b>3.6 GHz, street (bw 40 MHz) — mean DL, foliage on / off (Mbps):</b></p>
+<table><tr><th>Distance bin</th><th>n</th><th>Mean DL on</th><th>Mean DL off</th><th>Delta</th><th>DL served on / off</th></tr>
+<tr><td>0&ndash;100 m</td><td>20</td><td>271.9</td><td>271.9</td><td>0.0</td><td>100.0% / 100.0%</td></tr>
+<tr><td>100&ndash;250 m</td><td>94</td><td>200.4</td><td>200.5</td><td>&minus;0.1</td><td>98.9% / 98.9%</td></tr>
+<tr><td>250&ndash;500 m</td><td>296</td><td>147.4</td><td>149.3</td><td>&minus;1.9 (&minus;1.3%)</td><td>92.6% / 92.6%</td></tr>
+<tr><td>500&ndash;679 m</td><td>94</td><td>179.8</td><td>180.1</td><td>&minus;0.3</td><td>87.2% / 87.2%</td></tr>
+</table>
+<p><b>28 GHz, street (bw 200 MHz) — mean DL, foliage on / off (Mbps):</b></p>
+<table><tr><th>Distance bin</th><th>n</th><th>Mean DL on</th><th>Mean DL off</th><th>Delta</th><th>DL served on / off</th></tr>
+<tr><td>0&ndash;100 m</td><td>20</td><td>220.1</td><td>220.1</td><td>0.0</td><td>85.0% / 85.0%</td></tr>
+<tr><td>100&ndash;250 m</td><td>94</td><td>134.2</td><td>157.3</td><td>&minus;23.1 (&minus;15%)</td><td>56.4% / 56.4%</td></tr>
+<tr><td>250&ndash;500 m</td><td>296</td><td>58.1</td><td>86.4</td><td>&minus;28.3 (&minus;33%)</td><td>34.1% / 34.5%</td></tr>
+<tr><td>500&ndash;679 m</td><td>94</td><td>92.1</td><td>95.5</td><td>&minus;3.4</td><td>43.6% / 43.6%</td></tr>
+</table>
+<p><b>Roof (CPE):</b> 3.6 GHz delta ~0 in every bin; 28 GHz mean DL delta &minus;0.0 / &minus;20.6 / &minus;29.9 / &minus;28.2 Mbps by bin (0&ndash;100 / 100&ndash;250 / 250&ndash;500 / 500&ndash;679 m). Median RSRP delta is 0.0 dB in every bin at both bands — the median cell has no foliage on its direct path; the effect lives in the tail.</p>
+<p><b>Verdict:</b> vegetation matters only at 28 GHz, street level, 100&ndash;500 m; ~0 at 3.6 GHz at any distance, ~0 at 0&ndash;100 m and past 500 m, ~0 for rooftops.</p>
+<p><b>Limitations:</b> public street trees only — no private-yard or park trees, so this is a lower bound on total canopy. Crown size/height are assumed from DBH (radius 2&ndash;5 m, crown 2&ndash;12 m); the inventory has no crown measurements. No terrain DEM — height above ground is a linear interpolation from 30 m at the TX to 1.5 m (street) / 6 m (roof) at the RX. The 40 m grid is coarse — tree crowns (3&ndash;6 m) are sub-cell, so this is a sensitivity test; at 10 cm resolution, crowns are resolved and per-tree RET becomes meaningful. Sameer Lalwani is the intended user of this vegetation model at his resolution.</p>
+
 <h2>Heat maps</h2>
 <figure><figcaption><b>0.7 GHz — roof</b> (Rooftop CPE, 10 MHz)</figcaption>
 <img src="maps/f700_roof_rsrp.png" alt="RSRP map 0.7 GHz roof"><img src="maps/f700_roof_throughput.png" alt="Throughput map 0.7 GHz roof"></figure><figure><figcaption><b>0.7 GHz — street</b> (Outdoor handset, 10 MHz)</figcaption>
@@ -104,7 +135,8 @@ DL served and throughput come from the twin5GNR v5 throughput model (LTE-workboo
 <div class="note">
 <b>Simulated</b> — path gains, LOS and diffuse shares: Sionna RT 2.2.0 ray tracing on the Vexcel mesh scene, settings above.<br>
 <b>Modelled</b> — RSRP and DL throughput: derived from the simulated path gains with the stated EIRP, bandwidth, antenna and workbook terms (twin_model.py, the same code as the twin5GNR v5 viewer).<br>
-<b>Not computed</b> — multi-cell interference / SINR under load; indoor receivers (street grid is outdoor at the facade); vegetation (no separate layer in the fused mesh); the wider 5×5 km area (only the 1 km² eval set is in hand).<br>
+<b>Not computed</b> — multi-cell interference / SINR under load; indoor receivers (street grid is outdoor at the facade); the wider 5×5 km area (only the 1 km² eval set is in hand).<br>
+<b>Vegetation</b> — now computed post-trace with ITU-R P.833-10 from the surveyed street-tree inventory (see Vegetation section); the fused mesh itself still carries no separate vegetation layer in Sionna RT.<br>
 <b>Assumptions to calibrate</b> — concrete-only material, S = 0.3 scattering, TX height 30 m AGL at the tile centre, ground/street placement from the mesh-derived opening.
 </div>
 </body></html>
